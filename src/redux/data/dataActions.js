@@ -35,12 +35,11 @@ export const fetchData = (account) => {
   return async (dispatch) => {
     dispatch(fetchDataRequest());
     try {
-    //  let name = await store
-     //   .getState()
+      //  let name = await store
+      //   .getState()
       //  .blockchain.queryFilter(
-
       let name = "test";
-      
+
       dispatch(
         fetchDataSuccess({
           name,

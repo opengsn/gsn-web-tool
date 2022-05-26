@@ -6,6 +6,7 @@ import {RootState} from "../redux/store";
 
 import {Collapse, Form, Button} from "react-bootstrap";
 import RelayCommands from "./RelayCommands";
+
 // const RelayCommands = React.lazy(() => import('./RelayCommands'));
 // <RelayCommands relay={relay.relay} account={account} web3={web3} /> 
 
@@ -47,11 +48,6 @@ export default function Relay(props: any) {
               })
             }
           </details>
-          <Button variant="secondary"
-            onClick={() => {
-              dispatch(deleteRelay());
-            }}
-          >Switch</Button>
           <RelayCommands relay={relay.relay} account={account} web3={web3} />
         </div>
         : null}
@@ -67,7 +63,8 @@ export default function Relay(props: any) {
             />
           </Form.Label>
           <Button variant="success" type="submit">Fetch data</Button>
-        </Form> : null}
+        </Form> : null
+      }
     </div>
   );
 }

@@ -1,15 +1,18 @@
 import {useEffect} from "react";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {RootState} from "../redux/store";
+import {deleteRelay} from "../redux/relay/relayActions";
 
 import MetamaskButton from "../components/MetamaskButton";
 import Relay from "../components/Relay";
 
 import {Container} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 export default function App() {
 
   const blockchain = useSelector((state: RootState) => state.blockchain);
+    const dispatch = useDispatch();
 
   useEffect(() => {
   }, []);
@@ -22,7 +25,15 @@ export default function App() {
           blockchain.account == null ?
             <MetamaskButton />
             :
-            <Relay web3={blockchain.web3} account={blockchain.account} />
+            <div className="row">
+              <Relay web3={blockchain.web3} account={blockchain.account} />
+              <Button variant="secondary"
+                className="my-2"
+                onClick={() => {
+                  dispatch(deleteRelay());
+                }}
+              >Switch</Button>
+            </div>
         }
         {blockchain.errorMsg !== "" ? (
           <p>
