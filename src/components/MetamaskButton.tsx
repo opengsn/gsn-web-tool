@@ -1,3 +1,4 @@
+import {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {connect} from "../redux/blockchain/blockchainActions";
 
@@ -5,6 +6,19 @@ import {Button} from "react-bootstrap";
 
 export default function MetamaskButton() {
   const dispatch = useDispatch();
+
+  useEffect((() => {
+    const connectWalletOnPageLoad = async () => {
+      if (localStorage?.getItem('isWalletConnected') === 'true') {
+        try {
+          dispatch(connect() as any);
+        } catch (ex) {
+          console.log(ex)
+        }
+      }
+    }
+    connectWalletOnPageLoad()
+  }), [])
 
   return (
 

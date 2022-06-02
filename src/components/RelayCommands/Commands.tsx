@@ -1,21 +1,13 @@
 import {useEffect, useState} from "react";
 
 import {Address} from "@opengsn/common/dist/types/Aliases";
-import {isSameAddress, sleep} from "@opengsn/common/dist/Utils";
-import {constants} from "@opengsn/common/dist/Constants";
-import {toNumber} from "@opengsn/common";
-import {HttpClient} from '@opengsn/common/dist/HttpClient'
-import {HttpWrapper} from '@opengsn/common/dist/HttpWrapper'
-import {Form, Collapse, Button} from 'react-bootstrap';
-
-import {useFormik} from 'formik';
+import {Form, Collapse, Button} from "react-bootstrap";
+import {useFormik} from "formik";
 import {ethers, BigNumber} from "ethers";
-import BN from 'bn.js'
 
-import relayHubAbi from "./contracts/relayHub.json"
-import stakeManagerAbi from "./contracts/stakeManager.json";
-import iErc20TokenAbi from "@opengsn/common/dist/interfaces/IERC20Token.json"
-
+import FundRelay from "./RegisterRelay/FundRelay";
+import StakeERC20 from "./RegisterRelay/StakeERC20";
+import AuthorizeWithHub from "./RegisterRelay/AuthorizeWithHub";
 
 export interface RegisterOptions {
   /** ms to sleep if waiting for RelayServer to set its owner */
@@ -24,10 +16,10 @@ export interface RegisterOptions {
   sleepCount: number
   from: Address
   token?: Address
-  gasPrice?: string | BN
+  gasPrice?: string | BigNumber
   stake: string
   wrap: boolean
-  funds: string | BN
+  funds: string | BigNumber
   relayUrl: string
   unstakeDelay: string
 }
@@ -39,22 +31,15 @@ interface RegistrationResult {
 }
 
 
-export default function RelayCommands({relay, account, web3}: any) {
+export default function RelayCommands({relay, account, provider}: any) {
 
-  //  const relay = props.relay;
-  //  const web3 = props.web3;
-  //  const account = props.account;
-  const logger = console;
-  const httpClient = new HttpClient(new HttpWrapper(), logger);
+  const signer = provider.getSigner();
 
-  const [showDeregisterRelayForm, setShowDeregisterRelayForm] = useState(false);
-
-
+  /* 
   const isRelayReady = async (relayUrl: string): Promise<boolean> => {
-    const response = await httpClient.getPingResponse(relayUrl)
+    const response: any = await fetch(relayUrl)
     return response.ready
   }
-
   const waitForRelay = async (relayUrl: string, timeout = 60): Promise<void> => {
     console.error(`Will wait up to ${timeout}s for the relay to be ready`)
 
@@ -71,13 +56,13 @@ export default function RelayCommands({relay, account, web3}: any) {
       }
       await sleep(3000)
     }
-    throw Error(`Relay not ready after ${timeout}s`)
+    console.error(`Relay not ready after ${timeout}s`)
   }
 
   const findFirstToken = async (relayHubAddress: string): Promise<string> => {
-    const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, web3);
+    const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, provider);
     const fromBlock = (await relayHub.functions.getCreationBlock())[0]
-    const toBlock = Math.min(toNumber(fromBlock) + 5000, await web3.getBlockNumber())
+    const toBlock = Math.min(toNumber(fromBlock) + 5000, await provider.getBlockNumber())
 
     const filters = relayHub.filters.StakingTokenDataChanged();
     const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock);
@@ -88,59 +73,27 @@ export default function RelayCommands({relay, account, web3}: any) {
     return tokens[0].args.token
   }
 
-
-  const registerRelay = async (options: RegisterOptions): Promise<RegistrationResult> => {
-    const transactions: string[] = []
-    try {
-      const gasPrice = options.gasPrice ?? (await web3.getGasPrice())._hex
-      const sendOptions: any = {
-        from: options.from,
-        gasPrice
-      }
-
-      //      if (response.chainId !== chainId.toString()) {
-      //        throw new Error(`wrong chain-id: Relayer on (${response.chainId}) but our provider is on (${chainId})`)
-      //      }
-
-      const relayAddress = relay.relayManagerAddress
-      const relayHubAddress = relay.relayHubAddress
-      const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, web3);
-
-      const signer = web3.getSigner();
-      const stakeManagerAddress = await relayHub.getStakeManager();
-      const stakeManager = new ethers.Contract(stakeManagerAddress, stakeManagerAbi, signer);
-
-      const {stake, unstakeDelay, owner, token} = (await stakeManager.getStakeInfo(relayAddress))[0]
-
-      console.log('current stake=', ethers.utils.formatUnits(stake, 'ether'), stake)
-      let stakingToken = options.token
+   */
+  /*
+    const stakeWithERC20 = async () => {
+  
+      const transactions: string[] = []
+      let stakingToken = undefined
       if (stakingToken == null) {
         stakingToken = await findFirstToken(relayHubAddress)
       }
-
-      if (!(isSameAddress(token, stakingToken) || isSameAddress(token, constants.ZERO_ADDRESS))) {
-        console.log(`Cannot use token ${stakingToken}. Relayer already uses token: ${token}`)
-        throw new Error(`Cannot use token ${stakingToken}. Relayer already uses token: ${token}`)
-      }
-
-      if (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, options.from)) {
-        console.log(`Already owned by ${owner}, our account=${options.from}`)
-        throw new Error(`Already owned by ${owner}, our account=${options.from}`)
-      }
-      
+  
       const stakingTokenContract = new ethers.Contract(stakingToken, iErc20TokenAbi, signer)
-
-
+  
       const tokenDecimals = await stakingTokenContract.decimals()
       const tokenSymbol = await stakingTokenContract.symbol()
-      const stakeParam = BigNumber.from((toNumber(options.stake) * Math.pow(10, tokenDecimals)).toString())
-
-      //      const formatToken = (val: any): string => formatTokenAmount(BigNumber.from(toNumber(val)), tokenDecimals, tokenSymbol)
+  
+      const stakeParam = BigNumber.from((toNumber("1.0") * Math.pow(10, tokenDecimals)).toString())
+  
       const formatToken = (val: any): string => {
         let shiftedBalance: BigNumber;
         const balance = BigNumber.from(toNumber(val._hex))
         const _tokenDecimals = BigNumber.from(tokenDecimals.toString())
-        console.log(tokenDecimals);
         if (_tokenDecimals.eq(18)) {
           shiftedBalance = BigNumber.from(val.toString());
         } else if (_tokenDecimals.lt(18)) {
@@ -152,27 +105,17 @@ export default function RelayCommands({relay, account, web3}: any) {
         }
         return `${ethers.utils.formatEther(shiftedBalance)} ${tokenSymbol}`
       }
-      const bal = await web3.getBalance(relayAddress)
-      if (BigNumber.from(bal).gt(ethers.utils.parseEther(options.funds.toString()))) {
-
+  
+      if (BigNumber.from(bal).gt(ethers.utils.parseEther("1.0"))) {
         console.log('Relayer already funded')
       } else {
         console.log('Funding relayer')
-        const signer = web3.getSigner();
-        const params = {
-          ...sendOptions,
+        const signer = provider.getSigner();
+        const fundTx = await signer.sendTransaction({
+          from: account,
           to: relayAddress,
-          value: ethers.utils.parseUnits(options.funds.toString(), "ether").toHexString()
-        }
-
-        const fundTx = await signer.sendTransaction(params)
-        /*
-        const fundTx = await web3.eth.sendTransaction({
-          ...sendOptions,
-          to: relayAddress,
-          value: "1.0"
+          value: ethers.utils.parseUnits("1.0", "ether").toHexString()
         })
-         */
         if (fundTx.hash == null) {
           return {
             success: false,
@@ -181,26 +124,30 @@ export default function RelayCommands({relay, account, web3}: any) {
         }
         transactions.push(fundTx.hash)
       }
-
+  
       if (owner === constants.ZERO_ADDRESS) {
         let i = 0
         while (true) {
-          console.debug(`Waiting ${options.sleepMs}ms ${i}/${options.sleepCount} for relayer to set ${options.from} as owner`)
-          await sleep(options.sleepMs)
+          console.debug(`Waiting ${1000}ms ${i}/${60} for relayer to set ${account} as owner`)
+          await sleep(1000)
           const newStakeInfo = (await stakeManager.getStakeInfo(relayAddress))[0]
-          if (newStakeInfo.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo.owner, options.from)) {
+          if (newStakeInfo.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo.owner, account)) {
             console.log('RelayServer successfully set its owner on the StakeManager')
             break
           }
-          if (options.sleepCount === i++) {
+          if (60 === i++) {
             throw new Error('RelayServer failed to set its owner on the StakeManager')
           }
         }
       }
-      if (unstakeDelay.gte(BigNumber.from(options.unstakeDelay)) &&
+  
+      if (unstakeDelay.gte(BigNumber.from("15000")) &&
         stake.gte(stakeParam)
       ) {
         console.log('Relayer already staked')
+        const stakeValue = stakeParam.sub(stake)
+        console.log(`Staking relayer ${formatToken(stakeValue)}`,
+          stake.toString() === '0' ? '' : ` (already has ${formatToken(stake)})`)
       } else {
         const config = await relayHub.getConfiguration()
         const minimumStakeForToken = await relayHub.getMinimumStakePerToken(stakingToken)
@@ -210,22 +157,21 @@ export default function RelayCommands({relay, account, web3}: any) {
         if (minimumStakeForToken.eq(BigNumber.from('0'))) {
           throw new Error(`Selected token (${stakingToken}) is not allowed in the current RelayHub`)
         }
-        if (config.minimumUnstakeDelay.gt(BigNumber.from(options.unstakeDelay))) {
-          throw new Error(`Given minimum unstake delay ${options.unstakeDelay.toString()} too low for the given hub ${config.minimumUnstakeDelay.toString()}`)
+        if (config.minimumUnstakeDelay.gt(BigNumber.from("15000"))) {
+          throw new Error(`Given minimum unstake delay ${"15000".toString()} too low for the given hub ${config.minimumUnstakeDelay.toString()}`)
         }
         const stakeValue = stakeParam.sub(stake)
         console.log(`Staking relayer ${formatToken(stakeValue)}`,
           stake.toString() === '0' ? '' : ` (already has ${formatToken(stake)})`)
-
-        const tokenBalance = await stakingTokenContract.balanceOf(options.from)
-        if (tokenBalance.lt(stakeValue) && options.wrap) {
+  
+        const tokenBalance = await stakingTokenContract.balanceOf(account)
+        if (tokenBalance.lt(stakeValue) && true) {
           // default token is wrapped eth, so deposit eth to make then into tokens.
           console.log(`Wrapping ${formatToken(stakeValue)}`)
           let depositTx: any
           try {
             depositTx = await stakingTokenContract.deposit({
-              ...sendOptions,
-              from: options.from,
+              from: account,
               value: stakeValue
             }) as any
           } catch (e) {
@@ -233,27 +179,53 @@ export default function RelayCommands({relay, account, web3}: any) {
           }
           transactions.push(depositTx.transactionHash)
         }
-
-
-        const currentAllowance = await stakingTokenContract.allowance(options.from, stakeManager.address)
+  
+        const currentAllowance = await stakingTokenContract.allowance(account, stakeManager.address)
         console.log('Current allowance', formatToken(currentAllowance))
         if (currentAllowance.lt(stakeValue)) {
           console.log(`Approving ${formatToken(stakeValue)} to StakeManager`)
           const approveTx = await stakingTokenContract.approve(stakeManager.address, stakeValue, {
-            ...sendOptions,
-            from: options.from
+            from: account
           })
+          approveTx.wait(2);
           transactions.push(approveTx.transactionHash)
         }
-
+  
         const stakeTx = await stakeManager
-          .stakeForRelayManager(stakingToken, relayAddress, options.unstakeDelay.toString(), stakeValue, {
-            ...sendOptions
+          .stakeForRelayManager(stakingToken, relayAddress, "15000".toString(), stakeValue, {
+            from: account
           })
         // @ts-ignore
         transactions.push(stakeTx.transactionHash)
       }
+    }
 
+  //      await waitForRelay("http://localhost:8090/getaddr")
+
+  console.log('return success');
+  return {
+    success: true
+  }
+
+
+}
+
+    */
+  const registerRelay = async (options: RegisterOptions): Promise<RegistrationResult> => {
+    try {
+      /*
+       * form validation 
+  
+  
+      if (!(isSameAddress(token, stakingToken) || isSameAddress(token, constants.ZERO_ADDRESS))) {
+        console.log(`Cannot use token ${stakingToken}. Relayer already uses token: ${token}`)
+        throw new Error(`Cannot use token ${stakingToken}. Relayer already uses token: ${token}`)
+      }
+  
+      if (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, account)) {
+        console.log(`Already owned by ${owner}, our account=${account}`)
+        throw new Error(`Already owned by ${owner}, our account=${account}`)
+      }
       try {
         await relayHub.verifyRelayManagerStaked(relayAddress)
         console.log('Relayer already authorized')
@@ -263,30 +235,30 @@ export default function RelayCommands({relay, account, web3}: any) {
           console.log('verifyRelayManagerStaked reverted with:', e.message)
         }
         console.log('Authorizing relayer for hub')
-        const authorizeTx = await stakeManager
-          .authorizeHubByOwner(relayAddress, relayHubAddress, sendOptions)
+        const authorizeTx = await stakeManager.authorizeHubByOwner(relayAddress, relayHubAddress, {from: account})
         // @ts-ignore
-        transactions.push(authorizeTx.transactionHash)
+        //
+        //        transactions.push(authorizeTx.transactionHash)
       }
 
-      await waitForRelay(options.relayUrl)
-
+        */
+      //      await waitForRelay(options.relayUrl)
+      console.log('return success');
       return {
-        success: true,
-        transactions
+        success: true
       }
     } catch (error: any) {
       console.log(error)
       return {
         success: false,
-        // transactions,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        //error: error.message
+        error: error.message
       }
     }
   }
 
   const DeregisterRelayButton = () => {
+    const [showDeregisterRelayForm, setShowDeregisterRelayForm] = useState(false);
     return (
       <div className="row">
         <Button
@@ -308,7 +280,6 @@ export default function RelayCommands({relay, account, web3}: any) {
   }
 
   const RegisterRelayButton = () => {
-
     const [showRegisterRelayForm, setShowRegisterRelayForm] = useState(false);
     const registerForm = useFormik({
       initialValues: {
@@ -321,11 +292,11 @@ export default function RelayCommands({relay, account, web3}: any) {
         wrap: false,
         funds: "1",
         relayUrl: "",
-        unstakeDelay: "1000"
+        unstakeDelay: 1000
       },
       onSubmit: values => {
         alert(JSON.stringify(values, null, 2));
-        registerRelay(values);
+        //  registerRelay(values);
       },
     });
     return (
@@ -340,6 +311,12 @@ export default function RelayCommands({relay, account, web3}: any) {
         </Button>
         <Collapse in={showRegisterRelayForm}>
           <div className="border p-3" id="register-relay-form">
+
+            <FundRelay relay={relay} signer={signer} account={account} />
+            <StakeERC20 relay={relay} signer={signer} account={account} />
+            <AuthorizeWithHub relay={relay} signer={signer} account={account} />
+            { /*
+            <h2>OLD - use buttons instead</h2>
             <Form
               onSubmit={registerForm.handleSubmit}>
               <Form.Group>
@@ -376,6 +353,7 @@ export default function RelayCommands({relay, account, web3}: any) {
                 Stake and register
               </Button>
             </Form>
+               */}
           </div>
         </Collapse>
       </div>
@@ -384,7 +362,7 @@ export default function RelayCommands({relay, account, web3}: any) {
 
   return (
     <div>
-      {(relay.ready || relay.ready === false) ?
+      {relay.ready === false ?
         <RegisterRelayButton />
         : null}
       {relay.ready ?

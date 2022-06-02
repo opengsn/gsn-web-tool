@@ -1,9 +1,11 @@
+import {AnyAction} from 'redux';
+
 const initialState = {
   relay: {},
   errorMsg: "",
 };
 
-const relayReducer = (state = initialState, action) => {
+const relayReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case "GET_ADDR__REQUEST":
       return {

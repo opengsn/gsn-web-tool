@@ -5,18 +5,23 @@ import {fetchRelayData, deleteRelay} from "../redux/relay/relayActions";
 import {RootState} from "../redux/store";
 
 import {Collapse, Form, Button} from "react-bootstrap";
-import RelayCommands from "./RelayCommands";
+import RelayCommands from "./RelayCommands/Commands";
+
+import {providers} from "ethers";
 
 // const RelayCommands = React.lazy(() => import('./RelayCommands'));
 // <RelayCommands relay={relay.relay} account={account} web3={web3} /> 
 
-export default function Relay(props: any) {
+interface RelayProps {
+  provider: providers.Web3Provider,
+  account: string
+}
+
+export default function Relay({provider, account}: RelayProps) {
   const relay = useSelector((state: RootState) => state.relay);
-  const web3 = props.web3;
-  const account = props.account;
   const dispatch = useDispatch();
 
-  const formik = useFormik({
+  const getRelayForm = useFormik({
     initialValues: {
       url: '',
     },
@@ -48,23 +53,33 @@ export default function Relay(props: any) {
               })
             }
           </details>
-          <RelayCommands relay={relay.relay} account={account} web3={web3} />
+          <RelayCommands provider={provider} account={account} relay={relay.relay} />
         </div>
         : null}
-      {localStorage.getItem('relayUrl') === null ?
-        <Form onSubmit={formik.handleSubmit}>
-          <Form.Label htmlFor="url">Relay URL
-            <Form.Control
-              id="url"
-              name="url"
-              type="url"
-              onChange={formik.handleChange}
-              value={formik.values.url}
-            />
-          </Form.Label>
-          <Button variant="success" type="submit">Fetch data</Button>
-        </Form> : null
-      }
+      <div className="row">
+        {localStorage.getItem('relayUrl') === null ?
+          <div className="col"><Form onSubmit={getRelayForm.handleSubmit}>
+            <Form.Label htmlFor="url">Relay URL
+              <Form.Control
+                id="url"
+                name="url"
+                type="url"
+                onChange={getRelayForm.handleChange}
+                value={getRelayForm.values.url}
+              />
+            </Form.Label>
+            <br />
+            <Button variant="success" type="submit">Fetch data</Button>
+          </Form>
+          </div> :
+          <Button variant="secondary"
+            className="my-2"
+            onClick={() => {
+              dispatch(deleteRelay());
+            }}
+          >Switch</Button>
+        }
+      </div>
     </div>
   );
 }

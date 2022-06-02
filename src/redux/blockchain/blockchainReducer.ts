@@ -1,11 +1,11 @@
 const initialState = {
   loading: false,
   account: null,
-  web3: null,
+  provider: null,
   errorMsg: "",
 };
 
-const blockchainReducer = (state = initialState, action) => {
+const blockchainReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case "CONNECTION_REQUEST":
       return {
@@ -17,7 +17,7 @@ const blockchainReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         account: action.payload.account,
-        web3: action.payload.web3,
+        provider: action.payload.provider,
       };
     case "CONNECTION_FAILED":
       return {
