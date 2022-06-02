@@ -36,7 +36,7 @@ export default function FundRelay({relay, signer, account}: any) {
         : <div>- Relay not yet funded</div> 
       }
       {
-        (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, account)) ?
+        (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, account)) === false ?
           <Button onClick={() => fundRelay()}> Fund Relay with 0.5 ETH</Button >
           : <div>- The relay is already owned by {owner}, our account={account}</div>
       }
