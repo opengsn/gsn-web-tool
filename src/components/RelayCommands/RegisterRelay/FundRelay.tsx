@@ -1,4 +1,5 @@
 import {ethers, BigNumber} from "ethers";
+import {useEffect} from "react";
 
 import {isSameAddress} from "@opengsn/common/dist/Utils";
 import {constants} from "@opengsn/common/dist/Constants";
@@ -27,19 +28,33 @@ export default function FundRelay({relay, signer, account}: any) {
     }
   }
 
+  useEffect(() => {
+    console.log(relayManagerAddress);
+    signer.provider.getBalance(relayManagerAddress).then((res: any) => {console.log(Number(res._hex))})
+   }, [])
 
   return (
     <>
       <h5>Funding Relay:</h5>
-      {(BigNumber.from(bal).gt(BigNumber.from(Number("1.0")))) ?
-        <div>- Relay already funded</div>
-        : <div>- Relay not yet funded</div> 
-      }
-      {
-        (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, account)) === false ?
-          <Button onClick={() => fundRelay()}> Fund Relay with 0.5 ETH</Button >
-          : <div>- The relay is already owned by {owner}, our account={account}</div>
-      }
+      <>
+
+        {console.log(Number(bal))}
+        {console.log(Number(BigNumber.from(Number("14114141414.0"))))}
+        {console.log(BigNumber.from(bal).gt(BigNumber.from(Number("1.0"))))}
+        {(BigNumber.from(bal).gt(BigNumber.from(Number("1.0")))) ?
+          <div>- Relay already funded</div>
+          :
+          <>
+            {
+              (owner !== constants.ZERO_ADDRESS && !isSameAddress(owner, account)) === false ?
+                <>
+                  <Button onClick={() => fundRelay()}> Fund Relay with 0.5 ETH</Button >
+                </>
+                : <div>- The relay is already owned by {owner}, our account={account}</div>
+            } 
+          </>
+        }
+      </>
       <hr />
     </>
   )
