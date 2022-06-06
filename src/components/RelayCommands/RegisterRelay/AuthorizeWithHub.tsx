@@ -29,7 +29,12 @@ export default function AuthorizeWithHub({relay, signer, account}: any) {
   }
 
   useEffect(() => {
-    relayHub.verifyRelayManagerStaked(relayManagerAddress).then(setRelayAuthorized(true))
+    relayHub.verifyRelayManagerStaked(relayManagerAddress)
+      .then(setRelayAuthorized(true))
+      .catch((err: any) => {
+        console.log(err);
+        setRelayAuthorized(false)
+      })
   }, []);
 
   return (
