@@ -1,23 +1,26 @@
-import {useState} from "react";
-
+import { useState } from "react";
 import Collapse from "react-bootstrap/Collapse";
 import Button from "react-bootstrap/Button";
 
+import HubAuthorizedListener from "./RegisterRelay/HubAuthorizedListener";
 import FundRelay from "./RegisterRelay/FundRelay";
 import StakeWithERC20 from "./RegisterRelay/StakeWithERC20/StakeWithERC20";
-import AuthorizeWithHub from "./RegisterRelay/AuthorizeWithHub";
+import AuthorizeHub from "./RegisterRelay/AuthorizeHub";
+
+import { useAppSelector } from "../../hooks";
 
 export default function RelayCommands() {
+  const relay = useAppSelector((state) => state.relay.relay)
 
-  const [showRegisterRelay, setShowRegisterRelay] = useState(false);
-  const [showDeregisterRelay, setShowDeregisterRelay] = useState(false);
+  const [showRegisterRelay, setShowRegisterRelay] = useState(false)
+  const [showDeregisterRelay, setShowDeregisterRelay] = useState(false)
 
   const handleShowRegisterRelay = () => {
     setShowRegisterRelay(!showRegisterRelay)
-  }
+  };
   const handleShowDeregisterRelay = () => {
     setShowDeregisterRelay(!showDeregisterRelay)
-  }
+  };
 
   const DeregisterRelay = () => {
     return (
@@ -37,8 +40,8 @@ export default function RelayCommands() {
           </div>
         </Collapse>
       </div>
-    )
-  }
+    );
+  };
 
   const RegisterRelay = () => {
     return (
@@ -51,23 +54,31 @@ export default function RelayCommands() {
         >
           Register
         </Button>
+        <HubAuthorizedListener />
         {showRegisterRelay ?
           <Collapse in={showRegisterRelay}>
             <div className="border p-3" id="register-relay-form">
+              <h5>Fund Relay</h5>
               <FundRelay />
+              <hr />
+              <h5>Stake with token</h5>
               <StakeWithERC20 />
+              <hr />
+              <h5>Authorize Hub</h5>
               <AuthorizeWithHub />
             </div>
           </Collapse>
           : null}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
-        <RegisterRelay />
-        <DeregisterRelay />
+      {
+        relay.ready ?
+          <DeregisterRelay /> : <RegisterRelay />
+      }
     </>
-  )
+  );
 }

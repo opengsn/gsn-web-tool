@@ -1,33 +1,45 @@
-import {useState, useEffect} from "react";
-import {ethers, BigNumber} from "ethers";
-import {useContractWrite, useWaitForTransaction} from 'wagmi';
+import { useContext } from "react";
+import { toast } from "react-toastify";
+import { ethers } from "ethers";
+import { useContractWrite } from "wagmi";
+import { TokenContext } from "./StakeWithERC20";
 
 import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
-
-
-import {isSameAddress, sleep} from "@opengsn/common/dist/Utils";
-import {constants} from "@opengsn/common/dist/Constants";
+import LoadingButton from "../../../../components/LoadingButton";
 
 import StakeManagerAbi from "../../../../contracts/stakeManager.json";
+import { useAppSelector, useStakeManagerAddress } from "../../../../hooks";
+import ErrorButton from "../../../../components/ErrorButton";
 
-export default function Stake({token, account, stakeManagerAddress, relayAddress}: any) {
+export default function Stake() {
 
-  const stakeValue = ethers.utils.parseEther("1.0")
-  const {data: stakeRelayerData, isError, isLoading, write: stakeRelayer} = useContractWrite(
+  const { token } = useContext(TokenContext);
+  const relay = useAppSelector((state) => state.relay.relay);
+
+  const { relayHubAddress, relayManagerAddress } = relay;
+
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress);
+  const stakeManagerAddress = stakeManagerAddressData as unknown as string;
+
+  const stakeValue = ethers.utils.parseEther("1.0");
+  const text = "Stake with ...";
+
+  const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite(
     {
       addressOrName: stakeManagerAddress,
       contractInterface: StakeManagerAbi,
     },
-    'stakeForRelayManager',
-    {args: [token, relayAddress, "15000", stakeValue]}
-  )
-  const {data: waitForStakeRelayerData, isSuccess} = useWaitForTransaction({
-    hash: stakeRelayerData?.hash,
-    onSuccess(data) {
-      console.log(data)
-    }
-  })
+    "stakeForRelayManager",
+    {
+      args: [token, relayManagerAddress, "15000", stakeValue],
+      onError(err) {
+        toast.warn(`Staking error: ${err.message}`);
+      },
+      onSuccess(data) {
+        toast.info(<span>Staked with tx: <br /> <b>{data.hash}</b></span>);
+      },
+    },
+  );
 
   // const stakeParam = BigNumber.from((toNumber("1.0") * Math.pow(10, tokenDecimals)).toString())
 
@@ -72,16 +84,16 @@ export default function Stake({token, account, stakeManagerAddress, relayAddress
 
   // }
 
+  if (isError) return <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer()}>{text}</ErrorButton>;
+  if (isLoading) return <LoadingButton />;
+  if (isSuccess) return <div>Relayer successfully staked</div>;
 
-  if (isError) return <div>Tx error / refused</div>
-  if (isLoading) return <Button><Spinner animation="border"></Spinner></Button> 
-  if (isSuccess) return <div>Relayer successfully staked</div>
   return (
     <div>
       {/* {BigNumber.from(bal).gt(ethers.utils.parseEther("1.0")) ? */}
       <Button onClick={() => stakeRelayer()} className="my-2">
-        Approve and stake with WETH
+        {text}
       </Button>
     </div>
-  )
+  );
 }

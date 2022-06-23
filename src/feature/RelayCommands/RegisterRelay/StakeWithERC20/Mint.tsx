@@ -1,97 +1,47 @@
-import {useEffect} from "react";
-
-import {useContractWrite, useWaitForTransaction, useBalance, useAccount, useContract, useToken} from 'wagmi';
-
-import {ethers, BigNumber} from "ethers";
+import { useContext } from "react";
+import { useContractWrite, useBalance } from "wagmi";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 import Button from "react-bootstrap/Button";
+import { TokenContext } from "./StakeWithERC20";
+import LoadingButton from "../../../../components/LoadingButton";
+import ErrorButton from "../../../../components/ErrorButton";
 
-import {useAppSelector, useAppDispatch} from "../../../../hooks";
+import iErc20TokenAbi from "@opengsn/common/dist/interfaces/IERC20Token.json";
 
-import iErc20TokenAbi from "@opengsn/common/dist/interfaces/IERC20Token.json"
-import {toNumber} from "@opengsn/common";
-import {Address} from "@opengsn/common/dist/types/Aliases";
+export default function Mint() {
+  const { token, account } = useContext(TokenContext);
 
-interface MintProps {
-  token: Address;
-  account: Address;
-}
-
-export default function Mint({token, account}: MintProps) {
-
-  // const { relayHub, relayHubAddress, stake } = relay;
-
-  const {data: mintTokenData, isError, isLoading, write: mintToken} = useContractWrite(
+  const { error: mintTokenError, isSuccess, isError, isLoading, write: mintToken } = useContractWrite(
     {
       addressOrName: token,
       contractInterface: iErc20TokenAbi,
     },
-    'deposit',
-    {overrides: {value: ethers.utils.parseEther("1.0")}}
-  )
-  const { data: waitForMintTxData, isSuccess} = useWaitForTransaction({
-    hash: mintTokenData?.hash,
-    onSuccess(data) {
-      console.log(data)
-    }
-  })
+    "deposit",
+    {
+      overrides: { value: ethers.utils.parseEther("1.0") },
+      onSuccess(data) {
+        toast.info(`Coins minted with tx ${data.hash}`);
+      },
+    },
+  );
 
+  const { data: bal } = useBalance({ addressOrName: account, token: token, staleTime: 32000, watch: true });
+  const text = <span>Mint {bal?.symbol}</span>;
 
-  const {data: bal} = useBalance({addressOrName: account, token: token, staleTime: 32000, watch: true })
+  const MintButton = () => {
 
-  const mintTokenx = async (stakingToken: Address | null = null) => {
+    if (isError) return (<ErrorButton message={mintTokenError?.message} onClick={() => mintToken()}><span>Retry {text}</span></ErrorButton>);
+    if (isLoading) return <LoadingButton />;
+    if (isSuccess) return <div>Transaction dispatched. Waiting for confirmations...</div>;
 
-    // const stakingTokenContract = new ethers.Contract(stakingToken, iErc20TokenAbi, signer)
-    // const tokenDecimals = await stakingTokenContract.decimals()
-    // const tokenSymbol = await stakingTokenContract.symbol()
-    // const stakeParam = BigNumber.from((toNumber("1.0") * Math.pow(10, tokenDecimals)).toString())
+    return <Button onClick={() => mintToken()} className="my-2">{text}</Button>;
+  };
 
-    // if (owner === constants.ZERO_ADDRESS) {
-    //   let i = 0
-    //   while (true) {
-    //     console.debug(`Waiting ${1000}ms ${i}/${60} for relayer to set ${account} as owner`)
-    //     await sleep(1000)
-    //     const newStakeInfo = (await stakeManager.getStakeInfo(relayAddress))[0]
-    //     if (newStakeInfo.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo.owner, account)) {
-    //       console.log('RelayServer successfully set its owner on the StakeManager')
-    //       break
-    //     }
-    //     if (60 === i++) {
-    //       throw new Error('RelayServer failed to set its owner on the StakeManager')
-    //     }
-    //   }
-    // }
-
-    // const stakeValue = stakeParam.sub(stake)
-    // const tokenBalance = await stakingTokenContract.balanceOf(account)
-
-    // if (tokenBalance.lt(stakeValue) && true) {
-    //   if (true) {
-    //     // default token is wrapped eth, so deposit eth to make then into tokens.
-    //     console.log(`wrapping formattoken`)
-    //     let depositTx: any
-    //     try {
-    //       depositTx = await stakingTokenContract.deposit({
-    //         from: account,
-    //         value: stakeValue
-    //       }) as any
-    //     } catch (e) {
-    //       console.log(e)
-    //       //        throw new Error('No deposit() method on default token. is it wrapped ETH?')
-    //     }
-    //     console.log(depositTx);
-    //   }
-    // }
-  }
-
-
-  if (isLoading) return <div>Processing…</div>
-  if (isError) return <div>Transaction error</div>
-  if (isSuccess) return <div>Bal {bal?.formatted}</div>
   return (
     <div>
-      <div>Bal {bal?.formatted}</div>
-      <Button onClick={() => mintToken()} className="my-2">Mint ERC20 wETH</Button>
+      <MintButton />
     </div>
-  )
+  );
 }
