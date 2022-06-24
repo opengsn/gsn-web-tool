@@ -65,7 +65,7 @@ export default function RelayCommands() {
               <StakeWithERC20 />
               <hr />
               <h5>Authorize Hub</h5>
-              <AuthorizeWithHub />
+              <AuthorizeHub />
             </div>
           </Collapse>
           : null}
