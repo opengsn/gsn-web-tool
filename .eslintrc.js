@@ -26,6 +26,8 @@ module.exports = {
   rules: {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-function-return-type": "off", 
+    "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
+    "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "as", objectLiteralTypeAssertions: "allow" }]
   },
   settings: {
     react: {
