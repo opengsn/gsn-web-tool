@@ -50,7 +50,8 @@
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
-    "start": "RPC_URL='http://127.0.0.1:8545/' CHAIN_ID=1337 react-scripts start",
+    "start": " react-scripts start",
+    "fix": "eslint --fix src/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
