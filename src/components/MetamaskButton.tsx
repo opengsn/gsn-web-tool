@@ -1,29 +1,11 @@
-import { useConnect } from "wagmi";
-// import {connect} from "./blockchainSlice";
-// import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { InjectedConnector } from "wagmi/connectors/injected";
-
-import { Button } from "react-bootstrap";
+import { useConnect } from 'wagmi'
+import { Button } from 'react-bootstrap'
 
 export default function MetamaskButton() {
-
-  const { connect, connectors, error, isConnecting, pendingConnector } = useConnect();
-
-  // useEffect((() => {
-  //   const connectWalletOnPageLoad = async () => {
-  //     if (localStorage?.getItem('isWalletConnected') === 'true') {
-  //     try {
-
-  //       } catch (ex) {
-  //         console.log(ex)
-  //       }
-  //     }
-  //   }
-  //   connectWalletOnPageLoad()
-  // }), [])
+  const { connect, connectors, error, isConnecting, pendingConnector } = useConnect()
 
   return (
-  <div>
+    <div className="row">
       {connectors.map((connector) => (
         <Button
           disabled={!connector.ready}
@@ -38,30 +20,7 @@ export default function MetamaskButton() {
         </Button>
       ))}
 
-      {error && <div>{error.message}</div>}
-    </div> 
-    )
-  //     <div className="column">
-  //       <div className="col text-center">
-  //         <Button className="rounded-pill" onClick={
-  //           (e) => {
-  //             e.preventDefault();
-  //             connect()
-  //           }
-  //         }>
-  //           Connect with MetaMask
-  //         </Button>
-  //         <br />
-  //         <Button className="rounded-pill" onClick={
-  //           (e) => {
-  //             e.preventDefault();
-  //             disconnect()
-  //           }
-  //         }>
-  //           Disconnect
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   </div>
-  // )
+      {(error != null) && <div>{error.message}</div>}
+    </div>
+  )
 }
