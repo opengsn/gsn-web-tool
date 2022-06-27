@@ -1,32 +1,34 @@
-import {useAppSelector} from "../hooks";
 // import {RootState} from "../store";
-import React, { Suspense } from "react";
+import React from "react";
+import { useAccount } from "wagmi";
 
-import MetamaskButton from "../feature/MetamaskButton";
+import MetamaskButton from "../components/MetamaskButton";
+import DisconnectButton from "../components/DisconnectButton";
 import Relay from "../feature/Relay/Relay";
-import {useAccount} from "wagmi";
 
 import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button"
 
-// const MetamaskButton = React.lazy(() => import('../feature/MetamaskButton'));
+
 export default function App() {
+  // const { data, error, isLoading, isIdle, isFetching, isRefetching, isError, isSuccess } = useAccount()
+  const { data: account, error, isError } = useAccount();
 
-  // const blockchain = useAppSelector((state) => state.blockchain);
-  const {data, isLoading, isIdle, isFetching, isRefetching, isError, isSuccess} = useAccount()
-
-  console.log(  isLoading, isIdle, isFetching, isRefetching, isError, isSuccess)
-  console.log('App render');
   return (
-
     <div className="App">
-        <Container className="my-1">
-          {data !== null ?
-          <Relay />
-          :
-          <MetamaskButton />
-          } 
-        </Container>
+      <Container className="my-1">
+        {isError ?
+          <span>{error?.message}</span> : <span>{isError}</span>
+        }
+        {
+          account ?
+            <>
+              <Relay />
+              <hr />
+              <DisconnectButton />
+            </> : <MetamaskButton />
+        }
+      </Container>
     </div>
   );
 }
-

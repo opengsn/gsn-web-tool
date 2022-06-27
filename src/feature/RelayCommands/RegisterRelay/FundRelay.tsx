@@ -1,97 +1,61 @@
-import {useEffect, useState} from "react";
-import {ethers, BigNumber} from "ethers";
-import {useAppSelector, useAppDispatch} from "../../../hooks";
+import { ethers, BigNumber } from "ethers";
+import { useAppSelector } from "../../../hooks";
 
-import {useSigner, useAccount, useBalance, useSendTransaction, useWaitForTransaction} from 'wagmi'
-import {isSameAddress} from "@opengsn/common/dist/Utils";
-import {constants} from "@opengsn/common/dist/Constants";
+import { useBalance, useSendTransaction } from "wagmi";
+
+import { toast } from "react-toastify";
 
 import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
 
+import LoadingButton from "../../../components/LoadingButton";
+import ErrorButton from "../../../components/ErrorButton";
 
 export default function FundRelay() {
   const relay = useAppSelector((state) => state.relay.relay);
-  const {ownerAddress: owner, relayManagerAddress} = relay;
+  const { relayManagerAddress } = relay;
 
-  const funds = BigNumber.from(ethers.utils.parseEther(("0.5")))
+  const funds = BigNumber.from(ethers.utils.parseEther(("0.5")));
+
+  const { data: bal } = useBalance({ addressOrName: relayManagerAddress, watch: true });
 
   const FundButton = () => {
-    const {data: fundTxData, isIdle, isError, isLoading, isSuccess, sendTransaction} =
+    const text = <span>Fund Relay with 0.5 ETH</span>;
+    let gasPrice = "22000000000";
+
+    const { error: fundTxError, isIdle, isError, isLoading, isSuccess, sendTransaction: fundRelay } =
       useSendTransaction({
         request: {
           to: relayManagerAddress,
-          value: funds
+          value: funds,
+          gasLimit: 50000,
+          gasPrice: gasPrice,
         },
-      })
-    const {
-      data: waitForFundTxData,
-      isError: waitIsError,
-      isLoading: waitIsLoading,
-      isSuccess: waitIsSuccess
-    } = useWaitForTransaction({
-      hash: fundTxData?.hash,
-    })
+        onSuccess(data) {
+          toast.info(<span>Relay is being funded with <br /><b>{data.hash}</b>...</span>);
+        },
+      });
 
-    const FundedMessage = () => {
-      if (fundTxData !== undefined && waitIsSuccess) {
-        console.log(waitForFundTxData);
-        return <div>Relayer funded with tx {fundTxData.hash}</div>
-      }
-      return <div>Fuding relayManagerAddress with tx {fundTxData?.hash}</div>
-    }
+    if (isIdle) return (
+      <Button disabled={isLoading} onClick={() => fundRelay()}>
+        {text}
+      </Button>
+    );
+    if (isLoading) return <LoadingButton />;
+    // TODO
+    if (isSuccess) return (
+      <LoadingButton />
+    );
+    if (isError) return (<ErrorButton message={fundTxError?.message} onClick={() => fundRelay()}><span>Retry {text}</span></ErrorButton>);
 
-    return (
-      <div>
-        {isIdle && (
-          <Button disabled={isLoading} onClick={() => sendTransaction()}>
-            Fund Relay
-          </Button>
-        )}
-        {isLoading && (
-          <Button disabled={isLoading}>
-            <Spinner animation="border" role="status"></Spinner>
-          </Button>
-        )}
-        {isSuccess && <FundedMessage />}
-        {isError && <div>Error sending transaction</div>}
-      </div>
-    )
-  }
+    return <span>Error while creating FundButton</span>;
+  };
 
   const Funder = () => {
+    const isRelayFunded = (bal?.value.gte(funds));
+    console.log(bal?.value, funds)
+    if (isRelayFunded) return (<span>Relay already funded ✓</span>);
+    return <FundButton />;
+  };
 
-    let account: string = "unknown";
-    const {data: accountData} = useAccount();
-    if (accountData?.address !== undefined) {
-      account = accountData.address
-    }
-
-    const {data: bal} = useBalance({addressOrName: relayManagerAddress, watch: false})
-
-    const isRelayFunded = (bal?.value.gt(funds) === false)
-    const isAccountRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, account))
-
-    return (
-      <>
-        {isRelayFunded ?
-          <>
-            {isAccountRelayOwner ?
-              <FundButton />
-              : <div>- The relay is already owned by {owner}, our data.address={account}</div>
-            }
-          </>
-          : <span>Relay already funded</span>
-        }
-      </>
-    )
-  }
-
-  return (
-    <>
-      <h5>Funding Relay:</h5>
-      <Funder />
-      <hr />
-    </>
-  )
+  return <Funder />;
 }

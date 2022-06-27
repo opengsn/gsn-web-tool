@@ -1,43 +1,64 @@
-import ReactDOM from "react-dom/client";
-import {WagmiConfig, createClient, chain} from 'wagmi'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { providers } from "ethers";
+import ReactDOM from 'react-dom/client'
+import { WagmiConfig, createClient } from 'wagmi'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { providers, getDefaultProvider } from 'ethers'
 import {
   BrowserRouter,
   Routes,
   Route
-} from "react-router-dom";
+} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 
-import App from "./routes/App";
-import store from "./store";
-import {Provider} from "react-redux";
+import App from './routes/App'
+import store from './store'
+import { Provider } from 'react-redux'
 
-import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ErrorBoundary } from './components/ErrorBoundary'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'react-toastify/dist/ReactToastify.css'
 
-const ethProvider = new providers.JsonRpcProvider(process.env.RPC_URL, providers.getNetwork('1337'));
-const connector = new MetaMaskConnector({chains: [chain.hardhat]});
+const metamaskIsInstalled = window.ethereum?.isMetaMask
 
 const client = createClient({
   autoConnect: true,
-  provider: ethProvider,
-  connectors: [connector]
+  connectors: [new InjectedConnector()],
+  provider: (config) => {
+    if (metamaskIsInstalled === true) {
+      const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, 'any')
+      provider.on('network', (newNetwork, oldNetwork) => {
+        if (oldNetwork !== null) {
+          window.location.reload()
+        }
+      })
+      return provider
+    }
+
+    return getDefaultProvider(config.chainId)
+  }
 })
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(document.getElementById('root') as Element)
 
 root.render(
   <Provider store={store}>
     <BrowserRouter>
       <ErrorBoundary>
-      <WagmiConfig client={client}>
-        <Routes>
-          <Route path="/" element={<App />} />
-        </Routes>
-      </WagmiConfig>
+        <WagmiConfig client={client}>
+          <Routes>
+            <Route path="/" element={<App />} />
+          </Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={false}
+            newestOnTop
+            style={{ width: '45vw' }}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable={false}
+          />
+        </WagmiConfig>
       </ErrorBoundary>
     </BrowserRouter>
-  </Provider>
-);
-
+  </Provider>)

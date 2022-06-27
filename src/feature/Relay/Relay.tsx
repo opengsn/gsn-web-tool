@@ -1,86 +1,100 @@
-import React, {useEffect, Suspense} from "react";
-import {useAppDispatch, useAppSelector} from "../../hooks";
-import {useFormik} from 'formik';
-import {fetchRelayData, deleteRelayData} from "./relaySlice";
-// import {fetchRelayData, deleteRelay} from "../../redux/relay/relayActions";
-// import {RootState} from "../../redux/store";
+import React from 'react'
+import { useNetwork } from 'wagmi'
+import { useAppDispatch, useAppSelector } from '../../hooks'
+import { useFormik } from 'formik'
+import { fetchRelayData, deleteRelayData } from './relaySlice'
 
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+import Alert from 'react-bootstrap/Alert'
 
+import RelayCommands from '../RelayCommands/Commands'
 
-import {Form, Button} from "react-bootstrap";
-import RelayCommands from "../RelayCommands/Commands";
-
-// const RelayCommands = React.lazy(() => import('./RelayCommands/Commands'));
+import { PingResponse } from '@opengsn/common'
+import LoadingButton from '../../components/LoadingButton'
 
 function Relay() {
-  const relay = useAppSelector((state) => state.relay);
-  const dispatch = useAppDispatch();
+  const relay = useAppSelector((state) => state.relay)
+  const chainId = Number(relay.relay.chainId)
+
+  const dispatch = useAppDispatch()
+
+  const {
+    activeChain,
+    error,
+    isLoading,
+    switchNetwork
+  } = useNetwork()
 
   const getRelayForm = useFormik({
     initialValues: {
-      url: '',
+      url: ''
     },
     onSubmit: values => {
-      console.log('test')
-      console.log(values);
-      if (values.url.includes("getaddr")) {
-        dispatch(fetchRelayData(values.url));
-      }
-    },
-  });
+      dispatch(fetchRelayData(values.url)).catch(console.error)
+    }
+  })
 
-  useEffect(() => { 
-    // const relayUrlFromLocalStorage = localStorage.getItem("relayUrl")!
-    // if (relayUrlFromLocalStorage !== null && relayUrlFromLocalStorage.includes("getaddr")) {
-      // dispatch(fetchRelayData(relayUrlFromLocalStorage) as any);
-    // dispatch}
-  }, []);
+  const ChainIdHandler = () => {
+    return (
+      <Alert variant='warning'>
+        <Alert.Heading>Wrong chain</Alert.Heading>
+        <p>Wallet is connected to ID #{activeChain?.id} while the relay is on #{chainId}</p>
+        {isLoading ? <LoadingButton /> : null}
+        {error !== null
+          ? <Alert variant='danger'>Chain ID check failed: {error?.message}</Alert>
+          : null}
+        {switchNetwork !== undefined && !isLoading
+          ? <Button variant='primary' onClick={() => switchNetwork(chainId)}>Switch network</Button>
+          : null}
+      </Alert>
+    )
+  }
 
-  return (
-    <div>
-      {relay.errorMsg ? relay.errorMsg : null}
-      {relay.relay.version !== undefined ?
-        <div className="row">
-          <span>ready: {relay.relay.ready.toString()}</span>
-          {/* TODO: extract a RelayData component */}
-          <details>
-            <summary>Show relay data: <span>{relay.relay.ownerAddress}</span></summary>
-            {
-              Object.keys(relay.relay).map((x, i) => {
-                return <div key={i}>{x}: {'test'}</div>
-                // return <div key={i}>{x}: {(relay.relay[x])}</div>
-              })
-            }
-          </details>
-          {/* <Suspense fallback={<div>Loading relay controls...</div>}> */}
+  if (Object.keys(relay.relay).length === 0) {
+    return (
+      <Form onSubmit={getRelayForm.handleSubmit}>
+        <Form.Label htmlFor="url">Relay URL
+          <Form.Control
+            id="url"
+            name="url"
+            type="url"
+            onChange={getRelayForm.handleChange}
+            value={getRelayForm.values.url}
+          />
+        </Form.Label>
+        <br />
+        <Button variant="success" type="submit">Fetch data</Button>
+      </Form>
+    )
+  }
+  if (relay.errorMsg !== '') return <span>{relay.errorMsg}</span>
+  if ((activeChain?.id !== chainId && !isLoading) || isLoading) {
+    return <ChainIdHandler />
+  }
 
-            <RelayCommands />
-          {/* </Suspense> */}
-        </div>
-        : null}
-      <div className="row">
-        {relay.relay.version === undefined ?
-          <div className="col"><Form onSubmit={getRelayForm.handleSubmit}>
-            <Form.Label htmlFor="url">Relay URL
-              <Form.Control
-                id="url"
-                name="url"
-                type="url"
-                onChange={getRelayForm.handleChange}
-                value={getRelayForm.values.url}
-              />
-            </Form.Label>
-            <br />
-            <Button variant="success" type="submit">Fetch data</Button>
-          </Form>
-          </div> :
-          <Button variant="secondary"
-            className="my-2"
-            onClick={() => {dispatch(deleteRelayData())}}
-          >Switch</Button>
-        }
+  if (isLoading) return <>Loading?</>
+  if (activeChain?.id === chainId && Object.keys(relay.relay).length > 0 && !isLoading) {
+    return (
+      <div className='row'>
+        {/* TODO: extract a RelayData component */}
+        <details>
+          <summary>Show relay data: <span>{relay.relay.ownerAddress}</span></summary>
+          {
+            Object.keys(relay.relay).map((x, i) => {
+              return <div key={i}>{x}: {(relay.relay[x as keyof PingResponse])?.toString()}</div>
+            })
+          }
+        </details>
+        <RelayCommands />
+        <Button variant="secondary"
+          className="my-2"
+          onClick={() => dispatch(deleteRelayData())}
+        >Switch</Button>
       </div>
-    </div>
-  );
+    )
+  }
+
+  return <>Error initializing relay view</>
 }
-export default React.memo(Relay);
+export default React.memo(Relay)
