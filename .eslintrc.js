@@ -15,6 +15,7 @@ module.exports = {
   extends:
     [
       'standard-with-typescript',
+      'react-app',
       'plugin:react/recommended'
     ],
   plugins: ["react", "react-hooks"],
@@ -26,7 +27,8 @@ module.exports = {
   rules: {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-function-return-type": "off", 
-    "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: true }],
     "@typescript-eslint/consistent-type-assertions": ["error", { assertionStyle: "as", objectLiteralTypeAssertions: "allow" }]
   },
   settings: {
