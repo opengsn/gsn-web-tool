@@ -7,7 +7,6 @@ import relayHubAbi from '../../../contracts/relayHub.json'
 export default function HubAuthorizedListener() {
   const relay = useAppSelector((state) => state.relay.relay)
 
-  alert(relay.relayHubAddress)
   const {data: stakeManagerAddressData} = useContractRead({
     addressOrName: relay.relayHubAddress,
     contractInterface: relayHubAbi
