@@ -169,14 +169,12 @@ export default function StakeWithERC20() {
   if (account !== undefined) {
     const isAccountRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, account))
 
-    // testing
-    if (isAccountRelayOwner) {
+    if (!isAccountRelayOwner) {
       return <div>- The relay is already owned by {owner}, our data.address={account}</div>
     }
   }
 
-  // testing
-  if (stakeManagerOwnerIsSet) return (<WaitingMessage />)
+  if (!stakeManagerOwnerIsSet) return (<WaitingMessage />)
 
   if (token !== null && account !== undefined && minimumStakeForToken !== null) {
     if (minimumStakeForToken?.isZero()) {

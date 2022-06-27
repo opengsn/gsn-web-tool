@@ -75,7 +75,7 @@ export default function RelayCommands() {
   return (
     <>
       {
-        !relay.ready
+        relay.ready
           ? <DeregisterRelay />
           : <>
             <HubAuthorizedListener />
