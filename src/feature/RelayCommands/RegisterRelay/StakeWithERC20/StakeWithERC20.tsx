@@ -1,137 +1,224 @@
-import { useEffect, useState, createContext } from "react";
-import { ethers } from "ethers";
-import { useAccount, useContract, useBlockNumber, useProvider } from "wagmi";
+import { useEffect, useState, createContext } from 'react'
+import { ethers } from 'ethers'
+import { useAccount, useContract, useBlockNumber, useProvider } from 'wagmi'
 
-import Spinner from "react-bootstrap/Spinner";
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import Spinner from 'react-bootstrap/Spinner'
+import { toast } from 'react-toastify'
 
-import { useAppSelector, useStakeInfo, useStakeManagerAddress } from "../../../../hooks";
+import { useAppSelector, useStakeInfo, useStakeManagerAddress } from '../../../../hooks'
 
-import TokenInfo from "./TokenInfo";
-import Mint from "./Mint";
-import Approve from "./Approve";
-import Stake from "./Stake";
+import TokenInfo from './TokenInfo'
+import Mint from './Mint'
+import Approve from './Approve'
+import Stake from './Stake'
 
-import { toNumber } from "@opengsn/common";
-import { constants } from "@opengsn/common/dist/Constants";
-import { isSameAddress } from "@opengsn/common/dist/Utils";
+import { toNumber } from '@opengsn/common'
+import { constants } from '@opengsn/common/dist/Constants'
+import { isSameAddress } from '@opengsn/common/dist/Utils'
 
-import relayHubAbi from "../../../../contracts/relayHub.json";
+import relayHubAbi from '../../../../contracts/relayHub.json'
 
-import { Address } from "@opengsn/common/dist/types/Aliases";
+import { Address } from '@opengsn/common/dist/types/Aliases'
+import { useFormik } from 'formik'
 
 export interface TokenContextInterface {
-  token: Address;
-  account: Address;
-  minimumStakeForToken: ethers.BigNumber;
+  token: Address
+  account: Address
+  minimumStakeForToken: ethers.BigNumber
 }
 
-export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface);
+export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
 
 export default function StakeWithERC20() {
-  const [token, setToken] = useState<Address | null>(null);
-  const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null);
-  const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false);
+  const [token, setToken] = useState<Address | null>(null)
+  const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
+  const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
 
-  const relay = useAppSelector((state) => state.relay.relay);
-  const { data: accountData } = useAccount();
-  const account = accountData?.address;
+  const relay = useAppSelector((state) => state.relay.relay)
+  const { data: accountData } = useAccount()
+
+  const account = accountData?.address
   const {
     relayManagerAddress,
     ownerAddress: owner,
-    relayHubAddress,
-  } = relay;
+    relayHubAddress
+  } = relay
 
-  const provider = useProvider();
+  const provider = useProvider()
   const relayHub = useContract({
     addressOrName: relayHubAddress,
     contractInterface: relayHubAbi,
-    signerOrProvider: provider,
-  });
+    signerOrProvider: provider
+  })
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress);
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string;
+  const { data: newStakeInfoData } = useStakeInfo(stakeManagerAddress, relayManagerAddress)
 
-  const { data: newStakeInfoData } = useStakeInfo(stakeManagerAddress, relayManagerAddress);
-
-  useBlockNumber({
+  const { data: curBlockData } = useBlockNumber({
     watch: false,
     enabled: false,
     onSuccess(data) {
-      findFirstToken(data);
-    },
-  });
+      findFirstToken(data).catch((e) => toast.error(e.message))
+    }
+  })
+
+  const TokenAddressForm = () => {
+    const getTokenAddress = useFormik({
+      initialValues: {
+        token: ''
+      },
+      onSubmit: values => {
+        setToken(values.token)
+      }
+    })
+
+    const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
+    return (
+      <Form onSubmit={getTokenAddress.handleSubmit}>
+        <Form.Label htmlFor="url">
+          ERC20 token address
+          <Form.Control
+            id="token"
+            name="token"
+            type="text"
+            onChange={getTokenAddress.handleChange}
+            value={getTokenAddress.values.token}
+          />
+        </Form.Label>
+        <br />
+        <Button disabled={!isAddress} variant="success" type="submit">Fetch token data</Button>
+      </Form>
+    )
+  }
+
+  const FindFirstTokenButton = () => {
+    const handleFindFirstTokenButton = () => {
+      if (curBlockData !== undefined) {
+        findFirstToken(curBlockData).then(setToken).catch((e) => toast.error(e.message))
+      }
+    }
+
+    return (
+      <Button onClick={() => handleFindFirstTokenButton()}>
+        Fetch first available token
+      </Button>
+    )
+  }
 
   const findFirstToken = async (curBlockNumber: number) => {
-    const fromBlock = (await relayHub.functions.getCreationBlock())[0];
-    const toBlock = Math.min(toNumber(fromBlock) + 5000, curBlockNumber);
+    const fromBlock = (await relayHub.functions.getCreationBlock())[0]
+    const toBlock = Math.min(toNumber(fromBlock) + 5000, curBlockNumber)
 
-    const filters = relayHub.filters.StakingTokenDataChanged();
-    const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock);
+    const filters = relayHub.filters.StakingTokenDataChanged()
+    const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)
 
     if (tokens.length === 0) {
-      throw new Error(`no registered staking tokens on relayhub ${relayHub.address}`);
+      throw new Error(`no registered staking tokens on relayhub ${relayHub.address as string}`)
     }
-    const foundToken = tokens[0].args.token;
+    const foundToken = tokens[0].args.token
 
-    setToken(foundToken);
-  };
+    return foundToken
+  }
 
   useEffect(() => {
     if (newStakeInfoData !== undefined && account !== undefined) {
-      const newStakeInfo = newStakeInfoData[0];
+      const newStakeInfo = newStakeInfoData[0]
 
       if (newStakeInfo?.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo?.owner, account)) {
-        setStakeManagerOwnerIsSet(true);
+        setStakeManagerOwnerIsSet(true)
       }
     }
-  }, [newStakeInfoData]);
+  }, [newStakeInfoData, account])
 
   useEffect(() => {
     if (token !== null) {
       const fetchMinimumStakeForToken = async () => {
-        const minimumStake = await relayHub.functions.getMinimumStakePerToken(token);
+        const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
 
-        setMinimumStakeForToken(minimumStake);
-      };
+        setMinimumStakeForToken(minimumStake[0])
+      }
 
-      fetchMinimumStakeForToken();
+      fetchMinimumStakeForToken().catch((e) => toast.error(e.message))
     }
-  }, [token]);
+  }, [token, relayHub.functions])
+
+  const SwitchTokenButton = () => {
+    const handleSwitchToken = () => setToken(null)
+
+    return (
+      <Button onClick={handleSwitchToken} variant='secondary'>
+        Switch Token
+      </Button>
+    )
+  }
 
   const WaitingMessage = () => (
-    <div>
-      <span>Waiting for Stake Manager to set Relay Manager {relayManagerAddress} as owner...  <Spinner animation="grow" size="sm" /></span>
+    <>
+      <span>Waiting for Stake Manager to set Relay Manager {relayManagerAddress} as owner...
+        <Spinner animation="grow" size="sm" />
+      </span>
       <br />
       <span>Is relay funded?</span>
-    </div>
-  );
+    </>
+  )
 
   if (account !== undefined) {
-    const isAccountRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, account));
+    const isAccountRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, account))
 
-    if (!isAccountRelayOwner) {
-      return <div>- The relay is already owned by {owner}, our data.address={account}</div>;
+    // testing
+    if (isAccountRelayOwner) {
+      return <div>- The relay is already owned by {owner}, our data.address={account}</div>
     }
   }
 
-  if (!stakeManagerOwnerIsSet) return (<WaitingMessage />);
+  // testing
+  if (stakeManagerOwnerIsSet) return (<WaitingMessage />)
+
   if (token !== null && account !== undefined && minimumStakeForToken !== null) {
+    if (minimumStakeForToken?.isZero()) {
+      return (
+        <>
+          <SwitchTokenButton />
+          <br />
+          <span>This ERC20 Token is not supported</span>
+        </>
+      )
+    }
     return (
       <>
+        <SwitchTokenButton />
+        <hr />
         <TokenContext.Provider value={{ token: token, account: account, minimumStakeForToken: minimumStakeForToken }}>
           <TokenInfo />
+          <br />
           <Mint />
+          <br />
           <Approve />
+          <br />
           <Stake />
         </TokenContext.Provider>
       </>
-    );
+    )
   }
 
-  if (token === null) { return <span>Could not fetch tokendata</span>; }
-  if (account === undefined) { return <span>Could not fetch token data</span>; }
-  if (minimumStakeForToken === null) { return <span>Could not fetch token data</span>; }
+  if (token === null) {
+    return (
+      <>
+        <TokenAddressForm />
+        <br />
+        <FindFirstTokenButton />
+      </>
+    )
+  }
 
-  return <span>Could not set up staking menu</span>;
+  if (account === undefined) { return <span>Could not load account data</span> }
+  if (minimumStakeForToken === null) {
+    return <span>Loading staking token data<Spinner animation="grow" size="sm" /></span>
+  }
+
+  return <span>Could not set up staking menu</span>
 }

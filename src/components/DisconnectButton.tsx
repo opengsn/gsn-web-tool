@@ -1,15 +1,21 @@
-import Button from "react-bootstrap/Button";
-import { useDisconnect } from "wagmi";
+import Button from 'react-bootstrap/Button'
+import { useDisconnect } from 'wagmi'
+import { deleteRelayData } from '../feature/Relay/relaySlice'
+import { useAppDispatch, useAppSelector } from '../hooks'
 
 export default function DisconnectButton() {
+  const relay = useAppSelector((state) => state.relay.relay)
+  const { disconnect } = useDisconnect()
 
-  const { disconnect } = useDisconnect();
+  const dispatch = useAppDispatch()
 
   return (
     <div className="row">
-
-      <Button onClick={() => disconnect()}>Disconnect wallet</Button>
-
+      <Button onClick={() => {
+        dispatch(deleteRelayData()).then(() => {
+          disconnect()
+        }).catch(console.error)
+      }}>Disconnect wallet</Button>
     </div>
   )
 }

@@ -35,6 +35,10 @@ function Relay() {
     }
   })
 
+  const handleDeleteRelayData = () => {
+    dispatch(deleteRelayData()).catch(console.error)
+  }
+
   const ChainIdHandler = () => {
     return (
       <Alert variant='warning'>
@@ -89,7 +93,7 @@ function Relay() {
         <RelayCommands />
         <Button variant="secondary"
           className="my-2"
-          onClick={() => dispatch(deleteRelayData())}
+          onClick={handleDeleteRelayData}
         >Switch</Button>
       </div>
     )

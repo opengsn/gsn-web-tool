@@ -1,28 +1,26 @@
-// import {RootState} from "../store";
-import React from "react";
-import { useAccount } from "wagmi";
+import React from 'react'
+import { useAccount } from 'wagmi'
 
-import MetamaskButton from "../components/MetamaskButton";
-import DisconnectButton from "../components/DisconnectButton";
-import Relay from "../feature/Relay/Relay";
+import MetamaskButton from '../components/MetamaskButton'
+import DisconnectButton from '../components/DisconnectButton'
+import Relay from '../feature/Relay/Relay'
 
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button"
-
+import Container from 'react-bootstrap/Container'
 
 export default function App() {
   // const { data, error, isLoading, isIdle, isFetching, isRefetching, isError, isSuccess } = useAccount()
-  const { data: account, error, isError } = useAccount();
+  const { data: account, error, isError, isLoading, isFetched, status } = useAccount()
 
+  console.log(account, status)
   return (
     <div className="App">
       <Container className="my-1">
-        {isError ?
-          <span>{error?.message}</span> : <span>{isError}</span>
+        {isError
+          ? <span>{error?.message}</span> : <span>{isError}</span>
         }
         {
-          account ?
-            <>
+          (account?.connector !== undefined && account !== undefined && isFetched && !isLoading && !isError && status === 'success')
+            ? <>
               <Relay />
               <hr />
               <DisconnectButton />
@@ -30,5 +28,5 @@ export default function App() {
         }
       </Container>
     </div>
-  );
+  )
 }

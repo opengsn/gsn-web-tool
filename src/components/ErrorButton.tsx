@@ -1,11 +1,11 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
-import Alert from "react-bootstrap/Alert";
+import React from 'react'
+import Button from 'react-bootstrap/Button'
+import Alert from 'react-bootstrap/Alert'
 
 interface ErrorButtonProps {
-  children: React.ReactNode;
-  message: string | undefined;
-  onClick?: () => void;
+  children: React.ReactNode
+  message: string | undefined
+  onClick?: () => void
 }
 
 const ErrorButton = ({ children, onClick, message }: ErrorButtonProps) => {
@@ -18,7 +18,7 @@ const ErrorButton = ({ children, onClick, message }: ErrorButtonProps) => {
       </Alert>
       <Button onClick={onClick} variant="outline-primary" className="border border-3 border-danger">{children}</Button>
     </div>
-  );
-};
+  )
+}
 
-export default ErrorButton;
+export default ErrorButton

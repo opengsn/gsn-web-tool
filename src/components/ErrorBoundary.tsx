@@ -1,17 +1,17 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
 export class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
-  public state = { hasError: false };
+  public state = { hasError: false }
 
-  public static getDerivedStateFromError() {
-    return { hasError: true };
+  public static getDerivedStateFromError () {
+    return { hasError: true }
   }
 
-  public componentDidCatch(error: Error): void {
-    console.error(error);
+  public componentDidCatch (error: Error): void {
+    console.error(error)
   }
 
-  public render(): React.ReactNode {
+  public render (): React.ReactNode {
     return !this.state.hasError ? (
       this.props.children
     ) : (
@@ -19,12 +19,12 @@ export class ErrorBoundary extends Component<{ children: React.ReactNode }, { ha
         <h1>Something went wrong</h1>
         <button
           onClick={() => {
-            window.location.reload();
+            window.location.reload()
           }}
         >
           Reload page
         </button>
       </div>
-    );
+    )
   }
 }

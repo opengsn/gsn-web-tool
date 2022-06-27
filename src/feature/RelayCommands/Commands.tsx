@@ -1,13 +1,13 @@
-import { useState } from "react";
-import Collapse from "react-bootstrap/Collapse";
-import Button from "react-bootstrap/Button";
+import { useState } from 'react'
+import Collapse from 'react-bootstrap/Collapse'
+import Button from 'react-bootstrap/Button'
 
-import HubAuthorizedListener from "./RegisterRelay/HubAuthorizedListener";
-import FundRelay from "./RegisterRelay/FundRelay";
-import StakeWithERC20 from "./RegisterRelay/StakeWithERC20/StakeWithERC20";
-import AuthorizeHub from "./RegisterRelay/AuthorizeHub";
+import HubAuthorizedListener from './RegisterRelay/HubAuthorizedListener'
+import FundRelay from './RegisterRelay/FundRelay'
+import StakeWithERC20 from './RegisterRelay/StakeWithERC20/StakeWithERC20'
+import AuthorizeHub from './RegisterRelay/AuthorizeHub'
 
-import { useAppSelector } from "../../hooks";
+import { useAppSelector } from '../../hooks'
 
 export default function RelayCommands() {
   const relay = useAppSelector((state) => state.relay.relay)
@@ -17,14 +17,14 @@ export default function RelayCommands() {
 
   const handleShowRegisterRelay = () => {
     setShowRegisterRelay(!showRegisterRelay)
-  };
+  }
   const handleShowDeregisterRelay = () => {
     setShowDeregisterRelay(!showDeregisterRelay)
-  };
+  }
 
   const DeregisterRelay = () => {
     return (
-      <div className="row">
+      <>
         <Button
           onClick={handleShowDeregisterRelay}
           aria-controls="register-relay-form"
@@ -39,13 +39,13 @@ export default function RelayCommands() {
             <div>WIP</div>
           </div>
         </Collapse>
-      </div>
-    );
-  };
+      </>
+    )
+  }
 
   const RegisterRelay = () => {
     return (
-      <div className="row">
+      <>
         <Button
           onClick={handleShowRegisterRelay}
           aria-controls="register-relay-form"
@@ -54,9 +54,8 @@ export default function RelayCommands() {
         >
           Register
         </Button>
-        <HubAuthorizedListener />
-        {showRegisterRelay ?
-          <Collapse in={showRegisterRelay}>
+        {showRegisterRelay
+          ? <Collapse in={showRegisterRelay}>
             <div className="border p-3" id="register-relay-form">
               <h5>Fund Relay</h5>
               <FundRelay />
@@ -69,16 +68,20 @@ export default function RelayCommands() {
             </div>
           </Collapse>
           : null}
-      </div>
-    );
-  };
+      </>
+    )
+  }
 
   return (
     <>
       {
-        relay.ready ?
-          <DeregisterRelay /> : <RegisterRelay />
+        !relay.ready
+          ? <DeregisterRelay />
+          : <>
+            <HubAuthorizedListener />
+            <RegisterRelay />
+          </>
       }
     </>
-  );
+  )
 }
