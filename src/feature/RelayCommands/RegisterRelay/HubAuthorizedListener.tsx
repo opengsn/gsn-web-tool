@@ -1,5 +1,5 @@
-import {useContractRead} from 'wagmi'
-import {useAppSelector} from '../../../hooks'
+import { useContractRead } from 'wagmi'
+import { useAppSelector } from '../../../hooks'
 
 import EventListener from './EventListener'
 import relayHubAbi from '../../../contracts/relayHub.json'
@@ -7,15 +7,15 @@ import relayHubAbi from '../../../contracts/relayHub.json'
 export default function HubAuthorizedListener() {
   const relay = useAppSelector((state) => state.relay.relay)
 
-  const {data: stakeManagerAddressData} = useContractRead({
+  const { data: stakeManagerAddressData } = useContractRead({
     addressOrName: relay.relayHubAddress,
     contractInterface: relayHubAbi
   },
-    'getStakeManager',
-    {
-      watch: false,
-      onError(err) { console.error(err) }
-    }
+  'getStakeManager',
+  {
+    watch: false,
+    onError(err) { console.error(err) }
+  }
   )
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
