@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
 import { useContractRead, useContractWrite } from 'wagmi'
 import { ethers } from 'ethers'
 import Button from 'react-bootstrap/Button'
@@ -11,7 +11,7 @@ import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useStakeManagerAddress, useAppSelector } from '../../../../hooks'
 
 export default function Approve() {
-  // const [approveAmount, setApproveAmount] = useState<ethers.BigNumber | null>(null)
+  const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
@@ -21,7 +21,14 @@ export default function Approve() {
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({ addressOrName: token, contractInterface: iErc20TokenAbi }, 'allowance', { args: [account, stakeManagerAddress] })
+  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({ addressOrName: token, contractInterface: iErc20TokenAbi }, 'allowance', {
+    args: [account, stakeManagerAddress],
+    onSuccess(data) {
+      setApproveAmount(
+        minimumStakeForToken.sub(data)
+      )
+    }
+  })
 
   const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite(
     {
@@ -29,7 +36,7 @@ export default function Approve() {
       contractInterface: iErc20TokenAbi
     },
     'approve',
-    { args: [stakeManagerAddress, currentAllowanceData?.sub(minimumStakeForToken)] }
+    { args: [stakeManagerAddress, approveAmount] }
   )
 
   const text = <span>Approve token for spend by Relay Manager</span>
@@ -44,7 +51,7 @@ export default function Approve() {
 
   const ApproveButton = () => {
     if (currentAllowanceData !== undefined) {
-      const text = `Approve for outstanding amount ${ethers.utils.formatEther(minimumStakeForToken.sub(currentAllowanceData))}`
+      const text = `Approve for outstanding amount ${ethers.utils.formatEther(approveAmount)}`
       return <Button onClick={() => approve()}>{text}</Button>
     } else {
       const text = <span>Approve for spend</span>

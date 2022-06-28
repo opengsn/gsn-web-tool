@@ -12,7 +12,7 @@ import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 import ErrorButton from '../../../../components/ErrorButton'
 
 export default function Stake () {
-  const { token } = useContext(TokenContext)
+  const { token, minimumStakeForToken } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
 
   const { relayHubAddress, relayManagerAddress } = relay
@@ -20,7 +20,8 @@ export default function Stake () {
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const stakeValue = ethers.utils.parseEther('1.0')
+  // const stakeValue = ethers.utils.parseEther('0.5')
+  // const stake
   const text = 'Stake with (token) (value)'
   const unstakeDelay = '15000'
 
@@ -31,7 +32,7 @@ export default function Stake () {
     },
     'stakeForRelayManager',
     {
-      args: [token, relayManagerAddress, unstakeDelay, stakeValue],
+      args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken],
       onError (err) {
         toast.warn(`Staking error: ${err.message}`)
       },
