@@ -28,7 +28,7 @@ export default function Mint() {
     enabled: false,
     onSuccess(data) {
       const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-      setMintAmount(outstandingTokenAmountCalculated)
+      if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
       setOutstandingMintAmount(outstandingTokenAmountCalculated)
       console.log(Number(ethers.utils.formatEther(outstandingMintAmount)))
     }
@@ -47,6 +47,7 @@ export default function Mint() {
     {
       overrides: { value: mintAmount },
       onSuccess(data) {
+        toast.info(ethers.utils.formatEther(mintAmount))
         toast.info(`Tokens minted with tx ${data.hash}`)
       }
     }
@@ -81,9 +82,8 @@ export default function Mint() {
             id="amount"
             name="amount"
             type="number"
-            min="0"
-            step="0.1"
             lang="en"
+            min="0.1"
             onChange={getMintAmountForm.handleChange}
             value={getMintAmountForm.values.amount}
           />
