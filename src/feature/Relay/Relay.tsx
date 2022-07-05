@@ -8,23 +8,21 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 
+import ChainIdHandler from '../../components/ChainIdHandler'
+import LoadingButton from '../../components/LoadingButton'
+
 import RelayCommands from '../RelayCommands/Commands'
 
 import { PingResponse } from '@opengsn/common'
-import LoadingButton from '../../components/LoadingButton'
 
 function Relay () {
   const relay = useAppSelector((state) => state.relay)
-  const chainId = Number(relay.relay.chainId)
+  const relayData: PingResponse = relay.relay
+  const chainId = Number(relayData.chainId)
 
   const dispatch = useAppDispatch()
 
-  const {
-    activeChain,
-    error,
-    isLoading,
-    switchNetwork
-  } = useNetwork()
+  const { chain } = useNetwork()
 
   const getRelayForm = useFormik({
     initialValues: {
@@ -39,23 +37,7 @@ function Relay () {
     dispatch(deleteRelayData()).catch(console.error)
   }
 
-  const ChainIdHandler = () => {
-    return (
-      <Alert variant='warning'>
-        <Alert.Heading>Wrong chain</Alert.Heading>
-        <p>Wallet is connected to ID #{activeChain?.id} while the relay is on #{chainId}</p>
-        {isLoading ? <LoadingButton /> : null}
-        {error !== null
-          ? <Alert variant='danger'>Chain ID check failed: {error?.message}</Alert>
-          : null}
-        {switchNetwork !== undefined && !isLoading
-          ? <Button variant='primary' onClick={() => switchNetwork(chainId)}>Switch network</Button>
-          : null}
-      </Alert>
-    )
-  }
-
-  if (Object.keys(relay.relay).length === 0) {
+  if (Object.keys(relayData).length === 0) {
     return (
       <Form onSubmit={getRelayForm.handleSubmit}>
         <Form.Label htmlFor="url">Relay URL
@@ -73,20 +55,19 @@ function Relay () {
     )
   }
   if (relay.errorMsg !== '') return <span>{relay.errorMsg}</span>
-  if ((activeChain?.id !== chainId && !isLoading) || isLoading) {
-    return <ChainIdHandler />
+  if (chain?.id !== undefined && chain?.id !== chainId) {
+    return <ChainIdHandler relayChainId={chainId} />
   }
 
-  if (isLoading) return <>Loading?</>
-  if (activeChain?.id === chainId && Object.keys(relay.relay).length > 0 && !isLoading) {
+  if (chain?.id === chainId && Object.keys(relayData).length > 0) {
     return (
       <div className='row'>
         {/* TODO: extract a RelayData component */}
         <details>
-          <summary>Show relay data: <span>{relay.relay.ownerAddress}</span></summary>
+          <summary>Show relay data: <span>{relayData.ownerAddress}</span></summary>
           {
-            Object.keys(relay.relay).map((x, i) => {
-              return <div key={i}>{x}: {(relay.relay[x as keyof PingResponse])?.toString()}</div>
+            Object.keys(relayData).map((x, i) => {
+              return <div key={i}>{x}: {(relayData[x as keyof PingResponse])?.toString()}</div>
             })
           }
         </details>

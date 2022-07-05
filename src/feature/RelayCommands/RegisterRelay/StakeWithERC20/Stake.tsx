@@ -27,10 +27,8 @@ export default function Stake () {
   const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite(
     {
       addressOrName: stakeManagerAddress,
-      contractInterface: StakeManagerAbi
-    },
-    'stakeForRelayManager',
-    {
+      contractInterface: StakeManagerAbi,
+      functionName: 'stakeForRelayManager',
       args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken],
       onError (err) {
         toast.warn(`Staking error: ${err.message}`)

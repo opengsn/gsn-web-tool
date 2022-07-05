@@ -21,7 +21,10 @@ export default function Approve () {
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({ addressOrName: token, contractInterface: iErc20TokenAbi }, 'allowance', {
+  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
+    addressOrName: token,
+    contractInterface: iErc20TokenAbi,
+    functionName: 'allowance',
     args: [account, stakeManagerAddress],
     onSuccess (data) {
       setApproveAmount(
@@ -30,14 +33,12 @@ export default function Approve () {
     }
   })
 
-  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite(
-    {
-      addressOrName: token,
-      contractInterface: iErc20TokenAbi
-    },
-    'approve',
-    { args: [stakeManagerAddress, approveAmount] }
-  )
+  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite({
+    addressOrName: token,
+    contractInterface: iErc20TokenAbi,
+    functionName: 'approve',
+    args: [stakeManagerAddress, approveAmount]
+  })
 
   const text = <span>Approve token for spend by Relay Manager</span>
 
