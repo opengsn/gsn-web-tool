@@ -7,11 +7,9 @@ import Relay from '../feature/Relay/Relay'
 
 import Container from 'react-bootstrap/Container'
 
-export default function App() {
-  // const { data, error, isLoading, isIdle, isFetching, isRefetching, isError, isSuccess } = useAccount()
+export default function App () {
   const { data: account, error, isError, isLoading, isFetched, status } = useAccount()
 
-  console.log(account, status)
   return (
     <div className="App">
       <Container className="my-1">
