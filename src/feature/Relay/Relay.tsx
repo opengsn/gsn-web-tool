@@ -4,18 +4,19 @@ import { useAppDispatch, useAppSelector } from '../../hooks'
 import { useFormik } from 'formik'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
+import Collapse from 'react-bootstrap/Collapse'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
 
 import ChainIdHandler from '../../components/ChainIdHandler'
-import LoadingButton from '../../components/LoadingButton'
 
+import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
 
 import { PingResponse } from '@opengsn/common'
 
 function Relay () {
+  const [showInfo, setShowInfo] = React.useState(false)
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
   const chainId = Number(relayData.chainId)
@@ -23,6 +24,12 @@ function Relay () {
   const dispatch = useAppDispatch()
 
   const { chain } = useNetwork()
+
+  // unmount Relay's Info component every time chain changes
+  // to avoid exception
+  React.useEffect(() => {
+    setShowInfo(false)
+  }, [chain, setShowInfo])
 
   const getRelayForm = useFormik({
     initialValues: {
@@ -62,15 +69,24 @@ function Relay () {
   if (chain?.id === chainId && Object.keys(relayData).length > 0) {
     return (
       <div className='row'>
-        {/* TODO: extract a RelayData component */}
-        <details>
-          <summary>Show relay data: <span>{relayData.ownerAddress}</span></summary>
-          {
-            Object.keys(relayData).map((x, i) => {
-              return <div key={i}>{x}: {(relayData[x as keyof PingResponse])?.toString()}</div>
-            })
-          }
-        </details>
+        <>
+          <Button
+            onClick={() => setShowInfo(!showInfo)}
+            aria-controls="relay-info"
+            aria-expanded={showInfo}
+          >
+            Show relay data
+          </Button>
+          <Collapse in={showInfo}>
+            <>
+              { showInfo
+                ? <div id="relay-info">
+                  <RelayInfo />
+                </div>
+                : null }
+            </>
+          </Collapse>
+        </>
         <RelayCommands />
         <Button variant="secondary"
           className="my-2"
