@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 
 import ErrorButton from '../../../components/ErrorButton'
 import LoadingButton from '../../../components/LoadingButton'
-import { useAppSelector, useStakeManagerAddress, useStakeInfo } from '../../../hooks'
+import { useAppSelector, useStakeManagerAddress } from '../../../hooks'
 
 import { useContract, useContractWrite } from 'wagmi'
 
@@ -30,8 +30,6 @@ export default function AuthorizehHub () {
     addressOrName: relayHubAddress,
     contractInterface: relayHubAbi
   })
-
-  const { data: newStakeInfoData } = useStakeInfo(stakeManagerAddress, relayManagerAddress)
 
   useEffect(() => {
     const isHubAuthorized = async () => {

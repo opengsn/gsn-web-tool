@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { toast } from 'react-toastify'
-import { ethers } from 'ethers'
 import { useContractWrite } from 'wagmi'
 import { TokenContext } from './StakeWithERC20'
 
