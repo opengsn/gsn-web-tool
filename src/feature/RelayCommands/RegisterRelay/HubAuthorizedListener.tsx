@@ -1,28 +1,26 @@
-import { useContractEvent } from "wagmi"
-import { useAppSelector, useAppDispatch, useStakeManagerAddress } from "../../../hooks"
-import { fetchRelayData } from "../../Relay/relaySlice"
+import { useContractRead } from 'wagmi'
+import { useAppSelector } from '../../../hooks'
 
-import StakeManagerAbi from "../../../contracts/stakeManager.json"
+import EventListener from './EventListener'
+import relayHubAbi from '../../../contracts/relayHub.json'
 
-export default function HubAuthorizedListener() {
+export default function HubAuthorizedListener () {
   const relay = useAppSelector((state) => state.relay.relay)
-  const relayUrl = useAppSelector((state) => state.relay.relayUrl)
 
-  const dispatch = useAppDispatch();
-
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relay.relayHubAddress)
+  const { data: stakeManagerAddressData } = useContractRead({
+    addressOrName: relay.relayHubAddress,
+    contractInterface: relayHubAbi
+  },
+  'getStakeManager',
+  {
+    watch: false,
+    onError (err) { console.error(err) }
+  }
+  )
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  useContractEvent(
-    {
-      addressOrName: stakeManagerAddress,
-      contractInterface: StakeManagerAbi,
-    },
-    "HubAuthorized",
-    () => {
-      dispatch(fetchRelayData(relayUrl));
-    },
-  )
-
-  return <span>Listening for HubAuthorized</span>
+  if (stakeManagerAddressData !== undefined) {
+    return <EventListener stakeManagerAddress={stakeManagerAddress} />
+  }
+  return <>Failed to fetch stakeManagerAddress</>
 }
