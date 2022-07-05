@@ -1,45 +1,46 @@
-import { useContext } from "react";
-import { toast } from "react-toastify";
-import { ethers } from "ethers";
-import { useContractWrite } from "wagmi";
-import { TokenContext } from "./StakeWithERC20";
+import { useContext } from 'react'
+import { toast } from 'react-toastify'
+import { ethers } from 'ethers'
+import { useContractWrite } from 'wagmi'
+import { TokenContext } from './StakeWithERC20'
 
-import Button from "react-bootstrap/Button";
-import LoadingButton from "../../../../components/LoadingButton";
+import Button from 'react-bootstrap/Button'
+import LoadingButton from '../../../../components/LoadingButton'
 
-import StakeManagerAbi from "../../../../contracts/stakeManager.json";
-import { useAppSelector, useStakeManagerAddress } from "../../../../hooks";
-import ErrorButton from "../../../../components/ErrorButton";
+import StakeManagerAbi from '../../../../contracts/stakeManager.json'
+import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
+import ErrorButton from '../../../../components/ErrorButton'
 
-export default function Stake() {
+export default function Stake () {
+  const { token, minimumStakeForToken } = useContext(TokenContext)
+  const relay = useAppSelector((state) => state.relay.relay)
 
-  const { token } = useContext(TokenContext);
-  const relay = useAppSelector((state) => state.relay.relay);
+  const { relayHubAddress, relayManagerAddress } = relay
 
-  const { relayHubAddress, relayManagerAddress } = relay;
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress);
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string;
-
-  const stakeValue = ethers.utils.parseEther("1.0");
-  const text = "Stake with ...";
+  // const stakeValue = ethers.utils.parseEther('0.5')
+  // const stake
+  const text = 'Stake with (token) (value)'
+  const unstakeDelay = '15000'
 
   const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite(
     {
       addressOrName: stakeManagerAddress,
-      contractInterface: StakeManagerAbi,
+      contractInterface: StakeManagerAbi
     },
-    "stakeForRelayManager",
+    'stakeForRelayManager',
     {
-      args: [token, relayManagerAddress, "15000", stakeValue],
-      onError(err) {
-        toast.warn(`Staking error: ${err.message}`);
+      args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken],
+      onError (err) {
+        toast.warn(`Staking error: ${err.message}`)
       },
-      onSuccess(data) {
-        toast.info(<span>Staked with tx: <br /> <b>{data.hash}</b></span>);
-      },
-    },
-  );
+      onSuccess (data) {
+        toast.info(<span>Staked with tx: <br /> <b>{data.hash}</b></span>)
+      }
+    }
+  )
 
   // const stakeParam = BigNumber.from((toNumber("1.0") * Math.pow(10, tokenDecimals)).toString())
 
@@ -84,9 +85,9 @@ export default function Stake() {
 
   // }
 
-  if (isError) return <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer()}>{text}</ErrorButton>;
-  if (isLoading) return <LoadingButton />;
-  if (isSuccess) return <div>Relayer successfully staked</div>;
+  if (isError) return <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer()}>{text}</ErrorButton>
+  if (isLoading) return <LoadingButton />
+  if (isSuccess) return <div>Relayer successfully staked</div>
 
   return (
     <div>
@@ -95,5 +96,5 @@ export default function Stake() {
         {text}
       </Button>
     </div>
-  );
+  )
 }

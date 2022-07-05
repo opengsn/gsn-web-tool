@@ -13,7 +13,7 @@ import RelayCommands from '../RelayCommands/Commands'
 import { PingResponse } from '@opengsn/common'
 import LoadingButton from '../../components/LoadingButton'
 
-function Relay() {
+function Relay () {
   const relay = useAppSelector((state) => state.relay)
   const chainId = Number(relay.relay.chainId)
 
@@ -34,6 +34,10 @@ function Relay() {
       dispatch(fetchRelayData(values.url)).catch(console.error)
     }
   })
+
+  const handleDeleteRelayData = () => {
+    dispatch(deleteRelayData()).catch(console.error)
+  }
 
   const ChainIdHandler = () => {
     return (
@@ -89,7 +93,7 @@ function Relay() {
         <RelayCommands />
         <Button variant="secondary"
           className="my-2"
-          onClick={() => dispatch(deleteRelayData())}
+          onClick={handleDeleteRelayData}
         >Switch</Button>
       </div>
     )
