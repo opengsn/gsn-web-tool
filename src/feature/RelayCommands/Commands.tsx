@@ -9,7 +9,7 @@ import AuthorizeHub from './RegisterRelay/AuthorizeHub'
 
 import { useAppSelector } from '../../hooks'
 
-export default function RelayCommands() {
+export default function RelayCommands () {
   const relay = useAppSelector((state) => state.relay.relay)
 
   const [showRegisterRelay, setShowRegisterRelay] = useState(false)

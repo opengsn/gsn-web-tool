@@ -15,7 +15,7 @@ import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useFormik } from 'formik'
 import { ButtonGroup } from 'react-bootstrap'
 
-export default function Mint() {
+export default function Mint () {
   const [mintAmount, setMintAmount] = useState(ethers.constants.Zero)
   const [outstandingMintAmount, setOutstandingMintAmount] = useState(ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
@@ -26,7 +26,7 @@ export default function Mint() {
     staleTime: 32000,
     watch: true,
     enabled: false,
-    onSuccess(data) {
+    onSuccess (data) {
       const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
       if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
       setOutstandingMintAmount(outstandingTokenAmountCalculated)
@@ -46,7 +46,7 @@ export default function Mint() {
     'deposit',
     {
       overrides: { value: mintAmount },
-      onSuccess(data) {
+      onSuccess (data) {
         toast.info(ethers.utils.formatEther(mintAmount))
         toast.info(`Tokens minted with tx ${data.hash}`)
       }

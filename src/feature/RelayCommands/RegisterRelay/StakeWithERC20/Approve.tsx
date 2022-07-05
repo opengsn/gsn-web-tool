@@ -10,7 +10,7 @@ import LoadingButton from '../../../../components/LoadingButton'
 import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useStakeManagerAddress, useAppSelector } from '../../../../hooks'
 
-export default function Approve() {
+export default function Approve () {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
 
   const relay = useAppSelector((state) => state.relay.relay)
@@ -23,7 +23,7 @@ export default function Approve() {
 
   const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({ addressOrName: token, contractInterface: iErc20TokenAbi }, 'allowance', {
     args: [account, stakeManagerAddress],
-    onSuccess(data) {
+    onSuccess (data) {
       setApproveAmount(
         minimumStakeForToken.sub(data)
       )

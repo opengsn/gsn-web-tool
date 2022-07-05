@@ -13,7 +13,7 @@ import RelayCommands from '../RelayCommands/Commands'
 import { PingResponse } from '@opengsn/common'
 import LoadingButton from '../../components/LoadingButton'
 
-function Relay() {
+function Relay () {
   const relay = useAppSelector((state) => state.relay)
   const chainId = Number(relay.relay.chainId)
 

@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../hooks'
 import EventListener from './EventListener'
 import relayHubAbi from '../../../contracts/relayHub.json'
 
-export default function HubAuthorizedListener() {
+export default function HubAuthorizedListener () {
   const relay = useAppSelector((state) => state.relay.relay)
 
   const { data: stakeManagerAddressData } = useContractRead({
@@ -14,7 +14,7 @@ export default function HubAuthorizedListener() {
   'getStakeManager',
   {
     watch: false,
-    onError(err) { console.error(err) }
+    onError (err) { console.error(err) }
   }
   )
   const stakeManagerAddress = stakeManagerAddressData as unknown as string

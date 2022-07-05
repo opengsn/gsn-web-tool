@@ -10,7 +10,7 @@ import { Address } from '@opengsn/common/dist/types/Aliases'
 
 export const useStakeManagerAddress = (relayHubAddress: Address) => useContractRead({ addressOrName: relayHubAddress, contractInterface: relayHubAbi }, 'getStakeManager',
   {
-    onError(err) { console.warn(err) }
+    onError (err) { console.warn(err) }
   }
 )
 

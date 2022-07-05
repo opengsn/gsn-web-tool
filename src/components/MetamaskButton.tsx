@@ -1,7 +1,7 @@
 import { useConnect } from 'wagmi'
 import { Button } from 'react-bootstrap'
 
-export default function MetamaskButton() {
+export default function MetamaskButton () {
   const { connect, connectors, error, isConnecting, pendingConnector } = useConnect()
 
   return (

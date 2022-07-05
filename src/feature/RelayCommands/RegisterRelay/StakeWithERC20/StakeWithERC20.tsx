@@ -31,7 +31,7 @@ export interface TokenContextInterface {
 
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
 
-export default function StakeWithERC20() {
+export default function StakeWithERC20 () {
   const [token, setToken] = useState<Address | null>(null)
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
@@ -61,7 +61,7 @@ export default function StakeWithERC20() {
   const { data: curBlockData } = useBlockNumber({
     watch: false,
     enabled: false,
-    onSuccess(data) {
+    onSuccess (data) {
       findFirstToken(data).catch((e) => toast.error(e.message))
     }
   })

@@ -11,7 +11,7 @@ import { useContract, useContractWrite } from 'wagmi'
 import relayHubAbi from '../../../contracts/relayHub.json'
 import StakeManagerAbi from '../../../contracts/stakeManager.json'
 
-export default function AuthorizehHub() {
+export default function AuthorizehHub () {
   const relay = useAppSelector((state) => state.relay.relay)
   const [relayManagerAuthorized, setRelayManagerAuthorized] = useState(false)
 
@@ -57,7 +57,7 @@ export default function AuthorizehHub() {
       'authorizeHubByOwner',
       {
         args: [relayManagerAddress, relayHubAddress],
-        onSuccess(data) {
+        onSuccess (data) {
           toast.info(<span>Authorized relay tx:<br />{data.hash}</span>)
         }
       }
