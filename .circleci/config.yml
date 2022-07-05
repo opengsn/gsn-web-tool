@@ -15,6 +15,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: yarn
+          command: "yarn"
+      - run:
           name: "lint"
           command: "yarn lint"
 
