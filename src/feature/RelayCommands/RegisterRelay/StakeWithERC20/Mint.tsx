@@ -20,7 +20,7 @@ export default function Mint () {
   const [outstandingMintAmount, setOutstandingMintAmount] = useState(ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { data: bal, isFetched: balIsFetched } = useBalance({
+  const { data: bal } = useBalance({
     addressOrName: account,
     token: token,
     staleTime: 32000,
@@ -38,7 +38,7 @@ export default function Mint () {
   //   console.log(outstandingTokenBalance)
   // }
 
-  const { error: mintTokenError, isIdle, isSuccess, isError, isLoading, write: mintToken } = useContractWrite(
+  const { error: mintTokenError, isSuccess, isError, isLoading, write: mintToken } = useContractWrite(
     {
       addressOrName: token,
       contractInterface: iErc20TokenAbi

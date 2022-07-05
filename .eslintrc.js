@@ -12,6 +12,10 @@ module.exports = {
     contract: false,
     web3: false
   },
+  ignorePatterns: [
+    '.eslintrc.js',
+     'build'
+  ],
   extends:
     [
       'standard-with-typescript',
