@@ -72,6 +72,7 @@ function Relay () {
         <>
           <Button
             onClick={() => setShowInfo(!showInfo)}
+            variant="info"
             aria-controls="relay-info"
             aria-expanded={showInfo}
           >
