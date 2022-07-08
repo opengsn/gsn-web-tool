@@ -13,7 +13,7 @@ interface stakeInfoProps {
 
 export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
   const { address } = useAccount()
-  const { data: stakeInfo } = useContractRead({
+  const { data: stakeInfo, isLoading } = useContractRead({
     addressOrName: stakeManagerAddress,
     contractInterface: StakeManagerAbi,
     functionName: 'getStakeInfo',
@@ -39,5 +39,6 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     )
   }
 
+  if (isLoading) return <div>Loading stake data</div>
   return <div>Failed to fetch stake data</div>
 }
