@@ -1,10 +1,8 @@
-import { useAccount, useBalance, useContractRead } from 'wagmi'
-import { useAppSelector } from '../../hooks'
-import relayHubAbi from '../../contracts/relayHub.json'
-import stakeManagerAbi from '../../contracts/stakeManager.json'
-
 import { PingResponse } from '@opengsn/common'
+import { useBalance, useContractRead } from 'wagmi'
 
+import relayHubAbi from '../../contracts/relayHub.json'
+import { useAppSelector } from '../../hooks'
 import StakeInfo from './StakeInfo'
 
 function Info () {
