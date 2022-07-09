@@ -2,22 +2,15 @@ import { useState } from 'react'
 import Collapse from 'react-bootstrap/Collapse'
 import Button from 'react-bootstrap/Button'
 
-import HubAuthorizedListener from './RegisterRelay/HubAuthorizedListener'
-import FundRelay from './RegisterRelay/FundRelay'
-import StakeWithERC20 from './RegisterRelay/StakeWithERC20/StakeWithERC20'
-import AuthorizeHub from './RegisterRelay/AuthorizeHub'
+import RegisterRelay from './RegisterRelay/RegisterRelay'
 
 import { useAppSelector } from '../../hooks'
 
 export default function RelayCommands () {
   const relay = useAppSelector((state) => state.relay.relay)
 
-  const [showRegisterRelay, setShowRegisterRelay] = useState(false)
   const [showDeregisterRelay, setShowDeregisterRelay] = useState(false)
 
-  const handleShowRegisterRelay = () => {
-    setShowRegisterRelay(!showRegisterRelay)
-  }
   const handleShowDeregisterRelay = () => {
     setShowDeregisterRelay(!showDeregisterRelay)
   }
@@ -43,45 +36,10 @@ export default function RelayCommands () {
     )
   }
 
-  const RegisterRelay = () => {
-    return (
-      <>
-        <Button
-          onClick={handleShowRegisterRelay}
-          aria-controls="register-relay-form"
-          aria-expanded={showRegisterRelay}
-          className="mt-2"
-        >
-          Register
-        </Button>
-        {showRegisterRelay
-          ? <Collapse in={showRegisterRelay}>
-            <div className="border p-3" id="register-relay-form">
-              <h5>Fund Relay</h5>
-              <FundRelay />
-              <hr />
-              <h5>Stake with token</h5>
-              <StakeWithERC20 />
-              <hr />
-              <h5>Authorize Hub</h5>
-              <AuthorizeHub />
-            </div>
-          </Collapse>
-          : null}
-      </>
-    )
-  }
-
   return (
     <>
-      {
-        relay.ready
-          ? <DeregisterRelay />
-          : <>
-            <HubAuthorizedListener />
-            <RegisterRelay />
-          </>
-      }
+      <DeregisterRelay />
+      <RegisterRelay />
     </>
   )
 }
