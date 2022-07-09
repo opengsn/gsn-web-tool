@@ -2,13 +2,14 @@ import React from 'react'
 import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { useFormik } from 'formik'
-import { fetchRelayData, deleteRelayData } from './relaySlice'
+import { fetchRelayData } from './relaySlice'
 
 import Collapse from 'react-bootstrap/Collapse'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 import ChainIdHandler from '../../components/ChainIdHandler'
+import SwitchRelayButton from './SwitchRelay'
 
 import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
@@ -40,10 +41,6 @@ function Relay () {
     }
   })
 
-  const handleDeleteRelayData = () => {
-    dispatch(deleteRelayData()).catch(console.error)
-  }
-
   if (Object.keys(relayData).length === 0) {
     return (
       <Form onSubmit={getRelayForm.handleSubmit}>
@@ -63,7 +60,10 @@ function Relay () {
   }
   if (relay.errorMsg !== '') return <span>{relay.errorMsg}</span>
   if (chain?.id !== undefined && chain?.id !== chainId) {
-    return <ChainIdHandler relayChainId={chainId} />
+    return (<>
+      <ChainIdHandler relayChainId={chainId} />
+      <SwitchRelayButton />
+    </>)
   }
 
   if (chain?.id === chainId && Object.keys(relayData).length > 0) {
@@ -78,21 +78,16 @@ function Relay () {
           >
             Show relay data
           </Button>
-          <Collapse in={showInfo}>
+          <Collapse in={showInfo} unmountOnExit={true} >
             <>
-              { showInfo
-                ? <div id="relay-info">
-                  <RelayInfo />
-                </div>
-                : null }
+              <div id="relay-info">
+                <RelayInfo />
+              </div>
             </>
           </Collapse>
         </>
         <RelayCommands />
-        <Button variant="secondary"
-          className="my-2"
-          onClick={handleDeleteRelayData}
-        >Switch</Button>
+        <SwitchRelayButton />
       </div>
     )
   }
