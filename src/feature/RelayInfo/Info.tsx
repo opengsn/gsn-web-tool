@@ -25,7 +25,7 @@ function Info () {
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const RelayURLDisplay = () => { return <span>{relayUrl}</span> }
+  const RelayUrl = () => { return <span>{relayUrl}</span> }
 
   const PingResponseData = () => {
     return (
@@ -68,7 +68,7 @@ function Info () {
 
   return (
     <div>
-      <RelayURLDisplay />
+      <RelayUrl />
       <h5>Getaddr info:</h5>
       <PingResponseData />
       <h5>Stake info:</h5>
