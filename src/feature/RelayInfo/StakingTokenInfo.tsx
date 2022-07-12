@@ -15,7 +15,7 @@ export default function StakingTokenInfo ({ stakingToken }: stakingTokenProps) {
 
   return (
     <div>
-      StakingTokenInfo: {stakingToken} <b>{stakingTokenBalance?.formatted}</b> <b>{stakingTokenBalance?.symbol}</b>
+      staking token: {stakingToken} <b>{stakingTokenBalance?.formatted}</b> <b>{stakingTokenBalance?.symbol}</b>
     </div>
   )
 }
