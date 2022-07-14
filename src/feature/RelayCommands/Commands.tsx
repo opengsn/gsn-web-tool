@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Collapse from 'react-bootstrap/Collapse'
 import Button from 'react-bootstrap/Button'
 
-import HubAuthorizedListener from './RegisterRelay/HubAuthorizedListener'
 import FundRelay from './RegisterRelay/FundRelay'
 import StakeWithERC20 from './RegisterRelay/StakeWithERC20/StakeWithERC20'
 import AuthorizeHub from './RegisterRelay/AuthorizeHub'
@@ -77,10 +76,7 @@ export default function RelayCommands () {
       {
         relay.ready
           ? <DeregisterRelay />
-          : <>
-            <HubAuthorizedListener />
-            <RegisterRelay />
-          </>
+          : <RegisterRelay />
       }
     </>
   )
