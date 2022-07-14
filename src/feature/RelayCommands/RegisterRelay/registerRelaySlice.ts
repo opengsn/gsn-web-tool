@@ -169,6 +169,9 @@ const registerSlice = createSlice({
   reducers: {
     highlightStepError: (state) => {
       state.status = 'error'
+    },
+    highlightStepLoading: (state) => {
+      state.status = 'loading'
     }
   },
   extraReducers: (builder) => {
@@ -258,5 +261,5 @@ const registerSlice = createSlice({
   }
 })
 
-export const { highlightStepError } = registerSlice.actions
+export const { highlightStepError, highlightStepLoading } = registerSlice.actions
 export default registerSlice.reducer
