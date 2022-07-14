@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import relayReducer from './feature/Relay/relaySlice'
+import registerReducer from './feature/RelayCommands/RegisterRelay/registerRelaySlice'
 
 const reducer = {
-  relay: relayReducer
+  relay: relayReducer,
+  register: registerReducer
 }
 
 const store = configureStore({
