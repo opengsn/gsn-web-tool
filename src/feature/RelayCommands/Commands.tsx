@@ -38,8 +38,8 @@ export default function RelayCommands () {
 
   return (
     <>
-      <DeregisterRelay />
       <RegisterRelay />
+      <DeregisterRelay />
     </>
   )
 }
