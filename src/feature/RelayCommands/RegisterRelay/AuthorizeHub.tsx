@@ -50,10 +50,8 @@ export default function AuthorizehHub () {
     const { error: authorizeTxError, isError, isLoading, isSuccess, write: authorizeHub } = useContractWrite(
       {
         addressOrName: stakeManagerAddress,
-        contractInterface: StakeManagerAbi
-      },
-      'authorizeHubByOwner',
-      {
+        contractInterface: StakeManagerAbi,
+        functionName: 'authorizeHubByOwner',
         args: [relayManagerAddress, relayHubAddress],
         onSuccess (data) {
           toast.info(<span>Authorized relay tx:<br />{data.hash}</span>)

@@ -2,7 +2,7 @@ import { useConnect } from 'wagmi'
 import { Button } from 'react-bootstrap'
 
 export default function MetamaskButton () {
-  const { connect, connectors, error, isConnecting, pendingConnector } = useConnect()
+  const { connect, connectors, error, pendingConnector } = useConnect()
 
   return (
     <div className="row">
@@ -10,12 +10,11 @@ export default function MetamaskButton () {
         <Button
           disabled={!connector.ready}
           key={connector.id}
-          onClick={() => connect(connector)}
+          onClick={() => connect({ connector })}
         >
           Connect with {connector.name}
           {!connector.ready && ' (unsupported)'}
-          {isConnecting &&
-            connector.id === pendingConnector?.id &&
+          {connector.id === pendingConnector?.id &&
             ' (connecting)'}
         </Button>
       ))}

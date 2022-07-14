@@ -41,13 +41,10 @@ export default function Mint () {
   const { error: mintTokenError, isSuccess, isError, isLoading, write: mintToken } = useContractWrite(
     {
       addressOrName: token,
-      contractInterface: iErc20TokenAbi
-    },
-    'deposit',
-    {
+      contractInterface: iErc20TokenAbi,
+      functionName: 'deposit',
       overrides: { value: mintAmount },
       onSuccess (data) {
-        toast.info(ethers.utils.formatEther(mintAmount))
         toast.info(`Tokens minted with tx ${data.hash}`)
       }
     }

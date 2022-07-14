@@ -37,9 +37,8 @@ export default function StakeWithERC20 () {
   const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
 
   const relay = useAppSelector((state) => state.relay.relay)
-  const { data: accountData } = useAccount()
+  const { address } = useAccount()
 
-  const account = accountData?.address
   const {
     relayManagerAddress,
     ownerAddress: owner,
@@ -125,14 +124,14 @@ export default function StakeWithERC20 () {
   }
 
   useEffect(() => {
-    if (newStakeInfoData !== undefined && account !== undefined) {
+    if (newStakeInfoData !== undefined && address !== undefined) {
       const newStakeInfo = newStakeInfoData[0]
 
-      if (newStakeInfo?.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo?.owner, account)) {
+      if (newStakeInfo?.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo?.owner, address)) {
         setStakeManagerOwnerIsSet(true)
       }
     }
-  }, [newStakeInfoData, account])
+  }, [newStakeInfoData, address])
 
   useEffect(() => {
     if (token !== null) {
@@ -166,17 +165,17 @@ export default function StakeWithERC20 () {
     </>
   )
 
-  if (account !== undefined) {
-    const isAccountRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, account))
+  if (address !== undefined) {
+    const isaddressRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, address))
 
-    if (!isAccountRelayOwner) {
-      return <div>- The relay is already owned by {owner}, our data.address={account}</div>
+    if (!isaddressRelayOwner) {
+      return <div>- The relay is already owned by {owner}, our data.address={address}</div>
     }
   }
 
   if (!stakeManagerOwnerIsSet) return (<WaitingMessage />)
 
-  if (token !== null && account !== undefined && minimumStakeForToken !== null) {
+  if (token !== null && address !== undefined && minimumStakeForToken !== null) {
     if (minimumStakeForToken?.isZero()) {
       return (
         <>
@@ -190,7 +189,7 @@ export default function StakeWithERC20 () {
       <>
         <SwitchTokenButton />
         <hr />
-        <TokenContext.Provider value={{ token: token, account: account, minimumStakeForToken: minimumStakeForToken }}>
+        <TokenContext.Provider value={{ token: token, account: address, minimumStakeForToken: minimumStakeForToken }}>
           <TokenInfo />
           <br />
           <Mint />
@@ -213,7 +212,7 @@ export default function StakeWithERC20 () {
     )
   }
 
-  if (account === undefined) { return <span>Could not load account data</span> }
+  if (address === undefined) { return <span>Could not load account data</span> }
   if (minimumStakeForToken === null) {
     return <span>Loading staking token data<Spinner animation="grow" size="sm" /></span>
   }
