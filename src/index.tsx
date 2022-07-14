@@ -26,11 +26,6 @@ const client = createClient({
   provider: (config) => {
     if (metamaskIsInstalled === true) {
       const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, 'any')
-      provider.on('network', (newNetwork, oldNetwork) => {
-        if (oldNetwork !== null) {
-          window.location.reload()
-        }
-      })
       return provider
     }
 
