@@ -104,8 +104,8 @@ validateOwnerInStakeManagerParams,
       const { owner } = (await stakeManager
         .getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        // dispatch(validateIsHubAuthorized({ relayManagerAddress, relayHubAddress, provider }))
-        //   .catch(console.error)
+         dispatch(validateIsHubAuthorized({ relayManagerAddress, relayHubAddress, provider }))
+           .catch(console.error)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
