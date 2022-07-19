@@ -118,23 +118,25 @@ interface validateIsRelayManagerStakedParams {
 }
 
 // step 1 -> 2 -> 3
-export const validateIsRelayManagerStaked = createAsyncThunk<boolean, validateIsRelayManagerStakedParams, { fulfilledMeta: null }
+export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsRelayManagerStakedParams, { fulfilledMeta: null }
 >('register/validateIsRelayManagerStaked',
   async ({ relayManagerAddress, relayHubAddress, provider }: validateIsRelayManagerStakedParams,
     { fulfillWithValue, rejectWithValue, dispatch, getState }) => {
     try {
       const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, provider)
-      await relayHub.verifyRelayManagerStaked(relayManagerAddress)
+      const test = await relayHub.verifyRelayManagerStaked(relayManagerAddress)
       // passes? might be that the relay is ready. let's dispatch a check
       const state = getState() as RootState
       dispatch(fetchRelayData(state.relay.relayUrl)).catch(console.error)
-      return fulfillWithValue(true, null)
+
+      return fulfillWithValue(3, null)
     } catch (error: any) {
+      console.log(error)
       if (error.message.includes('relay manager not staked') === true) {
-        return fulfillWithValue(false, null)
+        return fulfillWithValue(1, null)
       }
       if (error.message.includes('this hub is not authorized by SM') === true) {
-        return fulfillWithValue(true, null)
+        return fulfillWithValue(2, null)
       }
       return rejectWithValue(null)
     }
@@ -252,12 +254,19 @@ const registerSlice = createSlice({
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload) {
+      if (action.payload === 3) {
+        // 'Relay is ready',
+        state.step = 3
+        state.status = 'success'
+      } else if (action.payload === 2) {
+        // 'Authorizing Hub',
         state.step = 2
+        state.status = 'idle'
       } else {
+        // 'Staking with ERC20 token',
         state.step = 1
+        state.status = 'idle'
       }
-      state.status = 'idle'
     })
     builder.addCase(validateIsRelayManagerStaked.pending, (state) => {
       state.status = 'idle'
