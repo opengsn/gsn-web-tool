@@ -8,6 +8,7 @@ import stakeManagerAbi from '../../../contracts/stakeManager.json'
 import { isSameAddress } from '@opengsn/common/dist/Utils'
 import { Address } from '@opengsn/common/dist/types/Aliases'
 import { PingResponse } from '@opengsn/common'
+import { fetchRelayData } from '../../Relay/relaySlice'
 
 export enum RegisterSteps {
   'Funding relay',
@@ -18,7 +19,7 @@ export enum RegisterSteps {
 
 interface registerState {
   step: RegisterSteps
-  status: 'idle' | 'success' | 'error' | 'loading'
+  status: 'idle' | 'success' | 'error'
 }
 
 const initialState: registerState = {
@@ -50,9 +51,7 @@ interface validateIsRelayFundedParams {
 }
 
 // step 1 -> 2
-const validateIsRelayFunded = createAsyncThunk<boolean,
-validateIsRelayFundedParams,
-{ fulfilledMeta: null }>(
+const validateIsRelayFunded = createAsyncThunk<boolean, validateIsRelayFundedParams, { fulfilledMeta: null }>(
   'register/validateIsRelayFunded',
   async ({
     account,
@@ -83,10 +82,7 @@ interface validateOwnerInStakeManagerParams {
   provider: providers.BaseProvider
 }
 
-const validateOwnerInStakeManager = createAsyncThunk<boolean,
-validateOwnerInStakeManagerParams,
-{ fulfilledMeta: null }>(
-  'register/validateOwnerInStakeManager',
+export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwnerInStakeManagerParams, { fulfilledMeta: null }>('register/validateOwnerInStakeManager',
   async ({
     account,
     relay,
@@ -104,8 +100,8 @@ validateOwnerInStakeManagerParams,
       const { owner } = (await stakeManager
         .getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        // dispatch(validateIsHubAuthorized({ relayManagerAddress, relayHubAddress, provider }))
-        //   .catch(console.error)
+        dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider }))
+          .catch(console.error)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -115,23 +111,32 @@ validateOwnerInStakeManagerParams,
     }
   })
 
-interface validateIsHubAuthorizedParams {
+interface validateIsRelayManagerStakedParams {
   relayManagerAddress: Address
   relayHubAddress: Address
   provider: providers.BaseProvider
 }
 
-// step 3 -> 4
-export const validateIsHubAuthorized = createAsyncThunk(
-  'register/validateIsHubAuthorized',
-  async ({ relayManagerAddress, relayHubAddress, provider }: validateIsHubAuthorizedParams, { fulfillWithValue, rejectWithValue }) => {
+// step 1 -> 2 -> 3
+export const validateIsRelayManagerStaked = createAsyncThunk<boolean, validateIsRelayManagerStakedParams, { fulfilledMeta: null }
+>('register/validateIsRelayManagerStaked',
+  async ({ relayManagerAddress, relayHubAddress, provider }: validateIsRelayManagerStakedParams,
+    { fulfillWithValue, rejectWithValue, dispatch, getState }) => {
     try {
       const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, provider)
       await relayHub.verifyRelayManagerStaked(relayManagerAddress)
-      return fulfillWithValue(null)
+      // passes? might be that the relay is ready. let's dispatch a check
+      const state = getState() as RootState
+      dispatch(fetchRelayData(state.relay.relayUrl)).catch(console.error)
+      return fulfillWithValue(true, null)
     } catch (error: any) {
-      // unhandled message
-      return rejectWithValue(error.message)
+      if (error.message.includes('relay manager not staked') === true) {
+        return fulfillWithValue(false, null)
+      }
+      if (error.message.includes('this hub is not authorized by SM') === true) {
+        return fulfillWithValue(true, null)
+      }
+      return rejectWithValue(null)
     }
   })
 
@@ -140,14 +145,16 @@ interface fetchRegisterStateParams {
   account: Address
 }
 
-export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStateParams, { fulfilledMeta: null }>(
-  'register/fetchRegisterStateData',
+export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStateParams, { fulfilledMeta: null }
+>('register/fetchRegisterStateData',
   async ({ provider, account }, { getState, dispatch, fulfillWithValue, rejectWithValue }) => {
     const state = getState() as RootState
     try {
       const relay = state.relay.relay
-      if (relay.ready) { return fulfillWithValue(4, null) }
-      // start the chain
+      if (relay.ready) {
+        return fulfillWithValue(3, null)
+      }
+      // start the chain of checks
       dispatch(validateIsRelayFunded({ account, relay, provider }))
         .catch(rejectWithValue)
       return fulfillWithValue(1, null)
@@ -167,25 +174,26 @@ const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    highlightStepError: (state) => {
+    highlightStepError (state: registerState) {
       state.status = 'error'
     },
-    highlightStepLoading: (state) => {
-      state.status = 'loading'
+    highlightStepIdle (state: registerState) {
+      state.status = 'idle'
     }
   },
   extraReducers: (builder) => {
     // main
     builder.addCase(fetchRegisterStateData.fulfilled, (state, action) => {
-      if (action.payload === 4) {
+      if (action.payload === 3) {
         state.status = 'success'
         state.step = 3
       } else {
+        state.step = 0
         state.status = 'idle'
       }
     })
     builder.addCase(fetchRegisterStateData.pending, (state, action) => {
-      state.status = 'loading'
+      state.status = 'idle'
     })
     builder.addCase(fetchRegisterStateData.rejected, (state, action) => {
       state.status = 'error'
@@ -197,8 +205,7 @@ const registerSlice = createSlice({
       state.step = 1
     })
     builder.addCase(validateOwnerInPingResponse.pending, (state, action) => {
-      state.status = 'loading'
-      state.step = 1
+      state.status = 'idle'
     })
     builder.addCase(validateOwnerInPingResponse.rejected, (state, action) => {
       state.status = 'error'
@@ -206,19 +213,17 @@ const registerSlice = createSlice({
     })
 
     // check relay manager balance
-    // step 1 before transitioning to step 2
+    // a small check before running the validation that takes step 1 -> 2
     builder.addCase(validateIsRelayFunded.fulfilled, (state, action) => {
       if (action.payload) {
-        state.step = 1
-        state.status = 'loading'
+        state.status = 'idle'
       } else {
         state.step = 0
         state.status = 'idle'
       }
     })
     builder.addCase(validateIsRelayFunded.pending, (state) => {
-      state.status = 'loading'
-      state.step = 0
+      state.status = 'idle'
     })
     builder.addCase(validateIsRelayFunded.rejected, (state) => {
       state.status = 'error'
@@ -229,37 +234,41 @@ const registerSlice = createSlice({
     // step 1 -> 2
     builder.addCase(validateOwnerInStakeManager.fulfilled, (state, action) => {
       if (action.payload) {
+        state.step = 1
+      } else {
+        state.step = 0
+      }
+      state.status = 'idle'
+    })
+    builder.addCase(validateOwnerInStakeManager.pending, (state) => {
+      state.status = 'idle'
+      state.step = 0
+    })
+    builder.addCase(validateOwnerInStakeManager.rejected, (state) => {
+      state.status = 'error'
+      state.step = 0
+    })
+
+    // validate hub is authorized
+    // move to next step if action is _rejected_
+    builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
+      if (action.payload) {
         state.step = 2
       } else {
         state.step = 1
       }
       state.status = 'idle'
     })
-    builder.addCase(validateOwnerInStakeManager.pending, (state, action) => {
-      state.status = 'loading'
+    builder.addCase(validateIsRelayManagerStaked.pending, (state) => {
+      state.status = 'idle'
       state.step = 1
     })
-    builder.addCase(validateOwnerInStakeManager.rejected, (state, action) => {
-      state.status = 'error'
+    builder.addCase(validateIsRelayManagerStaked.rejected, (state) => {
+      state.status = 'idle'
       state.step = 1
-    })
-
-    // validate hub is authorized
-    // step 3
-    builder.addCase(validateIsHubAuthorized.fulfilled, (state, action) => {
-      state.step = 3
-      state.status = 'success'
-    })
-    builder.addCase(validateIsHubAuthorized.pending, (state, action) => {
-      state.status = 'loading'
-      state.step = 2
-    })
-    builder.addCase(validateIsHubAuthorized.rejected, (state, action) => {
-      state.status = 'error'
-      state.step = 2
     })
   }
 })
 
-export const { highlightStepError, highlightStepLoading } = registerSlice.actions
+export const { highlightStepError, highlightStepIdle } = registerSlice.actions
 export default registerSlice.reducer
