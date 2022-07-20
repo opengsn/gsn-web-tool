@@ -50,7 +50,7 @@ export default function RegisterRelay () {
         if (isActionableStep) {
           if (currentStep === index && status !== 'error') {
             variant = 'primary'
-          } else if (currentStep === index) {
+          } else if (currentStep === index && status === 'error') {
             variant = 'danger'
           } else {
             variant = ''
