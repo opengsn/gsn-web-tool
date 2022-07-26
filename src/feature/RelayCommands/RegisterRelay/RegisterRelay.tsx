@@ -58,7 +58,7 @@ export default function RegisterRelay () {
         } else if (index === 3 && status === 'idle') {
           variant = ''
         }
-        
+
         return (<ListGroup.Item
           key={step}
           variant={variant}
