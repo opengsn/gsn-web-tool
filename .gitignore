@@ -11,6 +11,9 @@
 # production
 /build
 
+# react-scripts
+/src/react-app-env.d.ts
+
 # misc
 .DS_Store
 .env.local
