@@ -1,4 +1,4 @@
-import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock'
 import { WagmiConfig, createClient } from 'wagmi'
@@ -10,7 +10,6 @@ import { Provider } from 'react-redux'
 
 import App from './routes/App'
 import { getSigners } from './test/utils'
-import { link } from 'fs'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,15 +17,15 @@ export const queryClient = new QueryClient({
       // Prevent Jest from garbage collecting cache
       cacheTime: Infinity,
       // Turn off retries to prevent timeouts
-      retry: false,
-    },
+      retry: false
+    }
   },
   logger: {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     error: () => { },
     log: console.log,
-    warn: console.warn,
-  },
+    warn: console.warn
+  }
 })
 
 const mockProvider = new MockProvider({ chainId: 31337, signer: getSigners()[0] })
@@ -42,9 +41,9 @@ const client = createClient({
         signer: getSigners()[0],
         flags: {
           noSwitchChain: false
-        },
+        }
       }
-    }),
+    })
   ],
   provider: mockProvider,
   queryClient
@@ -58,25 +57,23 @@ const WagmiConfigWrapper = ({ children }: any) => {
   )
 }
 
-
-test('renders connect with ... button if connect', async () => {
-  const linkElement = screen.getByText(/connect with/i)
-  expect(linkElement).toBeInTheDocument()
-})
-
-beforeEach(async () => {
-  await waitFor(() => {
-    const screen = render(<App />, { wrapper: WagmiConfigWrapper })
-  })
-})
-
 describe('with wallet connected', () => {
+  beforeEach(async () => {
+    await waitFor(() => {
+      render(<App />, { wrapper: WagmiConfigWrapper })
+    })
+  })
+
+  test('renders connect with ... button if connect', async () => {
+    const linkElement = screen.getByText(/connect with/i)
+    expect(linkElement).toBeInTheDocument()
+  })
+
   test('does not render connect with ... button if not connected', async () => {
     const linkElement = screen.queryByRole('button', { name: /connect with/i })
     await waitFor(async () => {
-      await connect({ chainId: 31337, connector: client.connectors[0]! })
+      await connect({ chainId: 31337, connector: client.connectors[0] })
     })
-
     expect(linkElement).not.toBeInTheDocument()
   })
 
@@ -91,6 +88,5 @@ describe('with wallet connected', () => {
   test('fetch relay data from url should appear', async () => {
     const fetchRelayDataButton = await screen.getByRole('button', { name: /fetch data/i })
     expect(fetchRelayDataButton).toBeInTheDocument()
-
   })
 })
