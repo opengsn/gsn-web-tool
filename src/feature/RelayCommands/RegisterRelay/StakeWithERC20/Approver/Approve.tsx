@@ -1,22 +1,26 @@
 import { useState, useContext } from 'react'
-import { useContractRead, useContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, useNetwork } from 'wagmi'
 import { ethers } from 'ethers'
 import Button from 'react-bootstrap/Button'
 
-import { TokenContext } from './StakeWithERC20'
-import ErrorButton from '../../../../components/ErrorButton'
-import LoadingButton from '../../../../components/LoadingButton'
+import { TokenContext } from '../StakeWithERC20'
+import ErrorButton from '../../../../../components/ErrorButton'
+import LoadingButton from '../../../../../components/LoadingButton'
 
 import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
-import { useStakeManagerAddress, useAppSelector } from '../../../../hooks'
+import { useStakeManagerAddress, useAppSelector } from '../../../../../hooks'
+import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 
-export default function Approve () {
+export default function Approver () {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
+  const defaultStateSwitchers = useDefaultStateSwitchers()
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
+
+  const { chain } = useNetwork()
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
@@ -37,7 +41,25 @@ export default function Approve () {
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'approve',
-    args: [stakeManagerAddress, approveAmount]
+    args: [stakeManagerAddress, approveAmount],
+    onSuccess (data) {
+      let infoMsg
+      if (chain?.blockExplorers !== undefined) {
+        infoMsg = (
+          <span>
+            Approving token for spend:<br />
+            <a href={chain.blockExplorers.default.url + '/' + data.hash}>Block Explorer</a>
+          </span>
+        )
+      } else {
+        infoMsg = (
+          <span>
+            Approving token for spend:<br /><b>{data.hash}</b>
+          </span>
+        )
+      }
+    },
+    ...defaultStateSwitchers
   })
 
   const text = <span>Approve token for spend by Relay Manager</span>
@@ -52,7 +74,7 @@ export default function Approve () {
 
   const ApproveButton = () => {
     if (currentAllowanceData !== undefined) {
-      const text = `Approve for outstanding amount ${ethers.utils.formatEther(approveAmount)}`
+      const text = `Approve for the amount outstanding (${ethers.utils.formatEther(approveAmount)})`
       return <Button onClick={() => approve()}>{text}</Button>
     } else {
       const text = <span>Approve for spend</span>

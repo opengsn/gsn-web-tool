@@ -1,32 +1,36 @@
 import { useEffect, useState, createContext } from 'react'
 import { ethers } from 'ethers'
-import { useAccount, useContract, useBlockNumber, useProvider } from 'wagmi'
+import { useAccount, useContract, useContractRead, useBlockNumber, useProvider } from 'wagmi'
 
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Spinner from 'react-bootstrap/Spinner'
 import { toast } from 'react-toastify'
 
-import { useAppSelector, useStakeInfo, useStakeManagerAddress } from '../../../../hooks'
+import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 
-import TokenInfo from './TokenInfo'
-import Mint from './Mint'
-import Approve from './Approve'
-import Stake from './Stake'
+import Minter from './Minter/Minter'
+import Approver from './Approver/Approve'
+import Staker from './Staker'
 
 import { toNumber } from '@opengsn/common'
 import { constants } from '@opengsn/common/dist/Constants'
 import { isSameAddress } from '@opengsn/common/dist/Utils'
 
 import relayHubAbi from '../../../../contracts/relayHub.json'
+import stakeManagerAbi from '../../../../contracts/stakeManager.json'
 
 import { Address } from '@opengsn/common/dist/types/Aliases'
 import { useFormik } from 'formik'
+import StakeAddedListener from './StakeAddedListener'
 
 export interface TokenContextInterface {
   token: Address
   account: Address
   minimumStakeForToken: ethers.BigNumber
+  stakeManagerAddress: Address
+  listen: boolean
+  setListen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
@@ -35,6 +39,7 @@ export default function StakeWithERC20 () {
   const [token, setToken] = useState<Address | null>(null)
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
+  const [listen, setListen] = useState(false)
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { address } = useAccount()
@@ -55,7 +60,12 @@ export default function StakeWithERC20 () {
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const { data: newStakeInfoData } = useStakeInfo(stakeManagerAddress, relayManagerAddress)
+  const { data: newStakeInfoData } = useContractRead({
+    addressOrName: stakeManagerAddress,
+    contractInterface: stakeManagerAbi,
+    args: relayManagerAddress,
+    functionName: 'getStakeInfo'
+  })
 
   const { data: curBlockData } = useBlockNumber({
     watch: false,
@@ -189,14 +199,20 @@ export default function StakeWithERC20 () {
       <>
         <SwitchTokenButton />
         <hr />
-        <TokenContext.Provider value={{ token: token, account: address, minimumStakeForToken: minimumStakeForToken }}>
-          <TokenInfo />
+        <TokenContext.Provider value={{
+          token: token,
+          account: address,
+          minimumStakeForToken: minimumStakeForToken,
+          stakeManagerAddress: stakeManagerAddress,
+          listen: listen,
+          setListen: setListen
+        }}>
+          <Minter />
           <br />
-          <Mint />
+          <Approver />
           <br />
-          <Approve />
-          <br />
-          <Stake />
+          <Staker />
+          <StakeAddedListener />
         </TokenContext.Provider>
       </>
     )
