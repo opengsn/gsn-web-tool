@@ -52,7 +52,7 @@
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
-    "lint": "eslint -f unix src",
+    "lint": "eslint -f unix .",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
