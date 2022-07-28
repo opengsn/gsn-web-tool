@@ -1,4 +1,4 @@
-import { spawn } from 'child_process'
+const { spawn } = require('child_process')
 const exec = (commands) => {
   spawn(commands, { stdio: 'inherit', shell: true })
 }

@@ -20,10 +20,11 @@ export const fetchRelayData = createAsyncThunk(
   'relay/getaddrRequest',
   async (relayUrl: string, thunkAPI) => {
     try {
-      const response = await axios(relayUrl)
+      const response = await axios.get(relayUrl, {
+        signal: thunkAPI.signal
+      })
 
       const relay = response.data
-      localStorage.setItem('relayUrl', relayUrl)
 
       return { relay }
     } catch (error: any) {
@@ -40,8 +41,8 @@ export const fetchRelayData = createAsyncThunk(
 
 export const deleteRelayData = createAsyncThunk(
   'relay/delete',
-  async () => {
-
+  (_, { dispatch, getState }) => {
+    dispatch(fetchRelayData('')).abort()
   }
 )
 

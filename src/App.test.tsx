@@ -1,15 +1,21 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock'
 import { WagmiConfig, createClient } from 'wagmi'
 import { hardhat } from '@wagmi/core/chains'
-import { connect } from '@wagmi/core'
+import { connect, disconnect } from '@wagmi/core'
 import { QueryClient } from 'react-query'
 import store from './store'
 import { Provider } from 'react-redux'
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from 'react-router-dom'
 
 import App from './routes/App'
 import { getSigners } from './test/utils'
+import Relay from './feature/Relay/Relay'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +35,19 @@ export const queryClient = new QueryClient({
 })
 
 const mockProvider = new MockProvider({ chainId: 31337, signer: getSigners()[0] })
-
+const WagmiConfigWrapper = ({ children }: any) => {
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <WagmiConfig client={client}>
+          <Routes>
+            <Route path="/" element={children} />
+          </Routes>
+        </WagmiConfig>
+      </BrowserRouter>
+    </Provider>
+  )
+}
 const client = createClient({
   autoConnect: false,
   connectors: [
@@ -49,44 +67,68 @@ const client = createClient({
   queryClient
 })
 
-const WagmiConfigWrapper = ({ children }: any) => {
-  return (
-    <Provider store={store}>
-      <WagmiConfig client={client}>{children}</WagmiConfig>
-    </Provider>
-  )
-}
 
-describe('with wallet connected', () => {
-  beforeEach(async () => {
-    await waitFor(() => {
-      render(<App />, { wrapper: WagmiConfigWrapper })
-    })
-  })
-
-  test('renders connect with ... button if connect', async () => {
-    const linkElement = screen.getByText(/connect with/i)
+describe('without wallet connected', () => {
+  test('renders connect with mock connector button if connect', async () => {
+    render(<App />, { wrapper: WagmiConfigWrapper })
+    const linkElement = screen.getByRole('button', { name: /connect with mock/i })
     expect(linkElement).toBeInTheDocument()
   })
 
-  test('does not render connect with ... button if not connected', async () => {
-    const linkElement = screen.queryByRole('button', { name: /connect with/i })
-    await waitFor(async () => {
-      await connect({ chainId: 31337, connector: client.connectors[0] })
-    })
+})
+
+describe('with wallet connected', () => {
+  beforeAll(async () => {
+    await connect({ chainId: 31337, connector: client.connectors[0] })
+  })
+  beforeEach(() => {
+    render(<Relay />, { wrapper: WagmiConfigWrapper })
+  })
+
+  afterEach(cleanup)
+
+  test('does not render connect with  mock connector button if not connected', async () => {
+    const linkElement = screen.queryByText(/connect with mock/i)
     expect(linkElement).not.toBeInTheDocument()
   })
 
-  test('fetch relay data from url form should appear', async () => {
-    const relayUrl = 'test'
-    const formElement = await screen.getByLabelText('Relay URL')
-    await userEvent.type(formElement, relayUrl)
-    // const formElement = screen.getByTestId('url')
-    expect(formElement).toHaveValue(relayUrl)
-  })
+  // test('fetch relay data from url form should appear', async () => {
+  //   const relayUrl = 'test'
+  //   const formElement = screen.getByLabelText('Relay URL')
+  //   await userEvent.type(formElement, relayUrl)
+  //   expect(formElement).toHaveValue(relayUrl)
+  // })
 
   test('fetch relay data from url should appear', async () => {
-    const fetchRelayDataButton = await screen.getByRole('button', { name: /fetch data/i })
+    const fetchRelayDataButton = screen.getByRole('button', { name: /fetch data/i })
     expect(fetchRelayDataButton).toBeInTheDocument()
+  })
+
+  describe('relay url transformation', () => {
+    afterEach(async () => {
+      const switchRelayBtn = screen.getByRole('button', { name: /switch relay/i })
+      await userEvent.click(switchRelayBtn)
+    })
+
+    const urlFormats = ['http://localhost.com/getaddr/'
+      , 'http://localhost.com/getaddr'
+      , 'https://localhost.com/getaddr/'
+      , 'https://localhost.com/getaddr'
+      , 'http://localhost.com/'
+      , 'http://localhost.com'
+      , 'https://localhost.com'
+      , 'localhost.com']
+
+    urlFormats.forEach((i) => {
+      it(`works correctly for ${i}`, async () => {
+        const user = userEvent.setup()
+        const fetchRelayDataButton = screen.getByRole('button', { name: /fetch data/i })
+        const input = screen.getByLabelText('Relay URL')
+        await user.type(input, i)
+
+        await user.click(fetchRelayDataButton)
+        expect(global.window.location.href).toMatch(/.*https%3A%2F%2F.*%2Fgetaddr$/i)
+      })
+    })
   })
 })
