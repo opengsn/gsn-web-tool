@@ -56,7 +56,6 @@ export default function Relay () {
   if (Object.keys(relayData).length === 0 && relay.errorMsg === '') {
     const queryRelayUrl = searchParams.get('relayUrl')
     if (queryRelayUrl !== null && queryRelayUrl.length !== 0) {
-      // dispatch(fetchRelayData(queryRelayUrl)).catch(console.error)
       const dispatchFetchRelay = dispatch(fetchRelayData(queryRelayUrl))
       abortFetch.current = dispatchFetchRelay.abort
       return (<div>

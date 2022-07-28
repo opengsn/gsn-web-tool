@@ -13,7 +13,7 @@ export default function SwitchRelayButton ({ autoFocus, abortFetch }: { autoFocu
       const abortFetchFunc = abortFetch as Function
       abortFetchFunc()
     }
-    dispatch(deleteRelayData()).catch(console.error)
+    dispatch(deleteRelayData())
   }
   return (<Button variant="secondary"
     className="my-2"

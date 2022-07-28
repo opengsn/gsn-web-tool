@@ -131,4 +131,11 @@ describe('with wallet connected', () => {
       })
     })
   })
+
+  // test('fetch relay data from url form should appear', async () => {
+  //   const relayUrl = 'test'
+  //   const formElement = screen.getByLabelText('Relay URL')
+  //   await userEvent.type(formElement, relayUrl)
+  //   expect(formElement).toHaveValue(relayUrl)
+  // })
 })
