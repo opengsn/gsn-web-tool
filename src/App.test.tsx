@@ -67,14 +67,12 @@ const client = createClient({
   queryClient
 })
 
-
 describe('without wallet connected', () => {
   test('renders connect with mock connector button if connect', async () => {
     render(<App />, { wrapper: WagmiConfigWrapper })
     const linkElement = screen.getByRole('button', { name: /connect with mock/i })
     expect(linkElement).toBeInTheDocument()
   })
-
 })
 
 describe('with wallet connected', () => {
@@ -110,14 +108,14 @@ describe('with wallet connected', () => {
       await userEvent.click(switchRelayBtn)
     })
 
-    const urlFormats = ['http://localhost.com/getaddr/'
-      , 'http://localhost.com/getaddr'
-      , 'https://localhost.com/getaddr/'
-      , 'https://localhost.com/getaddr'
-      , 'http://localhost.com/'
-      , 'http://localhost.com'
-      , 'https://localhost.com'
-      , 'localhost.com']
+    const urlFormats = ['http://localhost.com/getaddr/',
+      'http://localhost.com/getaddr',
+      'https://localhost.com/getaddr/',
+      'https://localhost.com/getaddr',
+      'http://localhost.com/',
+      'http://localhost.com',
+      'https://localhost.com',
+      'localhost.com']
 
     urlFormats.forEach((i) => {
       it(`works correctly for ${i}`, async () => {

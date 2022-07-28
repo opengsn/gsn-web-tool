@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { useFormik } from 'formik'
 import { fetchRelayData } from './relaySlice'
 
-import Collapse from 'react-bootstrap/Collapse'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
@@ -16,10 +15,9 @@ import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
 
 import { PingResponse } from '@opengsn/common'
-import { toast, Flip, Id } from 'react-toastify'
+import { toast, Flip } from 'react-toastify'
 
 export default function Relay () {
-  const provider = useProvider()
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
