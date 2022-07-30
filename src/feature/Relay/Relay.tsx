@@ -69,9 +69,7 @@ function Relay () {
   if (chain?.id === chainId && Object.keys(relayData).length > 0) {
     return (
       <div className="row">
-        <div className="col-3">
-          <div className="row"><SwitchRelayButton /></div>
-        </div>
+        <SwitchRelayButton />
         <hr />
         <RelayInfo />
         <RelayCommands />

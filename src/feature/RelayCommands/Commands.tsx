@@ -16,7 +16,7 @@ export default function RelayCommands () {
     return (<>
       <Button
         aria-controls="register-relay-form"
-        variant="primary"
+        variant="outline-primary"
         className="mt-2"
         disabled
       >
@@ -24,7 +24,7 @@ export default function RelayCommands () {
       </Button>
       <Button
         aria-controls="register-relay-form"
-        variant="danger"
+        variant="outline-danger"
         className="mt-2"
         disabled
       >
