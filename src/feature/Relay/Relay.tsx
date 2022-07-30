@@ -68,26 +68,13 @@ function Relay () {
 
   if (chain?.id === chainId && Object.keys(relayData).length > 0) {
     return (
-      <div className='row'>
-        <>
-          <Button
-            onClick={() => setShowInfo(!showInfo)}
-            variant="info"
-            aria-controls="relay-info"
-            aria-expanded={showInfo}
-          >
-            Show relay data
-          </Button>
-          <Collapse in={showInfo} unmountOnExit={true} >
-            <>
-              <div id="relay-info">
-                <RelayInfo />
-              </div>
-            </>
-          </Collapse>
-        </>
+      <div className="row">
+        <div className="col-3">
+          <div className="row"><SwitchRelayButton /></div>
+        </div>
+        <hr />
+        <RelayInfo />
         <RelayCommands />
-        <SwitchRelayButton />
       </div>
     )
   }

@@ -8,7 +8,7 @@ export default function SwitchRelayButton () {
     dispatch(deleteRelayData()).catch(console.error)
   }
   return (<Button variant="secondary"
-    className="my-2"
+    className="my-2 rounded-pill"
     onClick={handleDeleteRelayData}
-  >Switch relay</Button>)
+  >{' ↩ '}</Button>)
 }
