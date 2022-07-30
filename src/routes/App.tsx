@@ -2,7 +2,6 @@ import React from 'react'
 import { useAccount } from 'wagmi'
 
 import MetamaskButton from '../components/MetamaskButton'
-import DisconnectButton from '../components/DisconnectButton'
 import Relay from '../feature/Relay/Relay'
 
 import Container from 'react-bootstrap/Container'
@@ -17,8 +16,6 @@ export default function App () {
           (connector !== undefined && address !== undefined && isConnected && status === 'connected')
             ? <>
               <Relay />
-              <hr />
-              <DisconnectButton />
             </> : <MetamaskButton />
         }
       </Container>
