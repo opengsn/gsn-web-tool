@@ -97,13 +97,10 @@ export default function Relay () {
   if (chain?.id === chainId && Object.keys(relayData).length > 0) {
     return (
       <div className="row">
-        <>
-          <div id="relay-info">
-            <RelayInfo />
-          </div>
-        </>
-        <RelayCommands />
         <SwitchRelayButton />
+        <hr />
+        <RelayInfo />
+        <RelayCommands />
       </div>
     )
   }
