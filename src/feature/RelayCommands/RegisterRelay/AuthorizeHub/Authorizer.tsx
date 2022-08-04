@@ -45,7 +45,7 @@ export default function Authorizer () {
     }
 
     if (relayHub !== undefined) {
-      isHubAuthorized().catch((e) => toast.error(e.message))
+      isHubAuthorized().catch(console.error)
     }
   }, [relayHub, relayManagerAddress])
 

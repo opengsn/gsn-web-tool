@@ -20,10 +20,11 @@ export const fetchRelayData = createAsyncThunk(
   'relay/getaddrRequest',
   async (relayUrl: string, thunkAPI) => {
     try {
-      const response = await axios(relayUrl)
+      const response = await axios.get(relayUrl, {
+        signal: thunkAPI.signal
+      })
 
       const relay = response.data
-      localStorage.setItem('relayUrl', relayUrl)
 
       return { relay }
     } catch (error: any) {
@@ -38,17 +39,14 @@ export const fetchRelayData = createAsyncThunk(
   }
 )
 
-export const deleteRelayData = createAsyncThunk(
-  'relay/delete',
-  async () => {
-
-  }
-)
-
 const relaySlice = createSlice({
   name: 'relay',
   initialState,
   reducers: {
+    deleteRelayData (state: RelayState) {
+      state.relay = initialState.relay
+      state.errorMsg = ''
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchRelayData.fulfilled, (state, action) => {
@@ -60,13 +58,14 @@ const relaySlice = createSlice({
       state.relay = action.payload.relay
     })
     builder.addCase(fetchRelayData.rejected, (state, action) => {
-      state.errorMsg = `Something went wrong. ${action.error.message as string}`
-    })
-    builder.addCase(deleteRelayData.fulfilled, (state) => {
-      state.errorMsg = ''
-      state.relay = initialState.relay
+      if (action.error.message === 'Aborted') {
+        state.errorMsg = ''
+      } else {
+        state.errorMsg = `Something went wrong. ${action.error.message as string}`
+      }
     })
   }
 })
 
+export const { deleteRelayData } = relaySlice.actions
 export default relaySlice.reducer

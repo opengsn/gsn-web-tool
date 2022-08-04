@@ -10,6 +10,7 @@ import StakeManagerAbi from '../../../../contracts/stakeManager.json'
 import { useAppSelector } from '../../../../hooks'
 import ErrorButton from '../../../../components/ErrorButton'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
+import TransactionSuccessToast from '../../../../components/TransactionSuccessToast'
 
 export default function Stake () {
   const defaultStateSwitchers = useDefaultStateSwitchers()
@@ -28,8 +29,9 @@ export default function Stake () {
       functionName: 'stakeForRelayManager',
       args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken],
       onSuccess (data) {
+        const text = 'Staked relay'
+        toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
         setListen(true)
-        toast.info(<span>Staked with tx: <br /> <b>{data.hash}</b></span>)
       },
       ...defaultStateSwitchers
     }

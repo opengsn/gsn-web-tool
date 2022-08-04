@@ -11,9 +11,8 @@ export default function DisconnectButton () {
   return (
     <div className="row">
       <Button onClick={() => {
-        dispatch(deleteRelayData()).then(() => {
-          disconnect()
-        }).catch(console.error)
+        dispatch(deleteRelayData())
+        disconnect()
       }}>Disconnect wallet</Button>
     </div>
   )
