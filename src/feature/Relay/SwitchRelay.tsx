@@ -16,8 +16,8 @@ export default function SwitchRelayButton ({ autoFocus, abortFetch }: { autoFocu
     dispatch(deleteRelayData())
   }
   return (<Button variant="secondary"
-    className="my-2"
+    className="my-2 rounded-pill"
     onClick={handleDeleteRelayData}
     autoFocus={autoFocus !== undefined ? autoFocus : false}
-  >Switch relay</Button>)
+  >{' ← '}</Button>)
 }

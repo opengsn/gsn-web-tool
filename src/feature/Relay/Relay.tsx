@@ -103,13 +103,10 @@ export default function Relay () {
   if (chain?.id === chainId && relayDataFetched) {
     return (
       <div className="row">
-        <>
-          <div id="relay-info">
-            <RelayInfo />
-          </div>
-        </>
-        <RelayCommands />
         <SwitchRelayButton />
+        <hr />
+        <RelayInfo />
+        <RelayCommands />
       </div>
     )
   }
