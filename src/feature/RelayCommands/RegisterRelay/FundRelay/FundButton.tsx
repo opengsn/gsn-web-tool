@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { useNetwork, useSendTransaction } from 'wagmi'
 import { toast } from 'react-toastify'
+
 import Button from 'react-bootstrap/Button'
 
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
@@ -8,13 +9,12 @@ import { FunderContext } from './Funder'
 
 import LoadingButton from '../../../../components/LoadingButton'
 import ErrorButton from '../../../../components/ErrorButton'
+import TransactionSuccessToast from '../../../../components/TransactionSuccessToast'
 
 export default function FundButton () {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { relayManagerAddress, funds, setListen } = useContext(FunderContext)
   const gasPrice = '22000000000'
-
-  const { chain } = useNetwork()
 
   const { error: fundTxError, isIdle, isError, isLoading, isSuccess, sendTransaction: fundRelay } =
     useSendTransaction({
@@ -25,23 +25,9 @@ export default function FundButton () {
         gasPrice: gasPrice
       },
       onSuccess (data) {
-        let infoMsg
-        if (chain?.blockExplorers !== undefined) {
-          infoMsg = (
-            <span>
-              Relay is being funded:<br />
-              <a href={chain.blockExplorers.default.url + '/' + data.hash}>Block Explorer</a>
-            </span>
-          )
-        } else {
-          infoMsg = (
-            <span>
-              Relay is being funded.<br /><b>{data.hash}</b>
-            </span>
-          )
-        }
+        const text = 'Funded relay.'
+        toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
         setListen(true)
-        toast.info(infoMsg)
       },
       ...defaultStateSwitchers
     })

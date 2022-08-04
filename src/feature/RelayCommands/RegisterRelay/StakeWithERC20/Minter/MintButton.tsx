@@ -10,26 +10,30 @@ import ErrorButton from '../../../../../components/ErrorButton'
 
 import { TokenContext } from '../StakeWithERC20'
 import { MinterContext } from './Minter'
+import TransactionSuccessToast from '../../../../../components/TransactionSuccessToast'
 
 export default function MintButton () {
   const { token } = useContext(TokenContext)
   const { mintAmount } = useContext(MinterContext)
-
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { error: mintTokenError, isSuccess, isError, isLoading, write: mintToken } = useContractWrite(
+
+  const { error: mintTokenError, isError, isLoading, write: mintToken } = useContractWrite(
     {
       addressOrName: token,
       contractInterface: iErc20TokenAbi,
       functionName: 'deposit',
       overrides: { value: mintAmount },
       onSuccess (data) {
-        toast.info(`Tokens minted with tx ${data.hash}`)
+        const text = 'Minting token'
+        toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
       },
       ...defaultStateSwitchers
     }
   )
 
   const MintButton = () => {
+    const MintSuccess = <div>Minted succesfully</div>
+
     const MintError = () => {
       const text = `Mint outstanding amount: ${ethers.utils.formatEther(mintAmount)}`
       return (
@@ -38,6 +42,7 @@ export default function MintButton () {
         </ErrorButton>
       )
     }
+
     const text = <span>Mint {ethers.utils.formatEther(mintAmount)}</span>
     return (
       <>

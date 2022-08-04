@@ -10,6 +10,8 @@ import LoadingButton from '../../../../../components/LoadingButton'
 import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useStakeManagerAddress, useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
+import { toast } from 'react-toastify'
+import TransactionSuccessToast from '../../../../../components/TransactionSuccessToast'
 
 export default function Approver () {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
@@ -43,21 +45,8 @@ export default function Approver () {
     functionName: 'approve',
     args: [stakeManagerAddress, approveAmount],
     onSuccess (data) {
-      let infoMsg
-      if (chain?.blockExplorers !== undefined) {
-        infoMsg = (
-          <span>
-            Approving token for spend:<br />
-            <a href={chain.blockExplorers.default.url + '/' + data.hash}>Block Explorer</a>
-          </span>
-        )
-      } else {
-        infoMsg = (
-          <span>
-            Approving token for spend:<br /><b>{data.hash}</b>
-          </span>
-        )
-      }
+      const text = 'Approved Stake Manager for spend'
+      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
     },
     ...defaultStateSwitchers
   })

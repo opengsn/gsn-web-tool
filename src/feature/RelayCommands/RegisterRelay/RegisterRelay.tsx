@@ -71,7 +71,13 @@ export default function RegisterRelay () {
   useEffect(() => {
     if (address !== undefined) {
       dispatch(fetchRegisterStateData({ provider, account: address })).
-        catch((e) => { toast.error(e.message) })
+        catch((e) => {
+          console.log(e.message)
+          toast.error(<>
+            <p>Error while fetching relay status</p>
+            <p>See console for error message</p>
+          </>)
+        })
     }
   }, [])
 

@@ -69,10 +69,7 @@ export default function StakeWithERC20 () {
 
   const { data: curBlockData } = useBlockNumber({
     watch: false,
-    enabled: false,
-    onSuccess (data) {
-      findFirstToken(data).catch((e) => toast.error(e.message))
-    }
+    enabled: false
   })
 
   const TokenAddressForm = () => {
@@ -107,7 +104,15 @@ export default function StakeWithERC20 () {
   const FindFirstTokenButton = () => {
     const handleFindFirstTokenButton = () => {
       if (curBlockData !== undefined) {
-        findFirstToken(curBlockData).then(setToken).catch((e) => toast.error(e.message))
+        findFirstToken(curBlockData).then(setToken).catch((e) => {
+          console.error(e.message)
+          toast.error(
+            <>
+              <p>Error while fetching first available token</p>
+              <p>See console for error message</p>
+            </>
+          )
+        })
       }
     }
 
@@ -151,7 +156,15 @@ export default function StakeWithERC20 () {
         setMinimumStakeForToken(minimumStake[0])
       }
 
-      fetchMinimumStakeForToken().catch((e) => toast.error(e.message))
+      fetchMinimumStakeForToken().catch((e) => {
+        console.error(e.message)
+        toast.error(
+          <>
+            <p>Error while fetching minimum stake for token</p>
+            <p>See console for error message</p>
+          </>
+        )
+      })
     }
   }, [token, relayHub.functions])
 
