@@ -19,5 +19,5 @@ export default function SwitchRelayButton ({ autoFocus, abortFetch }: { autoFocu
     className="my-2 rounded-pill"
     onClick={handleDeleteRelayData}
     autoFocus={autoFocus !== undefined ? autoFocus : false}
-  >{' ← '}</Button>) 
+  >{' ← '}</Button>)
 }
