@@ -6,12 +6,14 @@ import { PingResponse } from '@opengsn/common'
 
 interface RelayState {
   relay: PingResponse
+  loading: boolean
   relayUrl: string
   errorMsg: string
 }
 
 const initialState = {
   relay: {},
+  loading: false,
   relayUrl: '',
   errorMsg: ''
 } as RelayState
@@ -56,6 +58,11 @@ const relaySlice = createSlice({
       state.errorMsg = ''
       state.relayUrl = action.meta.arg
       state.relay = action.payload.relay
+      state.loading = false
+    })
+    builder.addCase(fetchRelayData.pending, (state) => {
+      state.errorMsg = ''
+      state.loading = true
     })
     builder.addCase(fetchRelayData.rejected, (state, action) => {
       if (action.error.message === 'Aborted') {
@@ -63,6 +70,7 @@ const relaySlice = createSlice({
       } else {
         state.errorMsg = `Something went wrong. ${action.error.message as string}`
       }
+      state.loading = false
     })
   }
 })
