@@ -9,6 +9,7 @@ import { fetchRegisterStateData, RegisterSteps } from './registerRelaySlice'
 import Authorizer from './AuthorizeHub/Authorizer'
 import Funder from './FundRelay/Funder'
 import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
+import Minter from './Minter/Minter'
 
 import ListGroup from 'react-bootstrap/ListGroup'
 import { toast } from 'react-toastify'
@@ -46,7 +47,7 @@ export default function RegisterRelay () {
       .map((step, index) => {
         let variant = (currentStep >= index) ? 'success' : ''
 
-        const isActionableStep = currentStep === index && currentStep !== 3
+        const isActionableStep = currentStep === index && currentStep !== 4
         if (isActionableStep) {
           if (currentStep === index && status !== 'error') {
             variant = 'primary'
@@ -55,7 +56,7 @@ export default function RegisterRelay () {
           } else {
             variant = ''
           }
-        } else if (index === 3 && status === 'idle') {
+        } else if (index === 4 && status === 'idle') {
           variant = ''
         }
 
@@ -70,9 +71,8 @@ export default function RegisterRelay () {
 
   useEffect(() => {
     if (address !== undefined) {
-      dispatch(fetchRegisterStateData({ provider, account: address })).
-        catch((e) => {
-          console.log(e.message)
+      dispatch(fetchRegisterStateData({ provider, account: address }))
+        .catch((e) => {
           toast.error(<>
             <p>Error while fetching relay status</p>
             <p>See console for error message</p>
@@ -93,8 +93,9 @@ export default function RegisterRelay () {
                 <Funder />
               </>
               : null}
-            {currentStep === 1 ? <StakeWithERC20 /> : null}
-            {currentStep === 2 ? <Authorizer /> : null}
+            {currentStep === 1 ? <Minter /> : null}
+            {currentStep === 2 ? <StakeWithERC20 /> : null}
+            {currentStep === 3 ? <Authorizer /> : null}
           </div>
         </Collapse>
         : null}

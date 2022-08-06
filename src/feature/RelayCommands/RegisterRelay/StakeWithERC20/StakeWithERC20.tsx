@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 
 import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 
-import Minter from './Minter/Minter'
+/* import Minter from './Minter/Minter' */
 import Approver from './Approver/Approve'
 import Staker from './Staker'
 
@@ -192,7 +192,7 @@ export default function StakeWithERC20 () {
     const isaddressRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, address))
 
     if (!isaddressRelayOwner) {
-      return <div>- The relay is already owned by {owner}, our data.address={address}</div>
+      return <div>- The relay is already owned by {owner}, connected account: data.address={address}</div>
     }
   }
 
@@ -220,7 +220,7 @@ export default function StakeWithERC20 () {
           listen: listen,
           setListen: setListen
         }}>
-          <Minter />
+          {/* <Minter /> */}
           <br />
           <Approver />
           <br />

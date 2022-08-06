@@ -7,11 +7,12 @@ import relayHubAbi from '../../../contracts/relayHub.json'
 import stakeManagerAbi from '../../../contracts/stakeManager.json'
 import { isSameAddress } from '@opengsn/common/dist/Utils'
 import { Address } from '@opengsn/common/dist/types/Aliases'
-import { PingResponse } from '@opengsn/common'
+import { PingResponse, constants } from '@opengsn/common'
 import { fetchRelayData } from '../../Relay/relaySlice'
 
 export enum RegisterSteps {
   'Funding relay',
+  'Select token and mint',
   'Staking with ERC20 token',
   'Authorizing Hub',
   'Relay is ready',
@@ -20,11 +21,13 @@ export enum RegisterSteps {
 interface registerState {
   step: RegisterSteps
   status: 'idle' | 'success' | 'error'
+  token: Address | ''
 }
 
 const initialState: registerState = {
   step: 0,
-  status: 'idle'
+  status: 'idle',
+  token: ''
 }
 
 interface validateOwnerInPingResponseParams {
@@ -41,6 +44,41 @@ const validateOwnerInPingResponse = createAsyncThunk(
       return fulfillWithValue(value)
     } catch (error: any) {
       return rejectWithValue('could not validate owner in /getaddr response')
+    }
+  })
+
+interface checkIsMintingRequiredParams {
+  account: Address
+  relay: PingResponse
+  provider: providers.BaseProvider
+}
+
+// step 0 -> 1
+const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
+  'register/checkIsMintingRequired',
+  async ({
+    account,
+    relay,
+    provider
+  }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
+    try {
+      const { relayManagerAddress, relayHubAddress } = relay
+      const accountBalance = await provider.getBalance(account)
+      const relayHub = new ethers.Contract(relay.relayHubAddress, relayHubAbi, provider)
+      const stakeManagerAddress = await relayHub.getStakeManager()
+      const stakeManager = new ethers.Contract(stakeManagerAddress, stakeManagerAbi, provider)
+      const { token } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
+      const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
+      if (token === constants.ZERO_ADDRESS && accountBalance.lt(minimumStake[0])) {
+        dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider }))
+          .catch(console.error)
+        return fulfillWithValue(true, null)
+      } else {
+        return fulfillWithValue(false, null)
+      }
+    } catch (e: any) {
+      console.log(e)
+      return rejectWithValue(false)
     }
   })
 
@@ -72,6 +110,7 @@ const validateIsRelayFunded = createAsyncThunk<boolean, validateIsRelayFundedPar
         return fulfillWithValue(false, null)
       }
     } catch (error: any) {
+      alert('wut')
       return rejectWithValue('could not fetch relay manager balance')
     }
   })
@@ -100,8 +139,8 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
       const { owner } = (await stakeManager
         .getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider }))
-          .catch(console.error)
+        alert('test')
+        dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -124,7 +163,9 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
     { fulfillWithValue, rejectWithValue, dispatch, getState }) => {
     try {
       const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, provider)
-      const test = await relayHub.verifyRelayManagerStaked(relayManagerAddress)
+
+      await relayHub.verifyRelayManagerStaked(relayManagerAddress)
+
       // passes? might be that the relay is ready. let's check
       const state = getState() as RootState
       if (state.relay.relay.ready) {
@@ -179,6 +220,16 @@ const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
+    selectToken (state: registerState, action) {
+      state.token = action.payload.address
+    },
+    isTokenSelected (state: registerState) {
+      if (state.token !== '') {
+        state.step = 3
+      } else {
+        state.step = 2
+      }
+    },
     highlightStepError (state: registerState) {
       state.status = 'error'
     },
@@ -197,22 +248,22 @@ const registerSlice = createSlice({
         state.status = 'idle'
       }
     })
-    builder.addCase(fetchRegisterStateData.pending, (state, action) => {
+    builder.addCase(fetchRegisterStateData.pending, (state) => {
       state.status = 'idle'
     })
-    builder.addCase(fetchRegisterStateData.rejected, (state, action) => {
+    builder.addCase(fetchRegisterStateData.rejected, (state) => {
       state.status = 'error'
     })
 
     // owner per config
-    builder.addCase(validateOwnerInPingResponse.fulfilled, (state, action) => {
+    builder.addCase(validateOwnerInPingResponse.fulfilled, (state) => {
       state.status = 'idle'
       state.step = 1
     })
-    builder.addCase(validateOwnerInPingResponse.pending, (state, action) => {
+    builder.addCase(validateOwnerInPingResponse.pending, (state) => {
       state.status = 'idle'
     })
-    builder.addCase(validateOwnerInPingResponse.rejected, (state, action) => {
+    builder.addCase(validateOwnerInPingResponse.rejected, (state) => {
       state.status = 'error'
       state.step = 1
     })
@@ -254,23 +305,31 @@ const registerSlice = createSlice({
       state.step = 0
     })
 
+    builder.addCase(checkIsMintingRequired.rejected, (state) => {
+      state.status = 'idle'
+    })
+    builder.addCase(checkIsMintingRequired.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.step = 2
+        state.status = 'idle'
+      } else {
+        state.status = 'idle'
+      }
+    })
+
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
       if (action.payload === 4) {
-        // 'Relay is ready' - highlighted in green
         state.step = 3
         state.status = 'success'
       } else if (action.payload === 3) {
-        // 'Relay is ready'
         state.step = 3
         state.status = 'idle'
       } else if (action.payload === 2) {
-        // 'Authorizing Hub'
         state.step = 2
         state.status = 'idle'
       } else {
-        // 'Staking with ERC20 token'
         state.step = 1
         state.status = 'idle'
       }
