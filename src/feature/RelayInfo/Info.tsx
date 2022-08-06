@@ -1,7 +1,7 @@
 import { isSameAddress, PingResponse } from '@opengsn/common'
 import { ethers } from 'ethers'
-import { Table } from 'react-bootstrap'
 import { useAccount, useBalance, useContractRead } from 'wagmi'
+import Table from 'react-bootstrap/Table'
 
 import relayHubAbi from '../../contracts/relayHub.json'
 import { useAppSelector } from '../../hooks'
