@@ -39,14 +39,13 @@ export default function RegisterRelay () {
       </Button>
     )
   }
-
   const RegisterFlowSteps = () => {
     const steps = Object.keys(RegisterSteps)
     const listElems = steps.filter(i => isNaN(parseInt(i, 10)))
       .map((step, index) => {
         let variant = (currentStep >= index) ? 'success' : ''
 
-        const isActionableStep = currentStep === index && currentStep !== 3
+        const isActionableStep = currentStep === index && currentStep !== 4
         if (isActionableStep) {
           if (currentStep === index && status !== 'error') {
             variant = 'primary'
@@ -55,7 +54,7 @@ export default function RegisterRelay () {
           } else {
             variant = ''
           }
-        } else if (index === 3 && status === 'idle') {
+        } else if (index === 4 && status === 'idle') {
           variant = ''
         }
 
@@ -93,8 +92,8 @@ export default function RegisterRelay () {
                 <Funder />
               </>
               : null}
-            {currentStep === 1 ? <StakeWithERC20 /> : null}
-            {currentStep === 2 ? <Authorizer /> : null}
+            {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
+            {currentStep === 3 ? <Authorizer /> : null}
           </div>
         </Collapse>
         : null}
