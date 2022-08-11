@@ -1,4 +1,4 @@
-import { useContractWrite, useNetwork } from 'wagmi'
+import { usePrepareContractWrite, useContractWrite, useNetwork } from 'wagmi'
 import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import StakeManagerAbi from '../../../../contracts/stakeManager.json'
@@ -27,20 +27,22 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const { error: authorizeTxError, isError, isLoading, isSuccess, write: authorizeHub } = useContractWrite(
-    {
-      addressOrName: stakeManagerAddress,
-      contractInterface: StakeManagerAbi,
-      functionName: 'authorizeHubByOwner',
-      args: [relayManagerAddress, relayHubAddress],
-      onSuccess (data) {
-        const text = 'Authorized Hub'
-        toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-        setListen(true)
-      },
-      ...defaultStateSwitchers
+  const { config, error: authorizeTxError, isLoading, isSuccess, isError } = usePrepareContractWrite({
+    addressOrName: stakeManagerAddress,
+    contractInterface: StakeManagerAbi,
+    functionName: 'authorizeHubByOwner',
+    args: [relayManagerAddress, relayHubAddress]
+  })
+
+  const { write: authorizeHub } = useContractWrite({
+    ...config,
+    ...defaultStateSwitchers,
+    onSuccess (data) {
+      const text = 'Authorized Hub'
+      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+      setListen(true)
     }
-  )
+  })
 
   const text = <span>Authorize Hub</span>
 
@@ -50,6 +52,6 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
   if (isSuccess) return <span>Authorized. Wait before relay is ready</span>
 
   return (
-    <Button onClick={() => authorizeHub()}>Authorize Hub</Button>
+    <Button onClick={() => authorizeHub?.()}>Authorize Hub</Button>
   )
 }

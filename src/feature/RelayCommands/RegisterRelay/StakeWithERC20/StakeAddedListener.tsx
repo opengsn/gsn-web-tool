@@ -31,24 +31,11 @@ export default function StakeAddedListener () {
       const askIfRelayIsStaked = async () => {
         const sleepCount = 15
         const sleepMs = 5000
-        const relayAddress = relayManagerAddress
         let i = 0
         while (true) {
           console.log('ax')
           await sleep(sleepMs)
-          try {
-            await relayHub.verifyRelayManagerStaked(relayAddress)
-          } catch (e: any) {
-            console.log(e)
-            if (e.message.match(/not authorized/) !== null) {
-              toast.info('poll caught')
-              dispatch(check).catch(toast.error)
-              break
-            }
-            if (e.message.match(/not staked/) !== null) {
-              console.log('not staked')
-            }
-          }
+          dispatch(check).catch(toast.error)
           if (sleepCount === i++) {
             throw new Error('Failed to fetch stake')
           }
@@ -56,7 +43,7 @@ export default function StakeAddedListener () {
       }
       askIfRelayIsStaked().catch(toast.error)
     }
-  }, [listen, check, relayHub, dispatch, relayHubAddress, relayManagerAddress])
+  }, [listen, check, dispatch])
 
   useContractEvent({
     addressOrName: stakeManagerAddress,

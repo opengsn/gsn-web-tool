@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { useNetwork, useSendTransaction } from 'wagmi'
+import { useNetwork, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 import { toast } from 'react-toastify'
 
 import Button from 'react-bootstrap/Button'
@@ -14,23 +14,23 @@ import TransactionSuccessToast from '../../../../components/TransactionSuccessTo
 export default function FundButton () {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { relayManagerAddress, funds, setListen } = useContext(FunderContext)
-  const gasPrice = '22000000000'
 
-  const { error: fundTxError, isIdle, isError, isLoading, isSuccess, sendTransaction: fundRelay } =
-    useSendTransaction({
-      request: {
-        to: relayManagerAddress,
-        value: funds,
-        gasLimit: 50000,
-        gasPrice: gasPrice
-      },
-      onSuccess (data) {
-        const text = 'Funded relay.'
-        toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-        setListen(true)
-      },
-      ...defaultStateSwitchers
-    })
+  const { config, error: prepareFundTxError, isError: prepareIsError } = usePrepareSendTransaction({
+    request: {
+      to: relayManagerAddress,
+      value: funds
+    }
+  })
+
+  const { sendTransaction: fundRelay, error: fundTxError, isIdle, isError, isLoading, isSuccess } = useSendTransaction({
+    ...config,
+    ...defaultStateSwitchers,
+    onSuccess (data) {
+      const text = 'Funded relay.'
+      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+      setListen(true)
+    }
+  })
 
   function createButton () {
     let FundButton
@@ -38,9 +38,10 @@ export default function FundButton () {
 
     if (isIdle) {
       FundButton = <>
-        <Button disabled={isLoading} onClick={() => fundRelay()}>
+        <Button disabled={isLoading} onClick={() => fundRelay?.()}>
           {text}
         </Button>
+        { prepareIsError ? <span>Error: {prepareFundTxError?.message}</span> : null}
       </>
     }
 
@@ -49,7 +50,7 @@ export default function FundButton () {
     }
 
     if (isError) {
-      FundButton = <ErrorButton message={fundTxError?.message} onClick={() => fundRelay()}>
+      FundButton = <ErrorButton message={fundTxError?.message} onClick={() => fundRelay?.()}>
         <span>Retry {text}</span>
       </ErrorButton>
     }
