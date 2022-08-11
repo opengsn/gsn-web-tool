@@ -25,9 +25,9 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     const { owner, token } = stakeInfo[0]
     const ShowOwner = () => {
       if (address !== undefined && isSameAddress(address, owner)) {
-        return <b>(the connected account)</b>
+        return <b>currently connected</b>
       } else {
-        return <b>(not the connected account)</b>
+        return <b>not the connected account</b>
       }
     }
 
