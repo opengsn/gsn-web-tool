@@ -49,7 +49,7 @@ export default function Minter () {
     <MinterContext.Provider value={{
       mintAmount: mintAmount,
       outstandingMintAmount: outstandingMintAmount,
-      setMintAmount: setMintAmount,
+      setMintAmount: setMintAmount
     }}>
       <Tabs defaultActiveKey="basic"
         unmountOnExit={true}
