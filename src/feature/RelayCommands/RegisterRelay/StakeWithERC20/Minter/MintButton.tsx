@@ -48,7 +48,7 @@ export default function MintButton () {
       <>
         {isError
           ? <MintError />
-          : <Button onClick={() => mintToken()} className="my-2">{text}</Button>
+          : <Button onClick={() => mintToken()} className="mt-2">{text}</Button>
         }
       </>
     )

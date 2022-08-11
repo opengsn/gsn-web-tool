@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 
 import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 
+import StakingTokenInfo from './StakingTokenInfo'
 import Minter from './Minter/Minter'
 import Approver from './Approver/Approve'
 import Staker from './Staker'
@@ -162,12 +163,6 @@ export default function StakeWithERC20 () {
           setToken(newStakeInfo.token)
           setStakingTokenIsSet(true)
         }
-        console.log(newStakeInfo)
-        console.log(newStakeInfo)
-        console.log(newStakeInfo)
-        console.log(newStakeInfo)
-        console.log(newStakeInfo)
-
         setStakeManagerOwnerIsSet(true)
       }
     }
@@ -224,7 +219,7 @@ export default function StakeWithERC20 () {
   if (!stakeManagerOwnerIsSet) return (<WaitingMessage />)
 
   if (token !== null && address !== undefined && minimumStakeForToken !== null) {
-    if (minimumStakeForToken?.isZero()) {
+    if (minimumStakeForToken?.isZero() && !listen) {
       return (
         <>
           <SwitchTokenButton />
@@ -235,8 +230,6 @@ export default function StakeWithERC20 () {
     }
     return (
       <>
-        <SwitchTokenButton />
-        <hr />
         <TokenContext.Provider value={{
           token: token,
           account: address,
@@ -245,15 +238,19 @@ export default function StakeWithERC20 () {
           listen: listen,
           setListen: setListen
         }}>
-          {currentStep}
+          <div><StakingTokenInfo /></div>
+          <SwitchTokenButton />
+          <hr />
           {currentStep === 1
             ? <><Minter />< br /></>
             : null}
           {currentStep === 2
-            ? <><Approver />
+            ? <>
+              <Approver />
               <br />
               <Staker />
-              <StakeAddedListener /></>
+              <StakeAddedListener />
+            </>
             : null}
         </TokenContext.Provider>
       </>

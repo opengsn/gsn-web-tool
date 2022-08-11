@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useRef, useEffect, useContext } from 'react'
 import { useFormik } from 'formik'
 import { ethers } from 'ethers'
 
@@ -6,9 +6,12 @@ import Form from 'react-bootstrap/Form'
 import { ButtonGroup, Button } from 'react-bootstrap'
 
 import { MinterContext } from './Minter'
+import { TokenContext } from '../StakeWithERC20'
 
 export default function MintAmountForm () {
+  const { minimumStakeForToken } = useContext(TokenContext)
   const { outstandingMintAmount, mintAmount, setMintAmount } = useContext(MinterContext)
+
   let initialAmount = Number(ethers.utils.formatEther(mintAmount))
   if (outstandingMintAmount !== null) initialAmount = Number(ethers.utils.formatEther(mintAmount))
 
@@ -24,6 +27,12 @@ export default function MintAmountForm () {
     }
   })
 
+  useEffect(() => {
+    return () => {
+      setMintAmount(minimumStakeForToken)
+    }
+  }, [minimumStakeForToken, setMintAmount])
+
   let valueIsValidAmount = false
   try {
     ethers.utils.parseEther(getMintAmountForm.values.amount.toString())
@@ -34,9 +43,8 @@ export default function MintAmountForm () {
   }
 
   return (
-    <Form onSubmit={getMintAmountForm.handleSubmit}>
+    <Form onSubmit={getMintAmountForm.handleSubmit} className="my-2">
       <Form.Label>
-        Enter the amount you wish to mint: {initialAmount}
         <Form.Control
           id="amount"
           name="amount"
@@ -51,7 +59,10 @@ export default function MintAmountForm () {
       <br />
       <ButtonGroup>
         <Button disabled={!valueIsValidAmount} variant="success" type="submit">Change mint amount</Button>
-        <Button onClick={() => getMintAmountForm.resetForm()}>Reset</Button>
+        <Button onClick={() => {
+          getMintAmountForm.resetForm()
+          setMintAmount(minimumStakeForToken)
+        }}>Reset</Button>
       </ButtonGroup>
     </Form>
   )

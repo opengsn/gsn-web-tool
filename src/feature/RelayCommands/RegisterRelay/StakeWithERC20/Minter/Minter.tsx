@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react'
-import { useBalance, useProvider } from 'wagmi'
+import { useBalance, useProvider, useToken } from 'wagmi'
 import { ethers } from 'ethers'
 
 import Card from 'react-bootstrap/Card'
@@ -10,6 +10,7 @@ import MintAmountForm from './MintAmountForm'
 import { TokenContext } from '../StakeWithERC20'
 import { checkIsMintingRequired } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
+import { Tab, Tabs } from 'react-bootstrap'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -27,7 +28,9 @@ export default function Minter () {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const provider = useProvider()
 
-  useBalance({
+  const { data: tokenData } = useToken({ address: token })
+
+  const { data: tokenBalanceData } = useBalance({
     addressOrName: account,
     token: token,
     watch: true,
@@ -43,15 +46,23 @@ export default function Minter () {
   if (mintAmount === null) return <></>
 
   return (
-    <Card>
-      <MinterContext.Provider value={{
-        mintAmount: mintAmount,
-        outstandingMintAmount: outstandingMintAmount,
-        setMintAmount: setMintAmount
-      }}>
-        <MintAmountForm />
-        <MintButton />
-      </MinterContext.Provider>
-    </Card>
+    <MinterContext.Provider value={{
+      mintAmount: mintAmount,
+      outstandingMintAmount: outstandingMintAmount,
+      setMintAmount: setMintAmount
+    }}>
+      <Tabs defaultActiveKey="basic"
+        unmountOnExit={true}
+      >
+        <span>Available: <b>{tokenBalanceData?.formatted}</b> {tokenData?.symbol}</span>
+        <Tab eventKey="basic" title="Basic">
+          <MintButton />
+        </Tab>
+        <Tab eventKey="advanced" title="Advanced (custom amount)">
+          <MintAmountForm />
+          <MintButton />
+        </Tab>
+      </Tabs>
+    </MinterContext.Provider>
   )
 }

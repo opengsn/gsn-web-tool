@@ -64,7 +64,8 @@ export default function RegisterRelay () {
         >{step} {status}</ListGroup.Item>
         )
       })
-    return <>{listElems}</>
+
+    return <><ListGroup>{listElems}</ListGroup><hr /></>
   }
 
   useEffect(() => {
@@ -85,12 +86,10 @@ export default function RegisterRelay () {
       <CollapseButton />
       {showRegisterRelay
         ? <Collapse in={showRegisterRelay}>
-          <div className="border p-3" id="register-relay-form">
+          <div className="border px-3 py-2" id="register-relay-form">
             <RegisterFlowSteps />
             {currentStep === 0
-              ? <>
-                <Funder />
-              </>
+              ? <Funder />
               : null}
             {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
             {currentStep === 3 ? <Authorizer /> : null}

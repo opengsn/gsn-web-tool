@@ -39,7 +39,7 @@ export default function Approver () {
     }
   })
 
-  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite({
+  const { error: approveTxError, isIdle, isSuccess, isError, isLoading, write: approve } = useContractWrite({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'approve',
@@ -51,7 +51,10 @@ export default function Approver () {
     ...defaultStateSwitchers
   })
 
-  const text = <span>Approve token for spend by Relay Manager</span>
+  const text = <div>
+    <p>Amount to be staked: {ethers.utils.formatEther(approveAmount)}</p>
+    <p>Approve token for spend by Relay Manager</p>
+  </div>
 
   const ApproveError = () => {
     return (
@@ -63,18 +66,31 @@ export default function Approver () {
 
   const ApproveButton = () => {
     if (currentAllowanceData !== undefined) {
-      const text = `Approve for the amount outstanding (${ethers.utils.formatEther(approveAmount)})`
+      const text = 'Approve'
       return <Button onClick={() => approve()}>{text}</Button>
     } else {
-      const text = <span>Approve for spend</span>
+      const text = <span>Approve</span>
       return <Button onClick={() => approve()}>{text}</Button>
     }
   }
 
-  if (currentAllowanceIsError) return <span>Error fetching token allowance</span>
-  if (isError) return <ApproveError />
-  if (isLoading) return <LoadingButton />
-  if (isSuccess) return <div>Succesfully increased allowance</div>
+  let content
+  switch (true) {
+    case isError:
+      content = <ApproveError />
+      break
+    case isSuccess:
+      content = <div>Succesfully increased allowance</div>
+      break
+    case isLoading:
+      content = <LoadingButton />
+      break
+    case currentAllowanceIsError:
+      content = <span>Error fetching token allowance</span>
+      break
+    default:
+      content = <ApproveButton />
+  }
 
-  return <ApproveButton />
+  return <div><>{text}</><>{content}</></div>
 }

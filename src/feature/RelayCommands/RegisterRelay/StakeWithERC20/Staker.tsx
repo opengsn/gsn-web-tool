@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { toast } from 'react-toastify'
-import { useContractWrite } from 'wagmi'
+import { useAccount, useBalance, useContractWrite, useToken } from 'wagmi'
 import { TokenContext } from './StakeWithERC20'
 
 import Button from 'react-bootstrap/Button'
@@ -16,10 +16,13 @@ export default function Stake () {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
-
   const { relayManagerAddress } = relay
 
-  const text = 'Stake with (token) (value)'
+  const { address } = useAccount()
+
+  const { data: tokenBalanceData } = useBalance({ addressOrName: address, token: token })
+
+  const text = 'Stake'
   const unstakeDelay = '15000'
 
   const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite(
@@ -37,16 +40,24 @@ export default function Stake () {
     }
   )
 
-  if (isError) return <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer()}>{text}</ErrorButton>
-  if (isLoading) return <LoadingButton />
-  if (isSuccess) return <div>Relayer successfully staked</div>
+  let content
+  switch (true) {
+    case isError:
+      content = <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer()}>{text}</ErrorButton>
+      break
+    case isLoading:
+      content = <LoadingButton />
+      break
+    case isSuccess:
+      content = <div>Relayer successfully staked</div>
+      break
+    default:
+      content = <Button onClick={() => stakeRelayer()} className="my-2">{text}</Button>
+  }
 
   return (
     <div>
-      {/* {BigNumber.from(bal).gt(ethers.utils.parseEther("1.0")) ? */}
-      <Button onClick={() => stakeRelayer()} className="my-2">
-        {text}
-      </Button>
+      {content}
     </div>
   )
 }
