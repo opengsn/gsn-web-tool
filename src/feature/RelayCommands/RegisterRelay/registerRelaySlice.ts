@@ -16,7 +16,7 @@ export enum RegisterSteps {
   'Select token and mint',
   'Staking with ERC20 token',
   'Authorizing Hub',
-  'Relay is ready'
+  'Waiting for Relay to be Ready'
 }
 
 interface registerState {
