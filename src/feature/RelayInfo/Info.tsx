@@ -70,7 +70,7 @@ function Info () {
                 {(relayData[x as keyof PingResponse])?.toString()}
               </td>
               <td>
-                <b>{ accountIsOwner ? '()'
+                <b>{ accountIsOwner ? 'currently connected'
                   : 'switch to owner to enable actions' }</b>
               </td>
             </>
