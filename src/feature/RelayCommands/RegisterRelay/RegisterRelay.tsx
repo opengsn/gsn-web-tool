@@ -12,6 +12,7 @@ import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
 
 import ListGroup from 'react-bootstrap/ListGroup'
 import { toast } from 'react-toastify'
+import { Check } from 'react-bootstrap-icons'
 
 export default function RegisterRelay () {
   const relay = useAppSelector((state) => state.relay.relay)
@@ -58,14 +59,20 @@ export default function RegisterRelay () {
           variant = ''
         }
 
+        const passedStep = !isActionableStep && variant === 'success'
         return (<ListGroup.Item
           key={step}
           variant={variant}
-        >{step}</ListGroup.Item>
+        >{step}{' '}{passedStep ? <Check color="green"></Check> : null}</ListGroup.Item>
         )
       })
 
-    return <><ListGroup>{listElems}</ListGroup><hr /></>
+    const showDivider = currentStep <= 3
+
+    return <>
+      <ListGroup>{listElems}</ListGroup>
+      {showDivider ? <hr /> : null}
+    </>
   }
 
   useEffect(() => {
