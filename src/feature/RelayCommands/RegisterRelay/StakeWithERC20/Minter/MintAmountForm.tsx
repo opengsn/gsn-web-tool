@@ -1,5 +1,4 @@
-import { useRef, useEffect, useContext } from 'react'
-import { useFormik } from 'formik'
+import { useEffect, useContext, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 
 import Form from 'react-bootstrap/Form'
@@ -9,23 +8,29 @@ import { MinterContext } from './Minter'
 import { TokenContext } from '../StakeWithERC20'
 
 export default function MintAmountForm () {
+  const [localMintAmount, setLocalMintAmount] = useState(ethers.constants.Zero)
   const { minimumStakeForToken } = useContext(TokenContext)
-  const { outstandingMintAmount, mintAmount, setMintAmount } = useContext(MinterContext)
+  const { setMintAmount } = useContext(MinterContext)
+  const inputValue = useRef<HTMLInputElement>(null)
 
-  let initialAmount = Number(ethers.utils.formatEther(mintAmount))
-  if (outstandingMintAmount !== null) initialAmount = Number(ethers.utils.formatEther(mintAmount))
+  const handleSetMintAmount = () => {
+    try {
+      const value = inputValue?.current?.value
+      if (value === undefined) return
 
-  const getMintAmountForm = useFormik({
-    initialValues: {
-      amount: initialAmount
-    },
-    onSubmit: values => {
-      console.log(outstandingMintAmount)
-      console.log(typeof values.amount, values.amount, mintAmount)
-      const amountBigNumber = ethers.utils.parseEther(values.amount.toString())
-      setMintAmount(amountBigNumber)
+      const amountBigNumber = ethers.utils.parseEther(value)
+      setLocalMintAmount(amountBigNumber)
+    } catch (e: any) {
+      console.log(e)
+      // suppress error
     }
-  })
+  }
+
+  useEffect(() => {
+    if (localMintAmount !== ethers.constants.Zero) {
+      setMintAmount(localMintAmount)
+    }
+  }, [localMintAmount])
 
   useEffect(() => {
     return () => {
@@ -33,37 +38,18 @@ export default function MintAmountForm () {
     }
   }, [minimumStakeForToken, setMintAmount])
 
-  let valueIsValidAmount = false
-  try {
-    ethers.utils.parseEther(getMintAmountForm.values.amount.toString())
-    valueIsValidAmount = true
-  } catch (e: any) {
-    console.log(e)
-    // suppress error
-  }
-
   return (
-    <Form onSubmit={getMintAmountForm.handleSubmit} className="my-2">
+    <Form className="my-2">
       <Form.Label>
         <Form.Control
           id="amount"
           name="amount"
-          type="number"
-          lang="en"
-          min="0"
-          step="any"
-          onChange={getMintAmountForm.handleChange}
-          value={getMintAmountForm.values.amount}
+          type="text"
+          ref={inputValue}
+          onChange={() => handleSetMintAmount()}
         />
       </Form.Label>
       <br />
-      <ButtonGroup>
-        <Button disabled={!valueIsValidAmount} variant="success" type="submit">Change mint amount</Button>
-        <Button onClick={() => {
-          getMintAmountForm.resetForm()
-          setMintAmount(minimumStakeForToken)
-        }}>Reset</Button>
-      </ButtonGroup>
     </Form>
   )
 }
