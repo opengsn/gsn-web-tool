@@ -114,13 +114,13 @@ function Info () {
       <thead>
         <tr>
           <th>
-            key
+            Name
           </th>
           <th>
-            value
+            Value
           </th>
           <th>
-            balance
+            Extra
           </th>
         </tr>
       </thead>
