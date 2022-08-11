@@ -123,12 +123,8 @@ const client = createClient({
   autoConnect: true,
   connectors: [new InjectedConnector({ chains })],
   provider: (config) => {
-    if (metamaskIsInstalled === true) {
-      const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, 'any')
-      return provider
-    }
-
-    return getDefaultProvider(config.chainId)
+    const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, config.chainId)
+    return provider
   }
 })
 
