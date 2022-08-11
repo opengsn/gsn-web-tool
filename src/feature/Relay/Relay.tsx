@@ -7,6 +7,8 @@ import { fetchRelayData } from './relaySlice'
 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 import ChainIdHandler from '../../components/ChainIdHandler'
 import SwitchRelayButton from './SwitchRelay'
@@ -65,19 +67,25 @@ export default function Relay () {
 
   if (Object.keys(relayData).length === 0 && relay.errorMsg === '') {
     return (
-      <Form className="row" onSubmit={getRelayForm.handleSubmit}>
-        <Form.Label htmlFor="url">Relay URL
-          <Form.Control
-            id="url"
-            name="url"
-            type="text"
-            onChange={getRelayForm.handleChange}
-            value={getRelayForm.values.url}
-          />
-        </Form.Label>
-        <br />
-        <Button variant="success" type="submit">Fetch data</Button>
-      </Form>
+      <Row className="justify-content-center">
+        <Col></Col>
+        <Col md="auto">
+          <Form onSubmit={getRelayForm.handleSubmit}>
+            <Form.Label htmlFor="url">Relay URL
+              <Form.Control
+                id="url"
+                name="url"
+                type="text"
+                onChange={getRelayForm.handleChange}
+                value={getRelayForm.values.url}
+              />
+            </Form.Label>
+            <br />
+            <Button style={{ width: '100%' }} variant="success" type="submit">Fetch data</Button>
+          </Form>
+        </Col>
+        <Col></Col>
+      </Row>
     )
   }
   if (relay.errorMsg !== '') {
@@ -98,9 +106,12 @@ export default function Relay () {
     return (
       <div className="row">
         <SwitchRelayButton />
-        <hr />
-        <RelayInfo />
-        <RelayCommands />
+        <div className="col-10">
+          <div className="row">
+            <RelayInfo />
+            <RelayCommands />
+          </div>
+        </div>
       </div>
     )
   }
