@@ -67,7 +67,7 @@ export default function Stake () {
         {prepareStakeTxError !== null
           ? <>
             <div className="p-3 mt-4 my-1 bg-warning">
-              <span className="text-dark">Account not ready for staking. Try increasing allowance</span>
+              <span className="text-dark">Account is not prepared for staking. Try increasing allowance</span>
             </div>
 
             <Button disabled className="my-2">
