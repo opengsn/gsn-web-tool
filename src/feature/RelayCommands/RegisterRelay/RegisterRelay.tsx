@@ -61,7 +61,7 @@ export default function RegisterRelay () {
         return (<ListGroup.Item
           key={step}
           variant={variant}
-        >{step} {status}</ListGroup.Item>
+        >{step}</ListGroup.Item>
         )
       })
 
