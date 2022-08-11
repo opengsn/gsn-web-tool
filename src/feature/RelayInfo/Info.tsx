@@ -45,8 +45,8 @@ function Info () {
               </td>
               <td>{(relayData[x as keyof PingResponse])?.toString()}</td>
               <td>
-                <span>{relayManagerBalanceData?.formatted}</span>{' '}
-                <b>{relayManagerBalanceData?.symbol}</b>
+                <span>Balance: <b>{relayManagerBalanceData?.formatted}</b></span>{' '}
+                <span>{relayManagerBalanceData?.symbol}</span>
               </td>
             </>
           )
@@ -56,8 +56,8 @@ function Info () {
               <td>{camelCaseToHuman(x)}</td>
               <td>{(relayData[x as keyof PingResponse])?.toString()}</td>
               <td>
-                <span>{relayWorkerBalanceData?.formatted}</span>{' '}
-                <b>{relayWorkerBalanceData?.symbol}</b>
+                <span>Balance: <b>{relayWorkerBalanceData?.formatted}</b></span>{' '}
+                <span>{relayWorkerBalanceData?.symbol}</span>
               </td>
             </>
           )
