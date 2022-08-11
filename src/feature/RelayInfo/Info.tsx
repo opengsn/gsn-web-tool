@@ -1,5 +1,7 @@
 import { isSameAddress, PingResponse } from '@opengsn/common'
+import { ethers } from 'ethers'
 import { useAccount, useBalance, useContractRead } from 'wagmi'
+import Table from 'react-bootstrap/Table'
 
 import relayHubAbi from '../../contracts/relayHub.json'
 import { useAppSelector } from '../../hooks'
@@ -14,6 +16,7 @@ function Info () {
 
   const { data: relayManagerBalanceData } = useBalance({ addressOrName: relayData.relayManagerAddress })
   const { data: relayWorkerBalanceData } = useBalance({ addressOrName: relayData.relayWorkerAddress })
+  const { data: ownerAddressBalance } = useBalance({ addressOrName: relayData.ownerAddress })
 
   const { data: stakeManagerAddressData, isLoading, isFetching } = useContractRead({
     addressOrName: relayData.relayHubAddress,
@@ -26,57 +29,112 @@ function Info () {
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   const RelayUrl = () => { return <span>{relayUrl}</span> }
+  const camelCaseToHuman = (s: string): string => {
+    return s.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
+  }
 
   const PingResponseData = () => {
-    return (
-      <div>
-        {Object.keys(relayData).map((x, i) => {
-          let dataDiv
-          if (x === 'relayManagerAddress') {
-            dataDiv = (
-              <div key={i}>
-                {x}: {(relayData[x as keyof PingResponse])?.toString()}
-                {' '}
-                <b>{relayManagerBalanceData?.formatted} {relayManagerBalanceData?.symbol}</b>
-              </div>
-            )
-          } else if (x === 'relayWorkerAddress') {
-            dataDiv = (
-              <div key={i}>
-                {x}: {(relayData[x as keyof PingResponse])?.toString()}
-                {' '}
-                <b>{relayWorkerBalanceData?.formatted} {relayWorkerBalanceData?.symbol}</b>
-              </div>
-            )
-          } else if (x === 'ownerAddress' && address !== undefined) {
-            const accountIsOwner = isSameAddress(relayData[x], address)
-            dataDiv = <div key={i}>
-              {x}: {(relayData[x as keyof PingResponse])?.toString()}
-              {' '}
-              <b>{ accountIsOwner ? '(connected account)'
-                : '(switch to the owner account to unlock register/deregister)' }</b>
-            </div>
-          } else {
-            dataDiv = <div key={i}>{x}: {(relayData[x as keyof PingResponse])?.toString()}</div>
-          }
+    return (<>
+      {Object.keys(relayData).map((x, i) => {
+        let data
+        if (x === 'relayManagerAddress') {
+          data = (
+            <>
+              <td>
+                {camelCaseToHuman(x)}
+              </td>
+              <td>{(relayData[x as keyof PingResponse])?.toString()}</td>
+              <td>
+                <span>Balance: <b>{relayManagerBalanceData?.formatted}</b></span>{' '}
+                <span>{relayManagerBalanceData?.symbol}</span>
+              </td>
+            </>
+          )
+        } else if (x === 'relayWorkerAddress') {
+          data = (
+            <>
+              <td>{camelCaseToHuman(x)}</td>
+              <td>{(relayData[x as keyof PingResponse])?.toString()}</td>
+              <td>
+                <span>Balance: <b>{relayWorkerBalanceData?.formatted}</b></span>{' '}
+                <span>{relayWorkerBalanceData?.symbol}</span>
+              </td>
+            </>
+          )
+        } else if (x === 'ownerAddress' && address !== undefined) {
+          const accountIsOwner = isSameAddress(relayData[x], address)
+          data = (
+            <>
+              <td>{camelCaseToHuman(x)}</td>
+              <td>
+                {(relayData[x as keyof PingResponse])?.toString()}
+              </td>
+              <td>
+                <b>{ accountIsOwner ? 'currently connected'
+                  : 'switch to owner to enable actions' }</b>
+              </td>
+            </>
+          )
+        } else if (x === 'minMaxPriorityFeePerGas') {
+          data = (
+            <>
+              <td>{camelCaseToHuman(x)}</td>
+              <td>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</td>
+              <td><b>Native currency, value in ethers</b></td>
+            </>
+          )
+        } else if (x === 'ready') {
+          data = (
+            <>
+              <td>{camelCaseToHuman(x)}</td>
+              <td>{relayData[x as keyof PingResponse] === true
+                ? <span>ready</span>
+                : <span>not ready</span>}
+              </td>
+              <td></td>
+            </>
+          )
+        } else {
+          data = (
+            <>
+              <td>{camelCaseToHuman(x)}</td>
+              <td>{(relayData[x as keyof PingResponse])?.toString()}</td>
+              <td></td>
+            </>
+          )
+        }
 
-          return dataDiv
-        })}
-      </div>
-    )
+        return <tr key={i}>{data}</tr>
+      })}
+    </>)
   }
 
   return (
-    <div>
-      <RelayUrl />
-      <h5>Getaddr info:</h5>
-      <PingResponseData />
-      <h5>Stake info:</h5>
-      { (isFetching || isLoading) && stakeManagerAddress !== undefined
-        ? <div>current owner: loading <br /> staking token: loading</div>
-        : <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-      }
-    </div>
+    <Table striped bordered size="sm">
+      <thead>
+        <tr>
+          <th>
+            Name
+          </th>
+          <th>
+            Value
+          </th>
+          <th>
+            Extra
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <PingResponseData />
+        { (isFetching || isLoading) && stakeManagerAddress !== undefined
+          ? <>
+            <tr><td>Current Owner</td><td>loading</td><td></td></tr>
+            <tr><td>staking token</td><td>loading</td><td></td></tr>
+          </>
+          : <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
+        }
+      </tbody>
+    </Table>
   )
 }
 export default Info
