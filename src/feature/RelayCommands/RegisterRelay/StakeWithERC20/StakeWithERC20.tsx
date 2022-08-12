@@ -1,6 +1,6 @@
 import { useEffect, useState, createContext } from 'react'
 import { ethers } from 'ethers'
-import { useAccount, useContract, useContractRead, useBlockNumber, useProvider } from 'wagmi'
+import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
 
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 
 import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 
+import StakingTokenInfo from './StakingTokenInfo'
 import Minter from './Minter/Minter'
 import Approver from './Approver/Approve'
 import Staker from './Staker'
@@ -23,6 +24,7 @@ import stakeManagerAbi from '../../../../contracts/stakeManager.json'
 import { Address } from '@opengsn/common/dist/types/Aliases'
 import { useFormik } from 'formik'
 import StakeAddedListener from './StakeAddedListener'
+import { ChainWithStakingTokens } from '../../../..'
 
 export interface TokenContextInterface {
   token: Address
@@ -36,10 +38,19 @@ export interface TokenContextInterface {
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
 
 export default function StakeWithERC20 () {
+  const currentStep = useAppSelector((state) => state.register.step)
+  const [stakingTokenIsSet, setStakingTokenIsSet] = useState(false)
   const [token, setToken] = useState<Address | null>(null)
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
   const [listen, setListen] = useState(false)
+
+  const { chain: chainData } = useNetwork()
+  const chain = chainData as unknown as ChainWithStakingTokens
+  // useEffect(() => {
+  //   if (chain.stakingTokens === undefined) return
+  //   setToken(chain.)
+  // }, [chain])
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { address } = useAccount()
@@ -87,13 +98,18 @@ export default function StakeWithERC20 () {
       <Form onSubmit={getTokenAddress.handleSubmit}>
         <Form.Label htmlFor="url">
           ERC20 token address
-          <Form.Control
+          <Form.Select
             id="token"
             name="token"
-            type="text"
+            disabled={stakingTokenIsSet}
             onChange={getTokenAddress.handleChange}
             value={getTokenAddress.values.token}
-          />
+          >
+            <option value="">Select staking token</option>
+            {chain.stakingTokens?.map((x) => {
+              return <option key={x} value={x}>{x} {isAddress}</option>
+            })}
+          </Form.Select>
         </Form.Label>
         <br />
         <Button disabled={!isAddress} variant="success" type="submit">Fetch token data</Button>
@@ -143,6 +159,10 @@ export default function StakeWithERC20 () {
       const newStakeInfo = newStakeInfoData[0]
 
       if (newStakeInfo?.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo?.owner, address)) {
+        if (newStakeInfo?.token !== constants.ZERO_ADDRESS) {
+          setToken(newStakeInfo.token)
+          setStakingTokenIsSet(true)
+        }
         setStakeManagerOwnerIsSet(true)
       }
     }
@@ -199,7 +219,7 @@ export default function StakeWithERC20 () {
   if (!stakeManagerOwnerIsSet) return (<WaitingMessage />)
 
   if (token !== null && address !== undefined && minimumStakeForToken !== null) {
-    if (minimumStakeForToken?.isZero()) {
+    if (minimumStakeForToken?.isZero() && !listen) {
       return (
         <>
           <SwitchTokenButton />
@@ -210,8 +230,6 @@ export default function StakeWithERC20 () {
     }
     return (
       <>
-        <SwitchTokenButton />
-        <hr />
         <TokenContext.Provider value={{
           token: token,
           account: address,
@@ -220,12 +238,20 @@ export default function StakeWithERC20 () {
           listen: listen,
           setListen: setListen
         }}>
-          <Minter />
-          <br />
-          <Approver />
-          <br />
-          <Staker />
-          <StakeAddedListener />
+          <div><StakingTokenInfo /></div>
+          <SwitchTokenButton />
+          <hr />
+          {currentStep === 1
+            ? <><Minter />< br /></>
+            : null}
+          {currentStep === 2
+            ? <>
+              <Approver />
+              <br />
+              <Staker />
+              <StakeAddedListener />
+            </>
+            : null}
         </TokenContext.Provider>
       </>
     )
@@ -236,7 +262,11 @@ export default function StakeWithERC20 () {
       <>
         <TokenAddressForm />
         <br />
-        <FindFirstTokenButton />
+        {chain.stakingTokens === undefined
+          ? <FindFirstTokenButton />
+          : null
+        }
+
       </>
     )
   }

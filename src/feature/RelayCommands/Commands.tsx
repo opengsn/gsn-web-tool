@@ -1,39 +1,41 @@
-import { useState } from 'react'
-import Collapse from 'react-bootstrap/Collapse'
+import { useAccount } from 'wagmi'
 import Button from 'react-bootstrap/Button'
 
+import { isSameAddress } from '@opengsn/common'
+
 import RegisterRelay from './RegisterRelay/RegisterRelay'
+import DeregisterRelay from './DeregisterRelay/DeregisterRelay'
 
 import { useAppSelector } from '../../hooks'
 
 export default function RelayCommands () {
   const relay = useAppSelector((state) => state.relay.relay)
+  const { address } = useAccount()
 
-  const [showDeregisterRelay, setShowDeregisterRelay] = useState(false)
-
-  const handleShowDeregisterRelay = () => {
-    setShowDeregisterRelay(!showDeregisterRelay)
+  const GrayedOutButtons = () => {
+    return (<>
+      <Button
+        aria-controls="register-relay-form"
+        variant="outline-primary"
+        className="mt-2"
+        disabled
+      >
+        Register
+      </Button>
+      <Button
+        aria-controls="register-relay-form"
+        variant="outline-danger"
+        className="mt-2"
+        disabled
+      >
+        Deregister
+      </Button>
+    </>)
   }
 
-  const DeregisterRelay = () => {
-    return (
-      <>
-        <Button
-          onClick={handleShowDeregisterRelay}
-          aria-controls="register-relay-form"
-          aria-expanded={showDeregisterRelay}
-          variant="danger"
-          className="mt-2"
-        >
-          Deregister
-        </Button>
-        <Collapse in={showDeregisterRelay}>
-          <div className="border p-3" id="register-relay-form">
-            <div>WIP</div>
-          </div>
-        </Collapse>
-      </>
-    )
+  if (address === undefined ||
+    (address !== undefined && !isSameAddress(address, relay.ownerAddress))) {
+    return <GrayedOutButtons />
   }
 
   return (

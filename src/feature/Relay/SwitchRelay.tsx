@@ -2,6 +2,7 @@ import Button from 'react-bootstrap/Button'
 import { useSearchParams } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks'
 import { deleteRelayData } from './relaySlice'
+import { ArrowReturnLeft } from 'react-bootstrap-icons'
 
 export default function SwitchRelayButton ({ autoFocus, abortFetch }: { autoFocus?: boolean, abortFetch?: unknown }) {
   const dispatch = useAppDispatch()
@@ -15,9 +16,12 @@ export default function SwitchRelayButton ({ autoFocus, abortFetch }: { autoFocu
     }
     dispatch(deleteRelayData())
   }
-  return (<Button variant="secondary"
-    className="my-2"
-    onClick={handleDeleteRelayData}
-    autoFocus={autoFocus !== undefined ? autoFocus : false}
-  >Switch relay</Button>)
+  return (<div className="p-3 col-1">
+    <div className="row"><Button variant="secondary"
+      className="rounded-pill"
+      onClick={handleDeleteRelayData}
+      autoFocus={autoFocus !== undefined ? autoFocus : false}>
+      <ArrowReturnLeft />
+    </Button>
+    </div>  </div>)
 }

@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { useContractRead, useContractWrite, useNetwork } from 'wagmi'
+import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
 import { ethers } from 'ethers'
 import Button from 'react-bootstrap/Button'
 
@@ -22,8 +22,6 @@ export default function Approver () {
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { chain } = useNetwork()
-
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
@@ -39,23 +37,27 @@ export default function Approver () {
     }
   })
 
-  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite({
+  const { config, error: prepareApproveTxError } = usePrepareContractWrite({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'approve',
-    args: [stakeManagerAddress, approveAmount],
+    args: [stakeManagerAddress, approveAmount]
+  })
+
+  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite({
+    ...config,
+    ...defaultStateSwitchers,
     onSuccess (data) {
       const text = 'Approved Stake Manager for spend'
       toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-    },
-    ...defaultStateSwitchers
+    }
   })
 
   const text = <span>Approve token for spend by Relay Manager</span>
 
   const ApproveError = () => {
     return (
-      <ErrorButton message={approveTxError?.message} onClick={() => approve()}>
+      <ErrorButton message={approveTxError?.message} onClick={() => approve?.()}>
         {text}
       </ErrorButton>
     )
@@ -63,18 +65,18 @@ export default function Approver () {
 
   const ApproveButton = () => {
     if (currentAllowanceData !== undefined) {
-      const text = `Approve for the amount outstanding (${ethers.utils.formatEther(approveAmount)})`
-      return <Button onClick={() => approve()}>{text}</Button>
+      const text = `Increase allowance by (${ethers.utils.formatEther(approveAmount)})`
+      return <Button onClick={() => approve?.()}>{text}</Button>
     } else {
       const text = <span>Approve for spend</span>
-      return <Button onClick={() => approve()}>{text}</Button>
+      return <Button onClick={() => approve?.()}>{text}</Button>
     }
   }
 
   if (currentAllowanceIsError) return <span>Error fetching token allowance</span>
   if (isError) return <ApproveError />
   if (isLoading) return <LoadingButton />
-  if (isSuccess) return <div>Succesfully increased allowance</div>
+  if (isSuccess || approveAmount.eq(ethers.constants.Zero)) return <div>Succesfully increased allowance</div>
 
   return <ApproveButton />
 }

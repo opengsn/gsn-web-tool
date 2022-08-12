@@ -14,8 +14,12 @@ export default function StakingTokenInfo ({ stakingToken }: stakingTokenProps) {
   })
 
   return (
-    <div>
-      staking token: {stakingToken} <b>{stakingTokenBalance?.formatted}</b> <b>{stakingTokenBalance?.symbol}</b>
-    </div>
+    <tr>
+      <td>Staking Token</td>
+      <td>{stakingToken}</td>
+      <td>
+        <span>Balance <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}</span>
+      </td>
+    </tr>
   )
 }
