@@ -65,7 +65,7 @@ export default function Approver () {
 
   const ApproveButton = () => {
     if (currentAllowanceData !== undefined) {
-      const text = `Approve for the amount outstanding (${ethers.utils.formatEther(approveAmount)})`
+      const text = `Increase allowance by (${ethers.utils.formatEther(approveAmount)})`
       return <Button onClick={() => approve?.()}>{text}</Button>
     } else {
       const text = <span>Approve for spend</span>
