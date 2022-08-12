@@ -11,7 +11,7 @@ export default function App () {
 
   return (
     <div className="App">
-      <Container className="my-1">
+      <Container fluid className="my-1">
         {
           (connector !== undefined && address !== undefined && isConnected && status === 'connected')
             ? <>

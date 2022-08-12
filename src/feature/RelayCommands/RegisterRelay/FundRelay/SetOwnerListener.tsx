@@ -80,5 +80,5 @@ export default function SetOwnerListener () {
     }
   }, [listen, account, dispatch, provider, refetch, stakeInfo])
 
-  return <span>{listen.toString()}</span>
+  return <></>
 }
