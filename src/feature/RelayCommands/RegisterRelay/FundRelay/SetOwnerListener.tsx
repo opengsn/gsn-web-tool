@@ -30,14 +30,8 @@ export default function SetOwnerListener () {
     eventName: 'OwnerSet',
     listener: () => {
       if (!listen && account !== undefined) {
-<<<<<<< Updated upstream
-        toast.info('event caught')
-        dispatch(fetchRegisterStateData({ provider, account })).
-          catch(console.error)
-=======
         dispatch(fetchRegisterStateData({ provider, account }))
           .catch(console.error)
->>>>>>> Stashed changes
       }
     }
   })
