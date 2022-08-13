@@ -68,6 +68,9 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-n": "^15.2.4",
     "hardhat": "^2.10.1"
   }
 }

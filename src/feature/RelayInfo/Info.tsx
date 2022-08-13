@@ -69,8 +69,9 @@ function Info () {
                 {(relayData[x as keyof PingResponse])?.toString()}
               </td>
               <td>
-                <b>{ accountIsOwner ? 'currently connected'
-                  : 'switch to owner to enable actions' }</b>
+                <b>{accountIsOwner
+                  ? 'currently connected'
+                  : 'switch to owner to enable actions'}</b>
               </td>
             </>
           )
@@ -125,7 +126,7 @@ function Info () {
       </thead>
       <tbody>
         <PingResponseData />
-        { (isFetching || isLoading) && stakeManagerAddress !== undefined
+        {(isFetching || isLoading) && stakeManagerAddress !== undefined
           ? <>
             <tr><td>Current Owner</td><td>loading</td><td></td></tr>
             <tr><td>staking token</td><td>loading</td><td></td></tr>

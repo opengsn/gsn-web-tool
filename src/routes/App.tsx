@@ -14,9 +14,8 @@ export default function App () {
       <Container fluid className="my-1">
         {
           (connector !== undefined && address !== undefined && isConnected && status === 'connected')
-            ? <>
-              <Relay />
-            </> : <MetamaskButton />
+            ? <Relay />
+            : <MetamaskButton />
         }
       </Container>
     </div>

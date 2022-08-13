@@ -13,10 +13,9 @@ export class ErrorBoundary extends Component<{ children: React.ReactNode }, { ha
   }
 
   public render (): React.ReactNode {
-    return !this.state.hasError ? (
-      this.props.children
-    ) : (
-      <div className="d-flex align-items-center justify-content-center vh-100 bg-primary">
+    return !this.state.hasError
+      ? this.props.children
+      : <div className="d-flex align-items-center justify-content-center vh-100 bg-primary">
         <div>
           <h1 className="display-1 fw-bold text-white">
             Something went wrong
@@ -34,6 +33,5 @@ export class ErrorBoundary extends Component<{ children: React.ReactNode }, { ha
           </div>
         </div>
       </div>
-    )
   }
 }
