@@ -29,7 +29,6 @@ export default function SetOwnerListener () {
     eventName: 'OwnerSet',
     listener: () => {
       if (!listen && account !== undefined) {
-        toast.info('event caught')
         dispatch(fetchRegisterStateData({ provider, account })).
           catch(console.error)
       }
@@ -65,7 +64,6 @@ export default function SetOwnerListener () {
               newOwner !== constants.ZERO_ADDRESS &&
               isSameAddress(newOwner, account)
             ) {
-              toast.info('poll caught')
               dispatch(fetchRegisterStateData({ provider, account })).catch(console.error)
               break
             }
