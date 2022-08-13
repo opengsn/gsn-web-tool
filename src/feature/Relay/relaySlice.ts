@@ -1,8 +1,10 @@
 import axios, { AxiosError } from 'axios'
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
 
-import { PingResponse } from '@opengsn/common'
+import { constants } from 'ethers'
+import { PingResponse } from '../../types/PingResponse'
+import { isSameAddress } from '../../utils/utils'
 
 interface RelayState {
   relay: PingResponse
@@ -43,6 +45,18 @@ const relaySlice = createSlice({
   name: 'relay',
   initialState,
   reducers: {
+    // dispatched in RelayInfo/StakeInfo
+    validateConfigOwnerInLineWithStakeManager (state: RelayState, action: PayloadAction<string>) {
+      if (
+        !isSameAddress(state.relay.ownerAddress, action.payload) &&
+        !isSameAddress(action.payload, constants.AddressZero)
+      ) {
+        toast.error('Please report the occurred error.')
+        state.errorMsg = `ERROR: The relay is misconfigured.
+        ownerAddress: ${state.relay.ownerAddress},
+        owner in StakeManager: ${action.payload}`
+      }
+    },
     deleteRelayData (state: RelayState) {
       state.relay = initialState.relay
       state.errorMsg = ''
@@ -67,5 +81,5 @@ const relaySlice = createSlice({
   }
 })
 
-export const { deleteRelayData } = relaySlice.actions
+export const { deleteRelayData, validateConfigOwnerInLineWithStakeManager } = relaySlice.actions
 export default relaySlice.reducer

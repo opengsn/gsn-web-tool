@@ -1,16 +1,17 @@
 import { useState, useContext } from 'react'
-import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { ethers } from 'ethers'
+
+import { toast } from 'react-toastify'
 import Button from 'react-bootstrap/Button'
 
 import { TokenContext } from '../StakeWithERC20'
 import ErrorButton from '../../../../../components/ErrorButton'
 import LoadingButton from '../../../../../components/LoadingButton'
+import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 
-import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useStakeManagerAddress, useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
-import { toast } from 'react-toastify'
 import TransactionSuccessToast from '../../../../../components/TransactionSuccessToast'
 
 export default function Approver () {

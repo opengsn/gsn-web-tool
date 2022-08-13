@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi'
 import Button from 'react-bootstrap/Button'
 
-import { isSameAddress } from '@opengsn/common'
+import { isSameAddress } from '../../utils/utils'
 
 import RegisterRelay from './RegisterRelay/RegisterRelay'
 import DeregisterRelay from './DeregisterRelay/DeregisterRelay'

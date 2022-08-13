@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { useNetwork, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 import { toast } from 'react-toastify'
 
 import Button from 'react-bootstrap/Button'

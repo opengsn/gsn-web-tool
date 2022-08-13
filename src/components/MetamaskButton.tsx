@@ -1,5 +1,5 @@
 import { useConnect } from 'wagmi'
-import { Button, Row, Col } from 'react-bootstrap'
+import Button from 'react-bootstrap/Button'
 
 export default function MetamaskButton () {
   const { connect, connectors, error, pendingConnector } = useConnect()
