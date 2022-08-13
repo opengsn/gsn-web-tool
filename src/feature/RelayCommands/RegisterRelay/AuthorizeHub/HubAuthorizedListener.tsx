@@ -37,14 +37,8 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
     eventName: 'HubAuthorized',
     listener: () => {
       if (listen) return
-<<<<<<< Updated upstream
-      toast.info('event caught')
-      dispatch(fetchRelayData(relayUrl)).
-        catch(console.error)
-=======
       dispatch(fetchRelayData(relayUrl))
         .catch(console.error)
->>>>>>> Stashed changes
     }
   })
 
