@@ -20,6 +20,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { Address } from '@opengsn/common'
+import RelaysList from './feature/RelaysList/RelaysList'
 
 export interface ChainWithStakingTokens extends Chain {
   stakingTokens?: Address[]
@@ -136,7 +137,8 @@ root.render(
       <ErrorBoundary>
         <WagmiConfig client={client}>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<RelaysList />} />
+            <Route path="/manage" element={<App />} />
           </Routes>
           <ToastContainer
             position="top-right"
