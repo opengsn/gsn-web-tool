@@ -654,7 +654,10 @@ class RelaysList extends React.Component {
           href="https://relays-v2.opengsn.org">here</a>
         <hr />
         <NetworkLinks networks={this.state.networks} relayCounts={relayCounts} />
-        <button onClick={() => globalevent.emit('refresh')}>Refresh</button>
+        <ButtonGroup vertical>
+          <a className="my-2" href="/manage"><button>Add new</button></a>
+          <button className="my-2" onClick={() => globalevent.emit('refresh')}>Refresh</button>
+        </ButtonGroup>
 
         {false && <>
           <ButtonGroup>
