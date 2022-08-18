@@ -9,11 +9,9 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Form from 'react-bootstrap/Form'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import ChainIdHandler from '../../components/ChainIdHandler'
-import SwitchRelayButton from './SwitchRelay'
 
 import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
@@ -72,51 +70,45 @@ export default function Relay () {
 
   if (!relayDataFetched) {
     return (<>
-      <Row className="justify-content-center">
-        <Col></Col>
-        <Col md="auto" className="flex-fill">
-          { relay.loading
-            ? <span>Loading data...</span>
-            : null }
-          { relay.errorMsg !== ''
-            ? <Alert variant="danger">
-              <span>Error: {relay.errorMsg}</span>
-            </Alert>
-            : null }
-          <Form className="row" onSubmit={getRelayForm.handleSubmit}>
-            <Form.Label htmlFor="url">Relay URL
-              <InputGroup><Form.Control
-                id="url"
-                name="url"
-                type="text"
-                onChange={getRelayForm.handleChange}
-                value={getRelayForm.values.url}
-              />
-              </InputGroup></Form.Label>
-            <Button variant="success" type="submit">Fetch data</Button>
-          </Form>
-        </Col>
-        <Col></Col>
-      </Row>
+      <Col md="2"></Col>
+      <Col md="auto" className="flex-fill">
+        {relay.loading
+          ? <span>Loading data...</span>
+          : null}
+        {relay.errorMsg !== ''
+          ? <Alert variant="danger">
+            <span>Error: {relay.errorMsg}</span>
+          </Alert>
+          : null}
+        <Form className="row" onSubmit={getRelayForm.handleSubmit}>
+          <Form.Label htmlFor="url">Relay URL
+            <InputGroup><Form.Control
+              id="url"
+              name="url"
+              type="text"
+              onChange={getRelayForm.handleChange}
+              value={getRelayForm.values.url}
+            />
+            </InputGroup></Form.Label>
+          <Button variant="success" type="submit">Fetch data</Button>
+        </Form>
+      </Col>
+      <Col></Col>
     </>)
   }
 
   if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
     return (<>
       <ChainIdHandler relayChainId={chainId} />
-      <SwitchRelayButton />
     </>)
   }
 
   if (chain?.id === chainId && relayDataFetched) {
     return (
-      <div className="row">
-        <SwitchRelayButton />
-        <div className="col-10">
-          <div className="row">
-            <RelayInfo />
-            <RelayCommands />
-          </div>
+      <div className="col-10">
+        <div className="row">
+          <RelayInfo />
+          <RelayCommands />
         </div>
       </div>
     )

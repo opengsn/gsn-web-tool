@@ -14,6 +14,7 @@ import { SparkLine } from './SparkLine'
 import { isSameAddress as same, sleep } from '@opengsn/common'
 import { Contract, providers, utils } from 'ethers'
 import { getNetworks } from './networks'
+import { Navigate } from 'react-router-dom'
 
 const { formatUnits, formatEther } = utils
 // global.web3 = new Web3(p)
@@ -611,14 +612,14 @@ function MyTable({
 class RelaysList extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { showAll: true }
+    this.state = { showAll: true, goToManage: false }
     // cookie.load('app')
   }
 
   componentDidMount() {
     // default title set in index.html
     document.title = "GSN (v3) Relays Network"
-    
+
     getNetworks().then(networks => {
       this.setState({ networks })
     }).catch(e => {
@@ -651,6 +652,7 @@ class RelaysList extends React.Component {
       </>
     }
     return <>
+      {this.state.goToManage ? <Navigate to='/manage' /> : null}
       <Card.Body>
         <h2>&nbsp;<img src="favicon.ico" height="50px" alt="" /> GSN (v3 beta) Relay Servers</h2>
         <b>Note</b> This is the status page of the new v3 (beta). For the current v2 network see <a
@@ -658,7 +660,7 @@ class RelaysList extends React.Component {
         <hr />
         <NetworkLinks networks={this.state.networks} relayCounts={relayCounts} />
         <ButtonGroup vertical>
-          <a className="my-2" href="/manage" target="_blank"><button>Add new</button></a>
+          <button className="my-2" onClick={() => this.setState({ goToManage: true })}>Add new</button>
           <button className="my-2" onClick={() => globalevent.emit('refresh')}>Refresh</button>
         </ButtonGroup>
 
