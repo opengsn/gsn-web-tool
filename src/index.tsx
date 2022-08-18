@@ -124,8 +124,12 @@ const client = createClient({
   autoConnect: true,
   connectors: [new InjectedConnector({ chains })],
   provider: (config) => {
-    const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, config.chainId)
-    return provider
+    if (config.chainId !== undefined) {
+      const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, config.chainId)
+      return provider
+    }
+
+    return getDefaultProvider()
   }
 })
 
