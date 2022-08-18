@@ -616,6 +616,9 @@ class RelaysList extends React.Component {
   }
 
   componentDidMount() {
+    // default title set in index.html
+    document.title = "GSN (v3) Relays Network"
+    
     getNetworks().then(networks => {
       this.setState({ networks })
     }).catch(e => {
