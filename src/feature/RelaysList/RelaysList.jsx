@@ -655,7 +655,7 @@ class RelaysList extends React.Component {
         <hr />
         <NetworkLinks networks={this.state.networks} relayCounts={relayCounts} />
         <ButtonGroup vertical>
-          <a className="my-2" href="/manage"><button>Add new</button></a>
+          <a className="my-2" href="/manage" target="_blank"><button>Add new</button></a>
           <button className="my-2" onClick={() => globalevent.emit('refresh')}>Refresh</button>
         </ButtonGroup>
 
