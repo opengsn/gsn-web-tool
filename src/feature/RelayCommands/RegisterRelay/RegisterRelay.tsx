@@ -98,7 +98,7 @@ export default function RegisterRelay () {
             {currentStep === 0
               ? <Funder />
               : null}
-            {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
+            {/* {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null} */}
             {currentStep === 3 ? <Authorizer /> : null}
           </div>
         </Collapse>

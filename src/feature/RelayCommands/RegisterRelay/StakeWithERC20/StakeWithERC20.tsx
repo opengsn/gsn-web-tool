@@ -1,6 +1,6 @@
 import { useEffect, useState, createContext } from 'react'
 import { ethers } from 'ethers'
-import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
+import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork, Chain } from 'wagmi'
 
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
@@ -24,7 +24,7 @@ import stakeManagerAbi from '../../../../contracts/stakeManager.json'
 import { Address } from '@opengsn/common/dist/types/Aliases'
 import { useFormik } from 'formik'
 import StakeAddedListener from './StakeAddedListener'
-import { ChainWithStakingTokens } from '../../../..'
+import { ChainWithGsn } from '../../../../networks'
 
 export interface TokenContextInterface {
   token: Address
@@ -46,7 +46,8 @@ export default function StakeWithERC20 () {
   const [listen, setListen] = useState(false)
 
   const { chain: chainData } = useNetwork()
-  const chain = chainData as unknown as ChainWithStakingTokens
+  const chain = chainData as unknown as ChainWithGsn
+
   // useEffect(() => {
   //   if (chain.stakingTokens === undefined) return
   //   setToken(chain.)
@@ -106,9 +107,9 @@ export default function StakeWithERC20 () {
             value={getTokenAddress.values.token}
           >
             <option value="">Select staking token</option>
-            {chain.stakingTokens?.map((x) => {
+            {/* {chain.stakingTokens?.map((x) => {
               return <option key={x} value={x}>{x} {isAddress}</option>
-            })}
+            })} */}
           </Form.Select>
         </Form.Label>
         <br />
