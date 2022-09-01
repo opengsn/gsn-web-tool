@@ -12,7 +12,6 @@ import { toast } from 'react-toastify'
 
 export default function SetOwnerListener () {
   const dispatch = useAppDispatch()
-  const provider = useProvider()
   const { address: account } = useAccount()
   const funderData = useContext(FunderContext)
 
@@ -20,12 +19,15 @@ export default function SetOwnerListener () {
     listen,
     setListen,
     stakeManagerAddress,
-    relayManagerAddress
+    relayManagerAddress,
+    chainId
   } = funderData
+  const provider = useProvider({ chainId: chainId })
 
   useContractEvent({
     addressOrName: stakeManagerAddress,
     contractInterface: stakeManagerAbi,
+    chainId: chainId,
     eventName: 'OwnerSet',
     listener: () => {
       if (!listen && account !== undefined) {
@@ -41,6 +43,7 @@ export default function SetOwnerListener () {
     contractInterface: stakeManagerAbi,
     args: relayManagerAddress,
     functionName: 'getStakeInfo',
+    chainId: chainId,
     watch: false
   })
 

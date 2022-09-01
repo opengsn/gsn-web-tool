@@ -1,32 +1,106 @@
-import React from 'react'
-import { useAccount } from 'wagmi'
+import { useEffect, useState } from 'react'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
 import Relay from '../feature/Relay/Relay'
 
 import NavigateBackButton from '../feature/Relay/NavigateBackButton'
-import MetamaskButton from '../components/MetamaskButton'
 
 import Row from 'react-bootstrap/Row'
 import Container from 'react-bootstrap/Container'
-import RelaysListNew from '../feature/RelaysList/RelaysListNew'
+// import RelaysListNew from '../feature/RelaysList/RelaysListWagmiWrapper'
+import { Route, Routes } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import RelaysListWagmiWrapper from '../feature/RelaysList/RelaysListWagmiWrapper'
+import { getNetworks } from '../networks'
+import { useAppDispatch, useAppSelector } from '../hooks'
+import { fetchNetworks, INetwork, NetworkListState } from '../feature/RelaysList/networkListSlice'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { ethers, getDefaultProvider } from 'ethers'
+import { Spinner } from 'react-bootstrap'
 
 export default function App () {
-  const { address, connector, isConnected, status } = useAccount()
+  const [gsnNetworks, setGsnNetworks] = useState<any>([])
+  const dispatch = useAppDispatch()
 
-  return (
-    <div className="App">
+  useEffect(() => {
+    const fetchNets = async () => {
+      try {
+        const tes = await getNetworks()
+        setGsnNetworks(tes)
+        dispatch(fetchNetworks()).catch(console.error)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    fetchNets().catch(console.error)
+  }, [])
+
+  const LoadingCentered =
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-white">
+      <div>
+        <Spinner variant="success" animation="grow"></Spinner>
+      </div>
+    </div>
+
+  if (gsnNetworks.length === 0) return LoadingCentered
+
+  const { chains, provider } = configureChains(
+    gsnNetworks,
+    [
+      infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
+      jsonRpcProvider({
+        rpc: (chain) => {
+          return ({
+            http: chain.rpcUrls.default
+          })
+        },
+        static: true
+      })
+    ]
+  )
+
+  const client = createClient({
+    autoConnect: true,
+    connectors: [new InjectedConnector({ chains })],
+    provider: (config) => {
+      if (config.chainId !== undefined) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider, config.chainId)
+        return provider
+      }
+
+      return getDefaultProvider()
+    }
+  })
+
+  const RelayExtendedViewContainer = () => {
+    return (<div className="App">
       <Container fluid className="my-1">
         <Row>
           <NavigateBackButton />
-          <RelaysListNew />
-          {
-            (connector !== undefined && address !== undefined && isConnected && status === 'connected')
-              ? <>
-                <Relay />
-              </> : <MetamaskButton />
-          }
+          <Relay />
         </Row>
       </Container>
-    </div>
+    </div>)
+  }
+
+  return (
+    <WagmiConfig client={client}>
+      <Routes>
+        <Route path="/" element={<RelaysListWagmiWrapper />} />
+        <Route path="/manage" element={<RelayExtendedViewContainer />} />
+      </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={false}
+        newestOnTop
+        style={{ width: '45vw' }}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+      />
+    </WagmiConfig>
   )
 }

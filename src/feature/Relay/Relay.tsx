@@ -25,7 +25,7 @@ export default function Relay () {
   const relayData: PingResponse = relay.relay
   const relayDataFetched = (Object.keys(relayData).length > 0)
   const chainId = Number(relayData.chainId)
-  const { chain } = useNetwork()
+  const { chain, chains } = useNetwork()
   const abortFetch = useRef<unknown>()
 
   const getRelayForm = useFormik({
@@ -81,33 +81,36 @@ export default function Relay () {
           </Alert>
           : null}
         <Form className="row" onSubmit={getRelayForm.handleSubmit}>
-          <Form.Label htmlFor="url">Relay URL
-            <InputGroup><Form.Control
-              id="url"
-              name="url"
-              type="text"
-              onChange={getRelayForm.handleChange}
-              value={getRelayForm.values.url}
-            />
-            </InputGroup></Form.Label>
-          <Button variant="success" type="submit">Fetch data</Button>
+          {/* URL from query  */}
+          {searchParams.get('relayUrl') === null
+            ? <>
+              <Form.Label htmlFor="url">Relay URL
+                <InputGroup><Form.Control
+                  id="url"
+                  name="url"
+                  type="text"
+                  onChange={getRelayForm.handleChange}
+                  value={getRelayForm.values.url}
+                />
+                </InputGroup></Form.Label>
+              <Button variant="success" type="submit">Fetch data</Button>
+            </>
+            : null}
         </Form>
       </Col>
       <Col></Col>
     </>)
   }
 
-  if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
-    return (<>
-      <ChainIdHandler relayChainId={chainId} />
-    </>)
-  }
-
-  if (chain?.id === chainId && relayDataFetched) {
+  const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
+  if (relayDataFetched) {
     return (
       <div className="col-10">
         <div className="row">
           <RelayInfo />
+          {connectedToWrongChainId
+            ? <ChainIdHandler relayChainId={chainId} />
+            : null}
           <RelayCommands />
         </div>
       </div>

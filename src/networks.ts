@@ -61,11 +61,15 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
       console.error(e)
     }
     // //hack: Nitro doesn't appear in the global network chainlist..
-    // chainList[421612] = {
-    //   chainId: 421612,
-    //   name: 'Arbitrum Nitro Devnet',
-    //   rpc: ['https://nitro-devnet.arbitrum.io/rpc'],
-    // }
+    chainList[421612] = {
+      chainId: 421612,
+      name: 'Arbitrum Nitro Devnet',
+      rpc: ['https://nitro-devnet.arbitrum.io/rpc']
+    }
+    if (chainList[43113] !== undefined) {
+      // allows querying events 5000 blocks back
+      chainList[43113].rpc = ['https://avalanchetestapi.terminet.io/ext/bc/C/rpc']
+    }
   }
 
   type networks = '3' | '5' | '69' | '43113' | '31337' | '1337' | '80001' | '421611' | '421612'

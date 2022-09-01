@@ -104,7 +104,6 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
         return fulfillWithValue(false, null)
       }
     } catch (e: any) {
-      console.log(e)
       return rejectWithValue(false)
     }
   })
@@ -199,7 +198,6 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
       return fulfillWithValue(3, null)
     } catch (error: any) {
-      console.log(error)
       if (error.message.includes('relay manager not staked') === true) {
         return fulfillWithValue(2, null)
       }

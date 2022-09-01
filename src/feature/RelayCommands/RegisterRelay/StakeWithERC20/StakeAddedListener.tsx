@@ -33,7 +33,6 @@ export default function StakeAddedListener () {
         const sleepMs = 5000
         let i = 0
         while (true) {
-          console.log('ax')
           await sleep(sleepMs)
           dispatch(check).catch(toast.error)
           if (sleepCount === i++) {

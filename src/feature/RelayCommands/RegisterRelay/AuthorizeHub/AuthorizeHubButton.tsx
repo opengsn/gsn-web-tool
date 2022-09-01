@@ -20,10 +20,11 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
   const { relayHubAddress, relayManagerAddress } = relay
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { chain } = useNetwork()
+  const chainId = Number(relay.chainId)
 
   const {
     data: stakeManagerAddressData
-  } = useStakeManagerAddress(relayHubAddress)
+  } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 

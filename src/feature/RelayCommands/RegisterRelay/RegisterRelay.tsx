@@ -19,7 +19,7 @@ export default function RegisterRelay () {
   const currentStep = useAppSelector((state) => state.register.step)
   const status = useAppSelector((state) => state.register.status)
   const dispatch = useAppDispatch()
-  const provider = useProvider()
+  const provider = useProvider({ chainId: Number(relay.chainId) })
   const { address } = useAccount()
 
   const [showRegisterRelay, setShowRegisterRelay] = useState(false)
@@ -79,7 +79,6 @@ export default function RegisterRelay () {
     if (address !== undefined) {
       dispatch(fetchRegisterStateData({ provider, account: address })).
         catch((e) => {
-          console.log(e.message)
           toast.error(<>
             <p>Error while fetching relay status</p>
             <p>See console for error message</p>
@@ -98,7 +97,7 @@ export default function RegisterRelay () {
             {currentStep === 0
               ? <Funder />
               : null}
-            {/* {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null} */}
+            {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
             {currentStep === 3 ? <Authorizer /> : null}
           </div>
         </Collapse>

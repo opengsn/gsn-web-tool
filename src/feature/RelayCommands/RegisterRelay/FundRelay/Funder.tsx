@@ -6,6 +6,7 @@ import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
 
 import { Address } from '@opengsn/common'
+import { useAccount, useConnect } from 'wagmi'
 
 export interface FunderContextInterface {
   funds: BigNumber
@@ -13,6 +14,7 @@ export interface FunderContextInterface {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: Address
   stakeManagerAddress: Address
+  chainId: number
 }
 
 export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)
@@ -21,9 +23,13 @@ export default function Funder () {
   const [listen, setListen] = useState(false)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress, relayHubAddress } = relay
+  const chainId = Number(relay.chainId)
+
+  const { connector } = useAccount()
 
   const funds = BigNumber.from(ethers.utils.parseEther(('0.5')))
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  alert(chainId)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   return (
@@ -32,7 +38,8 @@ export default function Funder () {
       listen: listen,
       setListen: setListen,
       relayManagerAddress: relayManagerAddress,
-      stakeManagerAddress: stakeManagerAddress
+      stakeManagerAddress: stakeManagerAddress,
+      chainId: chainId
     }}>
       <FundButton />
       <SetOwnerListener />

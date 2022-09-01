@@ -19,16 +19,18 @@ export default function Approver () {
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
+  const chainId = Number(relay.chainId)
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'allowance',
+    chainId: chainId,
     args: [account, stakeManagerAddress],
     onSuccess (data) {
       setApproveAmount(

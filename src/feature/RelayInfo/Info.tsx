@@ -12,17 +12,25 @@ function Info () {
   const relayUrl: string = relay.relayUrl
   const relayData: PingResponse = relay.relay
 
+  const chainId = Number(relayData.chainId)
+
   const { address } = useAccount()
 
-  const { data: relayManagerBalanceData } = useBalance({ addressOrName: relayData.relayManagerAddress })
-  const { data: relayWorkerBalanceData } = useBalance({ addressOrName: relayData.relayWorkerAddress })
+  const { data: relayManagerBalanceData } = useBalance({
+    addressOrName: relayData.relayManagerAddress,
+    chainId: chainId
+  })
+  const { data: relayWorkerBalanceData } = useBalance({
+    addressOrName: relayData.relayWorkerAddress,
+    chainId: chainId
+  })
   const { data: ownerAddressBalance } = useBalance({ addressOrName: relayData.ownerAddress })
 
   const { data: stakeManagerAddressData, isLoading, isFetching } = useContractRead({
     addressOrName: relayData.relayHubAddress,
     contractInterface: relayHubAbi,
     functionName: 'getStakeManager',
-    watch: false,
+    chainId: chainId,
     onError (err) { console.warn(err) }
   })
 
@@ -70,8 +78,8 @@ function Info () {
                 {(relayData[x as keyof PingResponse])?.toString()}
               </td>
               <td>
-                <b>{ accountIsOwner ? 'currently connected'
-                  : 'switch to owner to enable actions' }</b>
+                <b>{accountIsOwner ? 'currently connected'
+                  : 'switch to owner to enable actions'}</b>
               </td>
             </>
           )
@@ -126,7 +134,7 @@ function Info () {
       </thead>
       <tbody>
         <PingResponseData />
-        { (isFetching || isLoading) && stakeManagerAddress !== undefined
+        {(isFetching || isLoading) && stakeManagerAddress !== undefined
           ? <>
             <tr><td>Current Owner</td><td>loading</td><td></td></tr>
             <tr><td>staking token</td><td>loading</td><td></td></tr>

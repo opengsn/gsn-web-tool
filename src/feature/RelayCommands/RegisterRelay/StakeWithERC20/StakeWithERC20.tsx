@@ -61,6 +61,7 @@ export default function StakeWithERC20 () {
     ownerAddress: owner,
     relayHubAddress
   } = relay
+  const chainId = Number(relay.chainId)
 
   const provider = useProvider()
   const relayHub = useContract({
@@ -69,7 +70,7 @@ export default function StakeWithERC20 () {
     signerOrProvider: provider
   })
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   const { data: newStakeInfoData } = useContractRead({
@@ -210,9 +211,9 @@ export default function StakeWithERC20 () {
   )
 
   if (address !== undefined) {
-    const isaddressRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, address))
+    const isAddressRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, address))
 
-    if (!isaddressRelayOwner) {
+    if (!isAddressRelayOwner) {
       return <div>- The relay is already owned by {owner}, our data.address={address}</div>
     }
   }

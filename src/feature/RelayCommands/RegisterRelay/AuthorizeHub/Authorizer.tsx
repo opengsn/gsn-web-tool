@@ -22,10 +22,11 @@ export default function Authorizer () {
     relayManagerAddress,
     relayHubAddress
   } = relay
+  const chainId = Number(relay.chainId)
 
   const {
     data: stakeManagerAddressData
-  } = useStakeManagerAddress(relayHubAddress)
+  } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 

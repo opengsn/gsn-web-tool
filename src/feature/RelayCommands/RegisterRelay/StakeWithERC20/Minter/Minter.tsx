@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext } from 'react'
 import { useBalance, useProvider, useToken } from 'wagmi'
 import { ethers } from 'ethers'
 
-import Card from 'react-bootstrap/Card'
+import Tab from 'react-bootstrap/Tab'
+import Tabs from 'react-bootstrap/Tabs'
 
 import MintButton from './MintButton'
 import MintAmountForm from './MintAmountForm'
@@ -10,7 +11,6 @@ import MintAmountForm from './MintAmountForm'
 import { TokenContext } from '../StakeWithERC20'
 import { checkIsMintingRequired } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
-import { Tab, Tabs } from 'react-bootstrap'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber

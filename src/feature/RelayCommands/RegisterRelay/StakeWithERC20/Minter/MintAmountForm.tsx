@@ -2,8 +2,6 @@ import { useEffect, useContext, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 
 import Form from 'react-bootstrap/Form'
-import { ButtonGroup, Button } from 'react-bootstrap'
-
 import { MinterContext } from './Minter'
 import { TokenContext } from '../StakeWithERC20'
 
@@ -21,7 +19,6 @@ export default function MintAmountForm () {
       const amountBigNumber = ethers.utils.parseEther(value)
       setLocalMintAmount(amountBigNumber)
     } catch (e: any) {
-      console.log(e)
       // suppress error
     }
   }

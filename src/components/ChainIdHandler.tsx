@@ -2,9 +2,9 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
+import Col from 'react-bootstrap/Col'
 
 import LoadingButton from './LoadingButton'
-import { Row, Col } from 'react-bootstrap'
 
 interface chainIdHandlerProps {
   relayChainId: number
