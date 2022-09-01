@@ -1,7 +1,6 @@
-import { useBalance, useProvider } from 'wagmi'
+import { useProvider } from 'wagmi'
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
-import { toNumber } from '@opengsn/common'
 
 export interface ManagerBalanceProps {
   address: string | null
@@ -11,25 +10,24 @@ export interface ManagerBalanceProps {
 function Balance ({ address, chainId }: ManagerBalanceProps) {
   const [loading, setLoading] = useState(true)
   const [balance, setBalance] = useState<ethers.BigNumber | null>(null)
-  const provider = useProvider({ chainId: chainId })
-
-  const fetchBalance = async (provider: ethers.providers.BaseProvider) => {
-    if (address === null) return
-    try {
-      setLoading(true)
-      const workerBalance = await provider.getBalance(address)
-      setBalance(workerBalance)
-      setLoading(false)
-    } catch (e) {
-      setLoading(false)
-    }
-  }
+  const provider = useProvider({ chainId })
 
   useEffect(() => {
     if (balance === null) {
+      const fetchBalance = async (provider: ethers.providers.BaseProvider) => {
+        if (address === null) return
+        try {
+          setLoading(true)
+          const workerBalance = await provider.getBalance(address)
+          setBalance(workerBalance)
+          setLoading(false)
+        } catch (e) {
+          setLoading(false)
+        }
+      }
       fetchBalance(provider).catch(console.error)
     }
-  }, [address, provider])
+  }, [address, provider, balance])
 
   if (address === null) return <span>n/a</span>
   if (loading) { return <>loading...</> }

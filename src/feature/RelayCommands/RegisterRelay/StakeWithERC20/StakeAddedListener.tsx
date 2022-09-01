@@ -1,14 +1,13 @@
 import { useContext, useEffect } from 'react'
-import { useContract, useContractEvent, useProvider } from 'wagmi'
+import { useContractEvent, useProvider } from 'wagmi'
 import { toast } from 'react-toastify'
 import { validateIsRelayManagerStaked } from '../registerRelaySlice'
 
 import { TokenContext } from './StakeWithERC20'
 import { useAppDispatch, useAppSelector } from '../../../../hooks'
 
-import relayHubAbi from '../../../../contracts/relayHub.json'
 import stakeManagerAbi from '../../../../contracts/stakeManager.json'
-import { sleep } from '@opengsn/common'
+import { sleep } from '../../../../utils/utils'
 
 export default function StakeAddedListener () {
   const relay = useAppSelector((state) => state.relay.relay)
@@ -17,12 +16,6 @@ export default function StakeAddedListener () {
   const provider = useProvider()
 
   const { stakeManagerAddress, listen } = useContext(TokenContext)
-
-  const relayHub = useContract({
-    addressOrName: relayHubAddress,
-    contractInterface: relayHubAbi,
-    signerOrProvider: provider
-  })
 
   const check = validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider })
 

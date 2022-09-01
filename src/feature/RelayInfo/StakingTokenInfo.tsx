@@ -1,9 +1,7 @@
 import { useAccount, useBalance } from 'wagmi'
 
-import { Address } from '@opengsn/common/dist/types/Aliases'
-
 interface stakingTokenProps {
-  stakingToken: Address
+  stakingToken: string
   chainId: number
 }
 
@@ -12,7 +10,7 @@ export default function StakingTokenInfo ({ stakingToken, chainId }: stakingToke
   const { data: stakingTokenBalance } = useBalance({
     addressOrName: address,
     token: stakingToken,
-    chainId: chainId
+    chainId
   })
 
   const BalanceData = () => {

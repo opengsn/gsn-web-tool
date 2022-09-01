@@ -8,7 +8,7 @@ interface TokenValueInfoProps extends IFoundToken {
 }
 
 export function TokenValueInfo ({ token, minimumStake, chainId }: TokenValueInfoProps) {
-  const { data: tokenData } = useToken({ address: token, chainId: chainId })
+  const { data: tokenData } = useToken({ address: token, chainId })
   return (
     <span>
       {ethers.utils.formatEther(minimumStake)} {tokenData?.symbol}

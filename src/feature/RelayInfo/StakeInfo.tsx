@@ -1,15 +1,14 @@
 import { useAccount, useContractRead } from 'wagmi'
 
-import { isSameAddress } from '@opengsn/common/dist/Utils'
-import { Address } from '@opengsn/common/dist/types/Aliases'
-import StakeManagerAbi from '../../contracts/stakeManager.json'
+import { isSameAddress } from '../../utils/utils'
 
+import StakeManagerAbi from '../../contracts/stakeManager.json'
 import StakingTokenInfo from './StakingTokenInfo'
 import { useAppSelector } from '../../hooks'
 
 interface stakeInfoProps {
-  stakeManagerAddress: Address
-  relayManagerAddress: Address
+  stakeManagerAddress: string
+  relayManagerAddress: string
 }
 
 export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {

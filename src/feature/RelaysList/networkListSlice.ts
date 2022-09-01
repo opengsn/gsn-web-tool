@@ -1,13 +1,14 @@
-import { Address, PingResponse } from '@opengsn/common'
 import { compose, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios'
 import { ethers } from 'ethers'
 import { ChainWithGsn, getNetworks } from '../../networks'
 import RelayRegistrarAbi from '../../contracts/relayRegistrar.json'
 
+import { PingResponse } from '../../types/PingResponse'
+
 interface GsnNetworkRelay {
   url: string
-  manager: Address
+  manager: string
   config?: PingResponse
   errorMsg: string
 }

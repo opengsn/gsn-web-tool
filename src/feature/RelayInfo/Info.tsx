@@ -1,4 +1,5 @@
-import { isSameAddress, PingResponse } from '@opengsn/common'
+import { isSameAddress } from '../../utils/utils'
+import { PingResponse } from '../../types/PingResponse'
 import { ethers } from 'ethers'
 import { useAccount, useBalance, useContractRead } from 'wagmi'
 import Table from 'react-bootstrap/Table'
@@ -9,7 +10,6 @@ import StakeInfo from './StakeInfo'
 
 function Info () {
   const relay = useAppSelector((state) => state.relay)
-  const relayUrl: string = relay.relayUrl
   const relayData: PingResponse = relay.relay
 
   const chainId = Number(relayData.chainId)
@@ -18,25 +18,23 @@ function Info () {
 
   const { data: relayManagerBalanceData } = useBalance({
     addressOrName: relayData.relayManagerAddress,
-    chainId: chainId
+    chainId
   })
   const { data: relayWorkerBalanceData } = useBalance({
     addressOrName: relayData.relayWorkerAddress,
-    chainId: chainId
+    chainId
   })
-  const { data: ownerAddressBalance } = useBalance({ addressOrName: relayData.ownerAddress })
 
   const { data: stakeManagerAddressData, isLoading, isFetching } = useContractRead({
     addressOrName: relayData.relayHubAddress,
     contractInterface: relayHubAbi,
     functionName: 'getStakeManager',
-    chainId: chainId,
+    chainId,
     onError (err) { console.warn(err) }
   })
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const RelayUrl = () => { return <span>{relayUrl}</span> }
   const camelCaseToHuman = (s: string): string => {
     return s.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
   }
@@ -78,7 +76,8 @@ function Info () {
                 {(relayData[x as keyof PingResponse])?.toString()}
               </td>
               <td>
-                <b>{accountIsOwner ? 'currently connected'
+                <b>{accountIsOwner
+                  ? 'currently connected'
                   : 'switch to owner to enable actions'}</b>
               </td>
             </>

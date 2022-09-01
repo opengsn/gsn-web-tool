@@ -1,16 +1,17 @@
 import { useState, useContext } from 'react'
-import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { ethers } from 'ethers'
+
+import { toast } from 'react-toastify'
 import Button from 'react-bootstrap/Button'
 
 import { TokenContext } from '../StakeWithERC20'
 import ErrorButton from '../../../../../components/ErrorButton'
 import LoadingButton from '../../../../../components/LoadingButton'
+import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 
-import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import { useStakeManagerAddress, useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
-import { toast } from 'react-toastify'
 import TransactionSuccessToast from '../../../../../components/TransactionSuccessToast'
 
 export default function Approver () {
@@ -30,7 +31,7 @@ export default function Approver () {
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'allowance',
-    chainId: chainId,
+    chainId,
     args: [account, stakeManagerAddress],
     onSuccess (data) {
       setApproveAmount(
@@ -39,7 +40,7 @@ export default function Approver () {
     }
   })
 
-  const { config, error: prepareApproveTxError } = usePrepareContractWrite({
+  const { config, error: prepareApproveTxError, isError: prepareApproveTxIsError } = usePrepareContractWrite({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'approve',
@@ -76,6 +77,11 @@ export default function Approver () {
   }
 
   if (currentAllowanceIsError) return <span>Error fetching token allowance</span>
+  if (prepareApproveTxIsError && prepareApproveTxError !== null) {
+    return <div>Error preparing approve transaction.
+      <span className="bg-warning">{prepareApproveTxError.message}</span>
+    </div>
+  }
   if (isError) return <ApproveError />
   if (isLoading) return <LoadingButton />
   if (isSuccess || approveAmount.eq(ethers.constants.Zero)) return <div>Succesfully increased allowance</div>

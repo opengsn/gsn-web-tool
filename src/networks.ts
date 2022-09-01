@@ -1,16 +1,15 @@
 import gsnNetworks from './gsn-networks.json'
 import axios from 'axios'
 import { Chain } from 'wagmi'
-import { Address } from '@opengsn/common'
 
 export interface ChainWithGsn extends Chain {
   gsn: {
-    relayHubAddress: Address
+    relayHubAddress: string
     RelayHubAbi: any
     contracts: any
     group: string
   }
-  stakingTokens?: Address[]
+  stakingTokens?: string[]
 }
 // const infura = (document.location.href.match(/#.*infura=([^&]*)/) || [])[1] || 'f40be2b1a3914db682491dc62a19ad43'
 const infura = 'f40be2b1a3914db682491dc62a19ad43'
@@ -134,7 +133,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
     ])
   }, [])
   const availableChains = process(gsnNetworks)
-  const wrappedNativeCurrency: { [key: string]: Address } = {
+  const wrappedNativeCurrency: { [key: string]: string } = {
     'gsn-test': '0x5fbdb2315678afecb367f032d93f642f64180aa3',
     ropsten: '0x1368e39E3CB40C3dFb06d2cB8E5fca6a847D16E6',
     goerli: '0xE8172A9bf53001d2796825AeC32B68e21FDBb869',

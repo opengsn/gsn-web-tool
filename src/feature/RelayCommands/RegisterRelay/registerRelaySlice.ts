@@ -1,14 +1,13 @@
 import { AxiosError } from 'axios'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../../store'
-import { ethers, providers } from 'ethers'
+import { ethers, providers, constants } from 'ethers'
 
 import relayHubAbi from '../../../contracts/relayHub.json'
 import stakeManagerAbi from '../../../contracts/stakeManager.json'
-import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
-import { isSameAddress } from '@opengsn/common/dist/Utils'
-import { Address } from '@opengsn/common/dist/types/Aliases'
-import { PingResponse, constants } from '@opengsn/common'
+import iErc20TokenAbi from '../../../contracts/iERC20TokenAbi.json'
+import { isSameAddress } from '../../../utils/utils'
+import { PingResponse } from '../../../types/PingResponse'
 import { fetchRelayData } from '../../Relay/relaySlice'
 
 export enum RegisterSteps {
@@ -30,8 +29,8 @@ const initialState: registerState = {
 }
 
 interface validateOwnerInPingResponseParams {
-  account: Address
-  ownerAddress: Address
+  account: string
+  ownerAddress: string
 }
 
 // step 0
@@ -47,10 +46,10 @@ const validateOwnerInPingResponse = createAsyncThunk(
   })
 
 interface checkIsMintingRequiredParams {
-  account: Address
+  account: string
   relay: PingResponse
   provider: providers.BaseProvider
-  token?: Address
+  token?: string
 }
 
 // step 0 -> 1
@@ -70,9 +69,9 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
       const stakeManagerAddress = await relayHub.getStakeManager()
       const stakeManager = new ethers.Contract(stakeManagerAddress, stakeManagerAbi, provider)
 
-      const { tokenFromStakeInfo }: { tokenFromStakeInfo: Address } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
+      const { tokenFromStakeInfo }: { tokenFromStakeInfo: string } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
 
-      if (tokenFromStakeInfo === constants.ZERO_ADDRESS || tokenFromStakeInfo === undefined) {
+      if (tokenFromStakeInfo === constants.AddressZero || tokenFromStakeInfo === undefined) {
         if (token !== undefined) {
           const tokenContract = new ethers.Contract(token, iErc20TokenAbi, provider)
           const tokenBalance = await tokenContract.balanceOf(account)
@@ -91,7 +90,6 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
       const stakingTokenContract = new ethers.Contract(tokenFromStakeInfo, iErc20TokenAbi, provider)
 
       const accountErc20Balance = await stakingTokenContract.balanceOf(account)
-      // const tokenContract = new ethers.Contract(token, iErc20TokenAbi, provider)
       const minimumStake = await relayHub.functions.getMinimumStakePerToken(tokenFromStakeInfo)
       if (
         !stakingTokenBytecode.includes('deposit') ||
@@ -109,7 +107,7 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
   })
 
 interface validateIsRelayFundedParams {
-  account: Address
+  account: string
   relay: PingResponse
   provider: providers.BaseProvider
 }
@@ -141,7 +139,7 @@ const validateIsRelayFunded = createAsyncThunk<boolean, validateIsRelayFundedPar
   })
 
 interface validateOwnerInStakeManagerParams {
-  account: Address
+  account: string
   relay: PingResponse
   provider: providers.BaseProvider
 }
@@ -174,8 +172,8 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
   })
 
 interface validateIsRelayManagerStakedParams {
-  relayManagerAddress: Address
-  relayHubAddress: Address
+  relayManagerAddress: string
+  relayHubAddress: string
   provider: providers.BaseProvider
 }
 
@@ -210,7 +208,7 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
 interface fetchRegisterStateParams {
   provider: providers.BaseProvider
-  account: Address
+  account: string
 }
 
 export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStateParams, { fulfilledMeta: null }

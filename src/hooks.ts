@@ -5,13 +5,11 @@ import type { RootState, AppDispatch } from './store'
 
 import relayHubAbi from './contracts/relayHub.json'
 
-import { Address } from '@opengsn/common/dist/types/Aliases'
-
-export const useStakeManagerAddress = (relayHubAddress: Address, chainId: number) => useContractRead({
+export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) => useContractRead({
   addressOrName: relayHubAddress,
   contractInterface: relayHubAbi,
   functionName: 'getStakeManager',
-  chainId: chainId,
+  chainId,
   onError (err) {
     console.warn(err, chainId)
     console.warn(chainId)

@@ -32,7 +32,7 @@ export default function Minter () {
 
   const { data: tokenBalanceData } = useBalance({
     addressOrName: account,
-    token: token,
+    token,
     watch: true,
     onSuccess (data) {
       dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
@@ -47,9 +47,9 @@ export default function Minter () {
 
   return (
     <MinterContext.Provider value={{
-      mintAmount: mintAmount,
-      outstandingMintAmount: outstandingMintAmount,
-      setMintAmount: setMintAmount
+      mintAmount,
+      outstandingMintAmount,
+      setMintAmount
     }}>
       <Tabs defaultActiveKey="basic"
         unmountOnExit={true}

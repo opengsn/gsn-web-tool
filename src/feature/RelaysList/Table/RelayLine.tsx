@@ -1,5 +1,5 @@
-import { PingResponse } from '@opengsn/common'
-import { Button } from 'react-bootstrap'
+import { PingResponse } from '../../../types/PingResponse'
+import Button from 'react-bootstrap/Button'
 import { useNavigate } from 'react-router-dom'
 import Balance from './Balance'
 import BlockExplorerUrl from './BlockExplorerUrl'
