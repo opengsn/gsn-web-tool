@@ -1,5 +1,5 @@
 import gsnNetworks from './gsn-networks.json'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { Chain } from 'wagmi'
 
 export interface ChainWithGsn extends Chain {
@@ -44,18 +44,41 @@ let chainList: any = null
 // use gsn-networks for all gsn-deployed networks.
 // augment data from https://chainid.network/chains_mini.json, to add RPC
 // also add group defined above.
+
+interface ChainListNetwork {
+  name: string
+  chainId: number
+  rpc: string[]
+  shortName: string
+  faucets: string[]
+  nativeCurrency?: {
+    decimals: number
+    name: string
+    symbol: string
+  }
+}
+
+interface ChainListNetworkSet {
+  [key: number]: ChainListNetwork
+}
+
 export async function getNetworks (): Promise<ChainWithGsn[]> {
   if (chainList === null) {
     try {
-      const chainResponse = await axios.get(chainListMiniUrl)
+      // const chainResponse = await axios.get(chainListMiniUrl)
+      const chainResponse = await axios.get<string, AxiosResponse<ChainListNetwork[]>>(chainListMiniUrl)
       if (chainResponse.data === null) {
         // console.log('Bad response from', chainListMiniUrl, ':', chainResponse.response.data)
         throw new Error(`Failed to load chains from ${chainListMiniUrl}`)
       }
-      chainList = chainResponse.data.reduce((set: any, chainInfo: any) => ({
-        ...set,
-        [chainInfo.chainId]: chainInfo
-      }), {})
+      console.log(chainResponse.data)
+      chainList = chainResponse.data.reduce((set: ChainListNetworkSet, chainInfo: ChainListNetwork) => {
+        return ({
+          ...set,
+          [chainInfo.chainId]: chainInfo
+        })
+      }, {})
+      console.log(chainList)
     } catch (e: any) {
       console.error(e)
     }
