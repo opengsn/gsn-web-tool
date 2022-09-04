@@ -26,7 +26,7 @@ export default function App () {
   useEffect(() => {
     const fetchNets = async () => {
       try {
-        const networksForWagmi = await getNetworks() as ChainWithGsn[]
+        const networksForWagmi: ChainWithGsn[] = await getNetworks()
         setGsnNetworks(networksForWagmi)
         dispatch(fetchNetworks()).catch(console.error)
       } catch (e) {
