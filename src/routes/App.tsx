@@ -75,6 +75,7 @@ export default function App () {
 
   const RelayExtendedViewContainer = () => {
     return (<div className="App">
+      <header className="text-center text-white bg-danger">EXPERIMENTAL</header>
       <Container fluid className="my-1">
         <Row>
           <NavigateBackButton />
