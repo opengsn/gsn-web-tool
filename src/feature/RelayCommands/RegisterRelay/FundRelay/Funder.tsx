@@ -23,7 +23,6 @@ export default function Funder () {
   const chainId = Number(relay.chainId)
 
   const funds = BigNumber.from(ethers.utils.parseEther(('0.5')))
-  alert(chainId)
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
