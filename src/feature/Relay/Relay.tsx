@@ -18,6 +18,7 @@ import RelayCommands from '../RelayCommands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
 import { toast, Flip } from 'react-toastify'
+import { Card } from 'react-bootstrap'
 
 export default function Relay () {
   const dispatch = useAppDispatch()
@@ -25,7 +26,7 @@ export default function Relay () {
   const relayData: PingResponse = relay.relay
   const relayDataFetched = (Object.keys(relayData).length > 0)
   const chainId = Number(relayData.chainId)
-  const { chain, chains } = useNetwork()
+  const { chain } = useNetwork()
   const abortFetch = useRef<unknown>()
 
   const getRelayForm = useFormik({
@@ -107,6 +108,7 @@ export default function Relay () {
     return (
       <div className="col-10">
         <div className="row">
+          <Card className="border border-bottom-0 rounded-0"><Card.Body>{relay.relayUrl}</Card.Body></Card>
           <RelayInfo />
           {connectedToWrongChainId
             ? <ChainIdHandler relayChainId={chainId} />
