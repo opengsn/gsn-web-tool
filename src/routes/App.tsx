@@ -7,13 +7,12 @@ import NavigateBackButton from '../feature/Relay/NavigateBackButton'
 
 import Row from 'react-bootstrap/Row'
 import Container from 'react-bootstrap/Container'
-// import RelaysListNew from '../feature/RelaysList/RelaysListWagmiWrapper'
 import { Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import RelaysListWagmiWrapper from '../feature/RelaysList/RelaysListWagmiWrapper'
-import { getNetworks } from '../networks'
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { fetchNetworks, INetwork, NetworkListState } from '../feature/RelaysList/networkListSlice'
+import { ChainWithGsn, getNetworks } from '../networks'
+import { useAppDispatch } from '../hooks'
+import { fetchNetworks } from '../feature/RelaysList/networkListSlice'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -21,14 +20,14 @@ import { ethers, getDefaultProvider } from 'ethers'
 import { Spinner } from 'react-bootstrap'
 
 export default function App () {
-  const [gsnNetworks, setGsnNetworks] = useState<any>([])
+  const [gsnNetworks, setGsnNetworks] = useState<ChainWithGsn[]>([])
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     const fetchNets = async () => {
       try {
-        const tes = await getNetworks()
-        setGsnNetworks(tes)
+        const networksForWagmi: ChainWithGsn[] = await getNetworks()
+        setGsnNetworks(networksForWagmi)
         dispatch(fetchNetworks()).catch(console.error)
       } catch (e) {
         console.error(e)
@@ -65,17 +64,15 @@ export default function App () {
     autoConnect: true,
     connectors: [new InjectedConnector({ chains })],
     provider: (config) => {
-      if (config.chainId !== undefined) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider, config.chainId)
-        return provider
-      }
-
-      return getDefaultProvider()
+      if (config.chainId === undefined) return getDefaultProvider()
+      const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider, config.chainId)
+      return provider
     }
   })
 
   const RelayExtendedViewContainer = () => {
     return (<div className="App">
+      <header className="text-center text-white bg-danger">EXPERIMENTAL</header>
       <Container fluid className="my-1">
         <Row>
           <NavigateBackButton />
