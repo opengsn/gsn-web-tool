@@ -10,6 +10,7 @@ import RelayUrl from '../Table/RelayUrl'
 import Balance from '../Table/Balance'
 
 import { INetwork } from '../networkListSlice'
+import BlockExplorerUrl from '../Table/BlockExplorerUrl'
 
 interface NetworkCardProps {
   network: INetwork
@@ -19,16 +20,6 @@ export default function GsnStatusNew ({ network }: NetworkCardProps) {
   const { relayHubAddress, RelayHubAbi } = chain.gsn
 
   const RelaysTable = () => {
-    const AddressWithBlockExplorerUrl = ({ address }: { address: string }) => {
-      let addressElem
-      if (chain.blockExplorers?.default !== undefined) {
-        addressElem = <a href={`${chain.blockExplorers.default.url}/address/${address}`}>{address}</a>
-      } else {
-        addressElem = <span>{address}</span>
-      }
-      return addressElem
-    }
-
     const TableHead = () => (<thead>
       <tr>
         <th>url</th>
@@ -50,7 +41,7 @@ export default function GsnStatusNew ({ network }: NetworkCardProps) {
               <span className="text-danger">{x.errorMsg}</span>
             </td>
             <td>
-              <AddressWithBlockExplorerUrl address={x.manager} />
+              <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
             </td>
             <td><Balance address={x.manager} chainId={chain.id} /></td>
             <td><Button disabled>View details</Button></td>

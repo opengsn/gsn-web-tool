@@ -68,7 +68,6 @@ export default function SetOwnerListener () {
               newOwner !== constants.AddressZero &&
               isSameAddress(newOwner, account)
             ) {
-              toast.info('poll caught')
               dispatch(fetchRegisterStateData({ provider, account })).catch(console.error)
               break
             }

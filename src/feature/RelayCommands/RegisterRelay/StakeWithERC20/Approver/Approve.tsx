@@ -84,7 +84,11 @@ export default function Approver () {
   }
   if (isError) return <ApproveError />
   if (isLoading) return <LoadingButton />
-  if (isSuccess || approveAmount.eq(ethers.constants.Zero)) return <div>Succesfully increased allowance</div>
+  if (isSuccess || approveAmount.eq(ethers.constants.Zero)) {
+    return <div>
+      {'Succesfully increased allowance. \'Stake\' button will unlock after the transaction is confirmed by network'}
+    </div>
+  }
 
   return <ApproveButton />
 }

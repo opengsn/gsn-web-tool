@@ -43,10 +43,9 @@ export default function StakeAddedListener () {
     eventName: 'StakeAdded',
     listener () {
       if (listen) return
-      toast.info('event caught')
       dispatch(check).catch(toast.error)
     }
   })
 
-  return <span>{listen.toString()}</span>
+  return <></>
 }

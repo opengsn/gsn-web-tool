@@ -30,11 +30,11 @@ function Balance ({ address, chainId }: ManagerBalanceProps) {
   }, [address, provider, balance])
 
   if (address === null) return <span>n/a</span>
-  if (loading) { return <>loading...</> }
+  if (loading) { return <div>loading...</div> }
   if (balance !== null) {
-    return <span>
+    return <div>
       {ethers.utils.formatEther(balance.toString())}
-    </span>
+    </div>
   }
   return <>problem loading balance</>
 }

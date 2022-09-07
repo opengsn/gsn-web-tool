@@ -25,19 +25,21 @@ export default function ChainsList () {
       <hr />
     </div>
 
-    <Row className="px-3">
+    {/* mx-0 prevents horizontal scrollbar from appearing within container-fluid  */}
+    <Row className="mx-0">
       <Col md={3}>
         <NetworkLinksNew />
       </Col>
-      <Col md={{ span: 3, offset: 6 }} className="">
+      <Col md={{ span: 2, offset: 7 }} className="">
         <Row style={{ height: '150px' }}>
           <Link to='/manage'>
-            <Button size="lg" variant="success" className="h-100 w-100">
+            <Button size="lg" variant="success" className="h-75 w-100">
               <PlusCircleFill size={24} style={{
                 display: 'inline-block',
                 marginBottom: '3px',
                 marginRight: '4px'
-              }} /> Add new
+              }} />{' '}
+              Register New Relay
             </Button>
           </Link>
         </Row>
