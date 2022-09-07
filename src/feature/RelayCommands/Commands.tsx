@@ -8,8 +8,6 @@ import DeregisterRelay from './DeregisterRelay/DeregisterRelay'
 
 import { useAppSelector } from '../../hooks'
 import MetamaskButton from '../../components/MetamaskButton'
-import Tooltip from 'react-bootstrap/Tooltip'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 
 export default function RelayCommands () {
   const relay = useAppSelector((state) => state.relay.relay)
@@ -17,9 +15,7 @@ export default function RelayCommands () {
 
   const GrayedOutButtons = () => {
     return (
-      <OverlayTrigger placement={'bottom'} trigger={['hover', 'click']} defaultShow={true} delay={300} overlay={
-        <Tooltip>Connect to the owner account to enable actions</Tooltip>
-      }>
+      <>
         <Button
           aria-controls="register-relay-form"
           variant="outline-primary"
@@ -28,7 +24,7 @@ export default function RelayCommands () {
         >
           Register
         </Button>
-      </OverlayTrigger >
+      </>
     )
   }
 
@@ -38,7 +34,6 @@ export default function RelayCommands () {
       {!isConnected ? <MetamaskButton /> : null}
       <GrayedOutButtons />
     </>
-    // return <GrayedOutButtons />
   }
 
   return (
