@@ -2,6 +2,7 @@ import { useEffect, useContext, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 
 import Form from 'react-bootstrap/Form'
+
 import { MinterContext } from './Minter'
 import { TokenContext } from '../StakeWithERC20'
 

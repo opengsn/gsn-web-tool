@@ -12,9 +12,6 @@ export const useStakeManagerAddress = (relayHubAddress: string, chainId: number)
   chainId,
   onError (err) {
     console.warn(err, chainId)
-    console.warn(chainId)
-    console.warn(chainId)
-    console.warn(chainId)
   }
 })
 

@@ -4,7 +4,9 @@ import { isSameAddress } from '../../utils/utils'
 
 import StakeManagerAbi from '../../contracts/stakeManager.json'
 import StakingTokenInfo from './StakingTokenInfo'
-import { useAppSelector } from '../../hooks'
+
+import { useAppSelector, useAppDispatch } from '../../hooks'
+import { validateConfigOwnerInLineWithStakeManager } from '../Relay/relaySlice'
 
 interface stakeInfoProps {
   stakeManagerAddress: string
@@ -15,6 +17,7 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
   const relayData = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
+  const dispatch = useAppDispatch()
   const { address } = useAccount()
   const { data: stakeInfo, isSuccess } = useContractRead({
     addressOrName: stakeManagerAddress,
@@ -22,6 +25,10 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     functionName: 'getStakeInfo',
     args: relayManagerAddress,
     chainId
+    watch: false,
+    onSuccess (data) {
+      dispatch(validateConfigOwnerInLineWithStakeManager(data[0].owner))
+    }
   })
 
   if (stakeInfo !== undefined && isSuccess) {

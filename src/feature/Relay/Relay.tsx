@@ -71,6 +71,37 @@ export default function Relay () {
 
   if (!relayDataFetched) {
     return (<>
+      <Row className="justify-content-center">
+        <Col></Col>
+        <Col md="auto" className="flex-fill">
+          { relay.loading
+            ? <span>Loading data...</span>
+            : null }
+          { relay.errorMsg !== ''
+            ? <Alert variant="danger">
+              <span>Error: {relay.errorMsg}</span>
+            </Alert>
+            : null }
+          <Form className="row" onSubmit={getRelayForm.handleSubmit}>
+            <Form.Label htmlFor="url">Relay URL
+              <InputGroup><Form.Control
+                id="url"
+                name="url"
+                type="text"
+                onChange={getRelayForm.handleChange}
+                value={getRelayForm.values.url}
+              />
+              </InputGroup></Form.Label>
+            <Button variant="success" type="submit">Fetch data</Button>
+          </Form>
+        </Col>
+        <Col></Col>
+      </Row>
+    </>)
+  }
+
+  if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
+    return (<>
       <Col md="2"></Col>
       <Col md="auto" className="flex-fill">
         {relay.loading
