@@ -1,6 +1,5 @@
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
-import Spinner from 'react-bootstrap/Spinner'
 import { useAppSelector } from '../../hooks'
 import { INetwork } from './networkListSlice'
 

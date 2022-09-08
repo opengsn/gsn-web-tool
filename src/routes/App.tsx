@@ -34,7 +34,7 @@ export default function App () {
       }
     }
     fetchNets().catch(console.error)
-  }, [])
+  }, [dispatch])
 
   const LoadingCentered =
     <div className="d-flex align-items-center justify-content-center vh-100 bg-white">
@@ -45,7 +45,7 @@ export default function App () {
 
   if (gsnNetworks.length === 0) return LoadingCentered
 
-  const { chains, provider } = configureChains(
+  const { chains } = configureChains(
     gsnNetworks,
     [
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),

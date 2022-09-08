@@ -7,8 +7,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { ChainWithGsn } from '../../networks'
 import ChainsList from './ChainsList'
-import { useAppDispatch, useAppSelector } from '../../hooks'
-import { fetchNetworks } from './networkListSlice'
+import { useAppSelector } from '../../hooks'
 
 export default function RelaysListWagmiWrapper () {
   const [gsnNetworks, setGsnNetworks] = useState<ChainWithGsn[] | null>(null)
@@ -38,6 +37,7 @@ export default function RelaysListWagmiWrapper () {
     ]
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const client = createClient({
     connectors: [new InjectedConnector({ chains })],
     provider

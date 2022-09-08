@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/Button'
 import { isSameAddress } from '../../utils/utils'
 
 import RegisterRelay from './RegisterRelay/RegisterRelay'
-import DeregisterRelay from './DeregisterRelay/DeregisterRelay'
 
 import { useAppSelector } from '../../hooks'
 import MetamaskButton from '../../components/MetamaskButton'

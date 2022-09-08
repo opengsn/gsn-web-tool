@@ -28,6 +28,7 @@ export default function MintAmountForm () {
     if (localMintAmount !== ethers.constants.Zero) {
       setMintAmount(localMintAmount)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [localMintAmount])
 
   useEffect(() => {

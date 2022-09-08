@@ -80,6 +80,7 @@ export default function SetOwnerListener () {
       }
       askIfOwnerIsSet().catch(toast.error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listen, account, dispatch, provider, refetch, stakeInfo])
 
   return <></>
