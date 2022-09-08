@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as Element)
 
 root.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <ErrorBoundary>
         <App />
       </ErrorBoundary>
