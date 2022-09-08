@@ -5,14 +5,12 @@ import React, { useState, createContext } from 'react'
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
 
-import { Address } from '@opengsn/common'
-
 export interface FunderContextInterface {
   funds: BigNumber
   listen: boolean
   setListen: React.Dispatch<React.SetStateAction<boolean>>
-  relayManagerAddress: Address
-  stakeManagerAddress: Address
+  relayManagerAddress: string
+  stakeManagerAddress: string
 }
 
 export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)

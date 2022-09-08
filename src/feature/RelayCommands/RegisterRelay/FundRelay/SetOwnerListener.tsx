@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { useAccount, useContractEvent, useContractRead, useProvider } from 'wagmi'
+import { constants } from 'ethers'
 
 import { fetchRegisterStateData } from '../registerRelaySlice'
 
@@ -7,7 +8,7 @@ import { useAppDispatch } from '../../../../hooks'
 import { FunderContext } from './Funder'
 
 import stakeManagerAbi from '../../../../contracts/stakeManager.json'
-import { isSameAddress, constants, sleep } from '@opengsn/common'
+import { isSameAddress, sleep } from '../../../../utils/utils'
 import { toast } from 'react-toastify'
 
 export default function SetOwnerListener () {
@@ -29,9 +30,8 @@ export default function SetOwnerListener () {
     eventName: 'OwnerSet',
     listener: () => {
       if (!listen && account !== undefined) {
-        toast.info('event caught')
-        dispatch(fetchRegisterStateData({ provider, account })).
-          catch(console.error)
+        dispatch(fetchRegisterStateData({ provider, account }))
+          .catch(console.error)
       }
     }
   })
@@ -51,7 +51,7 @@ export default function SetOwnerListener () {
       const askIfOwnerIsSet = async () => {
         const sleepCount = 15
         const sleepMs = 5000
-        if (owner === constants.ZERO_ADDRESS) {
+        if (owner === constants.AddressZero) {
           let i = 0
           while (true) {
             console.debug(`Waiting ${sleepMs}ms ${i}/${sleepCount} for relayer to set (us) as owner`)
@@ -62,7 +62,7 @@ export default function SetOwnerListener () {
             }
             const newOwner = newStakeInfo.data[0].owner
             if (
-              newOwner !== constants.ZERO_ADDRESS &&
+              newOwner !== constants.AddressZero &&
               isSameAddress(newOwner, account)
             ) {
               toast.info('poll caught')

@@ -5,9 +5,7 @@ import type { RootState, AppDispatch } from './store'
 
 import relayHubAbi from './contracts/relayHub.json'
 
-import { Address } from '@opengsn/common/dist/types/Aliases'
-
-export const useStakeManagerAddress = (relayHubAddress: Address) => useContractRead({
+export const useStakeManagerAddress = (relayHubAddress: string) => useContractRead({
   addressOrName: relayHubAddress,
   contractInterface: relayHubAbi,
   functionName: 'getStakeManager',

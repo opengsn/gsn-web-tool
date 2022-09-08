@@ -6,7 +6,7 @@ import { TokenContext } from './StakeWithERC20'
 import Button from 'react-bootstrap/Button'
 import LoadingButton from '../../../../components/LoadingButton'
 
-import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
+import iErc20TokenAbi from '../../../../contracts/iERC20TokenAbi.json'
 import StakeManagerAbi from '../../../../contracts/stakeManager.json'
 import { useAppSelector } from '../../../../hooks'
 import ErrorButton from '../../../../components/ErrorButton'

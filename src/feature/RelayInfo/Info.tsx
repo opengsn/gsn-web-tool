@@ -1,4 +1,5 @@
-import { isSameAddress, PingResponse } from '@opengsn/common'
+import { isSameAddress } from '../../utils/utils'
+import { PingResponse } from '../../types/PingResponse'
 import { ethers } from 'ethers'
 import { useAccount, useBalance, useContractRead } from 'wagmi'
 import Table from 'react-bootstrap/Table'
@@ -9,7 +10,6 @@ import StakeInfo from './StakeInfo'
 
 function Info () {
   const relay = useAppSelector((state) => state.relay)
-  const relayUrl: string = relay.relayUrl
   const relayData: PingResponse = relay.relay
 
   const { address } = useAccount()
@@ -28,7 +28,6 @@ function Info () {
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
-  const RelayUrl = () => { return <span>{relayUrl}</span> }
   const camelCaseToHuman = (s: string): string => {
     return s.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
   }
@@ -70,8 +69,9 @@ function Info () {
                 {(relayData[x as keyof PingResponse])?.toString()}
               </td>
               <td>
-                <b>{ accountIsOwner ? 'currently connected'
-                  : 'switch to owner to enable actions' }</b>
+                <b>{accountIsOwner
+                  ? 'currently connected'
+                  : 'switch to owner to enable actions'}</b>
               </td>
             </>
           )
@@ -126,7 +126,7 @@ function Info () {
       </thead>
       <tbody>
         <PingResponseData />
-        { (isFetching || isLoading) && stakeManagerAddress !== undefined
+        {(isFetching || isLoading) && stakeManagerAddress !== undefined
           ? <>
             <tr><td>Current Owner</td><td>loading</td><td></td></tr>
             <tr><td>staking token</td><td>loading</td><td></td></tr>

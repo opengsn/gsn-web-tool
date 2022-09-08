@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext } from 'react'
-import { ethers } from 'ethers'
+import { ethers, constants } from 'ethers'
 import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
 
 import Button from 'react-bootstrap/Button'
@@ -14,23 +14,20 @@ import Minter from './Minter/Minter'
 import Approver from './Approver/Approve'
 import Staker from './Staker'
 
-import { toNumber } from '@opengsn/common'
-import { constants } from '@opengsn/common/dist/Constants'
-import { isSameAddress } from '@opengsn/common/dist/Utils'
+import { toNumber, isSameAddress } from '../../../../utils/utils'
 
 import relayHubAbi from '../../../../contracts/relayHub.json'
 import stakeManagerAbi from '../../../../contracts/stakeManager.json'
 
-import { Address } from '@opengsn/common/dist/types/Aliases'
 import { useFormik } from 'formik'
 import StakeAddedListener from './StakeAddedListener'
 import { ChainWithStakingTokens } from '../../../..'
 
 export interface TokenContextInterface {
-  token: Address
-  account: Address
+  token: string
+  account: string
   minimumStakeForToken: ethers.BigNumber
-  stakeManagerAddress: Address
+  stakeManagerAddress: string
   listen: boolean
   setListen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -40,7 +37,7 @@ export const TokenContext = createContext<TokenContextInterface>({} as TokenCont
 export default function StakeWithERC20 () {
   const currentStep = useAppSelector((state) => state.register.step)
   const [stakingTokenIsSet, setStakingTokenIsSet] = useState(false)
-  const [token, setToken] = useState<Address | null>(null)
+  const [token, setToken] = useState<string | null>(null)
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [stakeManagerOwnerIsSet, setStakeManagerOwnerIsSet] = useState(false)
   const [listen, setListen] = useState(false)
@@ -158,8 +155,8 @@ export default function StakeWithERC20 () {
     if (newStakeInfoData !== undefined && address !== undefined) {
       const newStakeInfo = newStakeInfoData[0]
 
-      if (newStakeInfo?.owner !== constants.ZERO_ADDRESS && isSameAddress(newStakeInfo?.owner, address)) {
-        if (newStakeInfo?.token !== constants.ZERO_ADDRESS) {
+      if (newStakeInfo?.owner !== constants.AddressZero && isSameAddress(newStakeInfo?.owner, address)) {
+        if (newStakeInfo?.token !== constants.AddressZero) {
           setToken(newStakeInfo.token)
           setStakingTokenIsSet(true)
         }
@@ -209,7 +206,7 @@ export default function StakeWithERC20 () {
   )
 
   if (address !== undefined) {
-    const isaddressRelayOwner = (owner !== constants.ZERO_ADDRESS && isSameAddress(owner, address))
+    const isaddressRelayOwner = (owner !== constants.AddressZero && isSameAddress(owner, address))
 
     if (!isaddressRelayOwner) {
       return <div>- The relay is already owned by {owner}, our data.address={address}</div>

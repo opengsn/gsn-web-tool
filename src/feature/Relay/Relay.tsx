@@ -18,7 +18,7 @@ import SwitchRelayButton from './SwitchRelay'
 import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
 
-import { PingResponse } from '@opengsn/common'
+import { PingResponse } from '../../types/PingResponse'
 import { toast, Flip } from 'react-toastify'
 
 export default function Relay () {

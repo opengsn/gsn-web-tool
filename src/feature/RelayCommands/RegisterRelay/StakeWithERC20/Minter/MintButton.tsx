@@ -1,17 +1,18 @@
 import { useContext } from 'react'
-import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { useContractWrite } from 'wagmi'
 import { toast } from 'react-toastify'
 import { ethers } from 'ethers'
-import iErc20TokenAbi from '@opengsn/common/dist/interfaces/IERC20Token.json'
 import Button from 'react-bootstrap/Button'
 
 import ErrorButton from '../../../../../components/ErrorButton'
 
+import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TokenContext } from '../StakeWithERC20'
 import { MinterContext } from './Minter'
 import TransactionSuccessToast from '../../../../../components/TransactionSuccessToast'
 import LoadingButton from '../../../../../components/LoadingButton'
+
+import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 
 export default function MintButton () {
   const { token } = useContext(TokenContext)

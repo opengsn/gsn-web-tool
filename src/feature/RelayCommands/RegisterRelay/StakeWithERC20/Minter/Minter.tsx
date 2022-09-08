@@ -2,8 +2,6 @@ import React, { createContext, useState, useContext } from 'react'
 import { useBalance, useProvider, useToken } from 'wagmi'
 import { ethers } from 'ethers'
 
-import Card from 'react-bootstrap/Card'
-
 import MintButton from './MintButton'
 import MintAmountForm from './MintAmountForm'
 

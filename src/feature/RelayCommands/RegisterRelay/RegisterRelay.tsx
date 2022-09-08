@@ -15,7 +15,6 @@ import { toast } from 'react-toastify'
 import { Check } from 'react-bootstrap-icons'
 
 export default function RegisterRelay () {
-  const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const status = useAppSelector((state) => state.register.status)
   const dispatch = useAppDispatch()
@@ -77,8 +76,8 @@ export default function RegisterRelay () {
 
   useEffect(() => {
     if (address !== undefined) {
-      dispatch(fetchRegisterStateData({ provider, account: address })).
-        catch((e) => {
+      dispatch(fetchRegisterStateData({ provider, account: address }))
+        .catch((e) => {
           console.log(e.message)
           toast.error(<>
             <p>Error while fetching relay status</p>
@@ -86,7 +85,7 @@ export default function RegisterRelay () {
           </>)
         })
     }
-  }, [])
+  }, [address, dispatch, provider])
 
   return (
     <>

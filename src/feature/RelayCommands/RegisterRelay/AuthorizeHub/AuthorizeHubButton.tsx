@@ -1,4 +1,4 @@
-import { usePrepareContractWrite, useContractWrite, useNetwork } from 'wagmi'
+import { usePrepareContractWrite, useContractWrite } from 'wagmi'
 import { useAppSelector, useStakeManagerAddress } from '../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import StakeManagerAbi from '../../../../contracts/stakeManager.json'
@@ -19,7 +19,6 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress, relayManagerAddress } = relay
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { chain } = useNetwork()
 
   const {
     data: stakeManagerAddressData

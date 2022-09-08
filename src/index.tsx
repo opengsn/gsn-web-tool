@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom/client'
 import { WagmiConfig, createClient, configureChains, Chain } from 'wagmi'
-import { rinkeby, goerli, optimismKovan, polygonMumbai, arbitrumRinkeby, ropsten } from 'wagmi/chains'
+import { goerli, optimismKovan, polygonMumbai, arbitrumRinkeby, ropsten } from 'wagmi/chains'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { publicProvider } from 'wagmi/providers/public'
-import { providers, getDefaultProvider } from 'ethers'
+import { providers } from 'ethers'
 import {
   BrowserRouter,
   Routes,
@@ -19,10 +19,9 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-toastify/dist/ReactToastify.css'
-import { Address } from '@opengsn/common'
 
 export interface ChainWithStakingTokens extends Chain {
-  stakingTokens?: Address[]
+  stakingTokens?: string[]
 }
 
 const avalancheFuji: ChainWithStakingTokens = {
@@ -99,7 +98,7 @@ const goTestnet: ChainWithStakingTokens = {
 
 const availableChains = [ropsten, goerli, optimismKovan, avalancheFuji, polygonMumbai, arbitrumRinkeby, arbitrumNitro, goTestnet, localhost]
 
-const wrappedNativeCurrency: { [key: string]: Address } = {
+const wrappedNativeCurrency: { [key: string]: string } = {
   'gsn-test': '0x5fbdb2315678afecb367f032d93f642f64180aa3',
   ropsten: '0x1368e39E3CB40C3dFb06d2cB8E5fca6a847D16E6',
   goerli: '0xE8172A9bf53001d2796825AeC32B68e21FDBb869',
@@ -116,8 +115,6 @@ const allChainsWithWrapped: ChainWithStakingTokens[] = availableChains.map((chai
 })
 
 const { chains } = configureChains(allChainsWithWrapped, [publicProvider()])
-
-const metamaskIsInstalled = window.ethereum?.isMetaMask
 
 const client = createClient({
   autoConnect: true,

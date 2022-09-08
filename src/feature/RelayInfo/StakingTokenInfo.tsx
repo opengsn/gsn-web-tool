@@ -1,9 +1,7 @@
 import { useAccount, useBalance } from 'wagmi'
 
-import { Address } from '@opengsn/common/dist/types/Aliases'
-
 interface stakingTokenProps {
-  stakingToken: Address
+  stakingToken: string
 }
 
 export default function StakingTokenInfo ({ stakingToken }: stakingTokenProps) {
