@@ -1,11 +1,13 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { useFormik } from 'formik'
-import { fetchRelayData } from './relaySlice'
+import { fetchRelayData, deleteRelayData } from './relaySlice'
 
+import InputGroup from 'react-bootstrap/InputGroup'
 import Form from 'react-bootstrap/Form'
+import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -23,14 +25,16 @@ export default function Relay () {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
+  const relayDataFetched = (Object.keys(relayData).length > 0)
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
   const abortFetch = useRef<unknown>()
 
   const getRelayForm = useFormik({
     initialValues: {
-      url: ''
+      url: relay.relayUrl
     },
+    enableReinitialize: true,
     onSubmit: values => {
       const regexpURL = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&/=]*)/i
 
@@ -47,62 +51,64 @@ export default function Relay () {
         return
       }
       const URL = formatURL(extractedURL[0])
+      if (relay.errorMsg !== '') {
+        dispatch(fetchRelayData(URL)).catch(console.error)
+      }
 
       setSearchParams({ relayUrl: URL })
     }
   })
 
   const [searchParams, setSearchParams] = useSearchParams()
-  if (Object.keys(relayData).length === 0 && relay.errorMsg === '') {
+  useEffect(() => {
     const queryRelayUrl = searchParams.get('relayUrl')
-    if (queryRelayUrl !== null && queryRelayUrl.length !== 0) {
+    if (queryRelayUrl !== null && queryRelayUrl.length !== 0 && relay.errorMsg === '') {
       const dispatchFetchRelay = dispatch(fetchRelayData(queryRelayUrl))
       abortFetch.current = dispatchFetchRelay.abort
-      return (<div>
-        <p>Loading relay data...</p>
-        <SwitchRelayButton abortFetch={abortFetch.current} />
-      </div>)
+    } else if (queryRelayUrl === null) {
+      dispatch(deleteRelayData())
     }
-  }
+  }, [relay.relayUrl, searchParams, dispatch, relay.errorMsg])
 
-  if (Object.keys(relayData).length === 0 && relay.errorMsg === '') {
-    return (
+  if (!relayDataFetched) {
+    return (<>
       <Row className="justify-content-center">
         <Col></Col>
-        <Col md="auto">
-          <Form onSubmit={getRelayForm.handleSubmit}>
+        <Col md="auto" className="flex-fill">
+          { relay.loading
+            ? <span>Loading data...</span>
+            : null }
+          { relay.errorMsg !== ''
+            ? <Alert variant="danger">
+              <span>Error: {relay.errorMsg}</span>
+            </Alert>
+            : null }
+          <Form className="row" onSubmit={getRelayForm.handleSubmit}>
             <Form.Label htmlFor="url">Relay URL
-              <Form.Control
+              <InputGroup><Form.Control
                 id="url"
                 name="url"
                 type="text"
                 onChange={getRelayForm.handleChange}
                 value={getRelayForm.values.url}
               />
-            </Form.Label>
-            <br />
-            <Button style={{ width: '100%' }} variant="success" type="submit">Fetch data</Button>
+              </InputGroup></Form.Label>
+            <Button variant="success" type="submit">Fetch data</Button>
           </Form>
         </Col>
         <Col></Col>
       </Row>
-    )
-  }
-  if (relay.errorMsg !== '') {
-    return (<>
-      <span>{relay.errorMsg}</span>
-      <br />
-      <SwitchRelayButton autoFocus abortFetch={abortFetch.current} />
     </>)
   }
-  if (chain?.id !== undefined && chain?.id !== chainId) {
+
+  if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
     return (<>
       <ChainIdHandler relayChainId={chainId} />
       <SwitchRelayButton />
     </>)
   }
 
-  if (chain?.id === chainId && Object.keys(relayData).length > 0) {
+  if (chain?.id === chainId && relayDataFetched) {
     return (
       <div className="row">
         <SwitchRelayButton />
