@@ -5,6 +5,8 @@ import { Address } from '@opengsn/common/dist/types/Aliases'
 import StakeManagerAbi from '../../contracts/stakeManager.json'
 
 import StakingTokenInfo from './StakingTokenInfo'
+import { useAppDispatch } from '../../hooks'
+import { validateConfigOwnerInLineWithStakeManager } from '../Relay/relaySlice'
 
 interface stakeInfoProps {
   stakeManagerAddress: Address
@@ -12,13 +14,17 @@ interface stakeInfoProps {
 }
 
 export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
+  const dispatch = useAppDispatch()
   const { address } = useAccount()
   const { data: stakeInfo, isLoading } = useContractRead({
     addressOrName: stakeManagerAddress,
     contractInterface: StakeManagerAbi,
     functionName: 'getStakeInfo',
     args: relayManagerAddress,
-    watch: false
+    watch: false,
+    onSuccess (data) {
+      dispatch(validateConfigOwnerInLineWithStakeManager(data[0].owner))
+    }
   })
 
   if (stakeInfo !== undefined) {
