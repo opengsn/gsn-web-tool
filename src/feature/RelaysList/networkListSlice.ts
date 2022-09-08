@@ -1,4 +1,4 @@
-import { compose, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
+import { compose, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios'
 import { ethers } from 'ethers'
 import { ChainWithGsn, getNetworks } from '../../networks'

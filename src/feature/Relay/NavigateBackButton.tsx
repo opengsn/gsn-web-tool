@@ -1,7 +1,5 @@
 import Button from 'react-bootstrap/Button'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useAppDispatch } from '../../hooks'
-import { deleteRelayData } from './relaySlice'
+import { useNavigate } from 'react-router-dom'
 import { ArrowReturnLeft } from 'react-bootstrap-icons'
 
 export default function NavigateBackButton ({ autoFocus, abortFetch }: { autoFocus?: boolean, abortFetch?: unknown }) {
