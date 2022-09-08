@@ -20,16 +20,18 @@ export default function Approver () {
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
+  const chainId = Number(relay.chainId)
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'allowance',
+    chainId,
     args: [account, stakeManagerAddress],
     onSuccess (data) {
       setApproveAmount(
@@ -38,7 +40,7 @@ export default function Approver () {
     }
   })
 
-  const { config, error: prepareApproveTxError } = usePrepareContractWrite({
+  const { config, error: prepareApproveTxError, isError: prepareApproveTxIsError } = usePrepareContractWrite({
     addressOrName: token,
     contractInterface: iErc20TokenAbi,
     functionName: 'approve',
@@ -75,9 +77,18 @@ export default function Approver () {
   }
 
   if (currentAllowanceIsError) return <span>Error fetching token allowance</span>
+  if (prepareApproveTxIsError && prepareApproveTxError !== null) {
+    return <div>Error preparing approve transaction.
+      <span className="bg-warning">{prepareApproveTxError.message}</span>
+    </div>
+  }
   if (isError) return <ApproveError />
   if (isLoading) return <LoadingButton />
-  if (isSuccess || approveAmount.eq(ethers.constants.Zero)) return <div>Succesfully increased allowance</div>
+  if (isSuccess || approveAmount.eq(ethers.constants.Zero)) {
+    return <div>
+      {'Succesfully increased allowance. \'Stake\' button will unlock after the transaction is confirmed by network'}
+    </div>
+  }
 
   return <ApproveButton />
 }

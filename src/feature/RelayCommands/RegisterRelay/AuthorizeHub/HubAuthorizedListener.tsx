@@ -20,6 +20,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
   const relay = useAppSelector((state) => state.relay.relay)
   const relayUrl = useAppSelector((state) => state.relay.relayUrl)
   const { relayHubAddress } = relay
+  const chainId = Number(relay.chainId)
 
   const dispatch = useAppDispatch()
   const provider = useProvider()
@@ -27,7 +28,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
 
   const {
     data: stakeManagerAddressData
-  } = useStakeManagerAddress(relayHubAddress)
+  } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 

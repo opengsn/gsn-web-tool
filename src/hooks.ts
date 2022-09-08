@@ -5,11 +5,14 @@ import type { RootState, AppDispatch } from './store'
 
 import relayHubAbi from './contracts/relayHub.json'
 
-export const useStakeManagerAddress = (relayHubAddress: string) => useContractRead({
+export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) => useContractRead({
   addressOrName: relayHubAddress,
   contractInterface: relayHubAbi,
   functionName: 'getStakeManager',
-  onError (err) { console.warn(err) }
+  chainId,
+  onError (err) {
+    console.warn(err, chainId)
+  }
 })
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`

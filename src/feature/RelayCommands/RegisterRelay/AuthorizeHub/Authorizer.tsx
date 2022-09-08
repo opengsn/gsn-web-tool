@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import AuthorizeHubButton from './AuthorizeHubButton'
-
 import HubAuthorizedListener from './HubAuthorizedListener'
 
 export default function Authorizer () {

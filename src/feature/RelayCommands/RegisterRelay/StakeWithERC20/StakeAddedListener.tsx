@@ -26,7 +26,6 @@ export default function StakeAddedListener () {
         const sleepMs = 5000
         let i = 0
         while (true) {
-          console.log('ax')
           await sleep(sleepMs)
           dispatch(check).catch(toast.error)
           if (sleepCount === i++) {
@@ -44,10 +43,9 @@ export default function StakeAddedListener () {
     eventName: 'StakeAdded',
     listener () {
       if (listen) return
-      toast.info('event caught')
       dispatch(check).catch(toast.error)
     }
   })
 
-  return <span>{listen.toString()}</span>
+  return <></>
 }

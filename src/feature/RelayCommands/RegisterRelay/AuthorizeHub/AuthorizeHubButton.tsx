@@ -19,10 +19,11 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress, relayManagerAddress } = relay
   const defaultStateSwitchers = useDefaultStateSwitchers()
+  const chainId = Number(relay.chainId)
 
   const {
     data: stakeManagerAddressData
-  } = useStakeManagerAddress(relayHubAddress)
+  } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 

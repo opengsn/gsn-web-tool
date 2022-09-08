@@ -12,17 +12,24 @@ function Info () {
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
 
+  const chainId = Number(relayData.chainId)
+
   const { address } = useAccount()
 
-  const { data: relayManagerBalanceData } = useBalance({ addressOrName: relayData.relayManagerAddress })
-  const { data: relayWorkerBalanceData } = useBalance({ addressOrName: relayData.relayWorkerAddress })
-  const { data: ownerAddressBalance } = useBalance({ addressOrName: relayData.ownerAddress })
+  const { data: relayManagerBalanceData } = useBalance({
+    addressOrName: relayData.relayManagerAddress,
+    chainId
+  })
+  const { data: relayWorkerBalanceData } = useBalance({
+    addressOrName: relayData.relayWorkerAddress,
+    chainId
+  })
 
   const { data: stakeManagerAddressData, isLoading, isFetching } = useContractRead({
     addressOrName: relayData.relayHubAddress,
     contractInterface: relayHubAbi,
     functionName: 'getStakeManager',
-    watch: false,
+    chainId,
     onError (err) { console.warn(err) }
   })
 

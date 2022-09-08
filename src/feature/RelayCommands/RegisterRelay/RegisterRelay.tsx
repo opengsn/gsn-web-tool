@@ -15,10 +15,11 @@ import { toast } from 'react-toastify'
 import { Check } from 'react-bootstrap-icons'
 
 export default function RegisterRelay () {
+  const relayData = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const status = useAppSelector((state) => state.register.status)
   const dispatch = useAppDispatch()
-  const provider = useProvider()
+  const provider = useProvider({ chainId: Number(relayData.chainId) })
   const { address } = useAccount()
 
   const [showRegisterRelay, setShowRegisterRelay] = useState(false)

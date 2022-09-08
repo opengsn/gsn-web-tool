@@ -2,13 +2,15 @@ import React, { createContext, useState, useContext } from 'react'
 import { useBalance, useProvider, useToken } from 'wagmi'
 import { ethers } from 'ethers'
 
+import Tab from 'react-bootstrap/Tab'
+import Tabs from 'react-bootstrap/Tabs'
+
 import MintButton from './MintButton'
 import MintAmountForm from './MintAmountForm'
 
 import { TokenContext } from '../StakeWithERC20'
 import { checkIsMintingRequired } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
-import { Tab, Tabs } from 'react-bootstrap'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -30,7 +32,7 @@ export default function Minter () {
 
   const { data: tokenBalanceData } = useBalance({
     addressOrName: account,
-    token: token,
+    token,
     watch: true,
     onSuccess (data) {
       dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
@@ -45,9 +47,9 @@ export default function Minter () {
 
   return (
     <MinterContext.Provider value={{
-      mintAmount: mintAmount,
-      outstandingMintAmount: outstandingMintAmount,
-      setMintAmount: setMintAmount
+      mintAmount,
+      outstandingMintAmount,
+      setMintAmount
     }}>
       <Tabs defaultActiveKey="basic"
         unmountOnExit={true}

@@ -21,9 +21,10 @@ import stakeManagerAbi from '../../../../contracts/stakeManager.json'
 
 import { useFormik } from 'formik'
 import StakeAddedListener from './StakeAddedListener'
-import { ChainWithStakingTokens } from '../../../..'
+import { ChainWithGsn } from '../../../../networks'
 
 export interface TokenContextInterface {
+  chainId: number
   token: string
   account: string
   minimumStakeForToken: ethers.BigNumber
@@ -43,7 +44,8 @@ export default function StakeWithERC20 () {
   const [listen, setListen] = useState(false)
 
   const { chain: chainData } = useNetwork()
-  const chain = chainData as unknown as ChainWithStakingTokens
+  const chain = chainData as unknown as ChainWithGsn
+
   // useEffect(() => {
   //   if (chain.stakingTokens === undefined) return
   //   setToken(chain.)
@@ -57,6 +59,7 @@ export default function StakeWithERC20 () {
     ownerAddress: owner,
     relayHubAddress
   } = relay
+  const chainId = Number(relay.chainId)
 
   const provider = useProvider()
   const relayHub = useContract({
@@ -65,7 +68,7 @@ export default function StakeWithERC20 () {
     signerOrProvider: provider
   })
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   const { data: newStakeInfoData } = useContractRead({
@@ -103,9 +106,9 @@ export default function StakeWithERC20 () {
             value={getTokenAddress.values.token}
           >
             <option value="">Select staking token</option>
-            {chain.stakingTokens?.map((x) => {
+            {/* {chain.stakingTokens?.map((x) => {
               return <option key={x} value={x}>{x} {isAddress}</option>
-            })}
+            })} */}
           </Form.Select>
         </Form.Label>
         <br />
@@ -206,9 +209,9 @@ export default function StakeWithERC20 () {
   )
 
   if (address !== undefined) {
-    const isaddressRelayOwner = (owner !== constants.AddressZero && isSameAddress(owner, address))
+    const isAddressRelayOwner = (owner !== constants.AddressZero && isSameAddress(owner, address))
 
-    if (!isaddressRelayOwner) {
+    if (!isAddressRelayOwner) {
       return <div>- The relay is already owned by {owner}, our data.address={address}</div>
     }
   }
@@ -228,12 +231,13 @@ export default function StakeWithERC20 () {
     return (
       <>
         <TokenContext.Provider value={{
-          token: token,
+          chainId,
+          token,
           account: address,
-          minimumStakeForToken: minimumStakeForToken,
-          stakeManagerAddress: stakeManagerAddress,
-          listen: listen,
-          setListen: setListen
+          minimumStakeForToken,
+          stakeManagerAddress,
+          listen,
+          setListen
         }}>
           <div><StakingTokenInfo /></div>
           <SwitchTokenButton />

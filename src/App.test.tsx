@@ -4,7 +4,7 @@ import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock'
 import { WagmiConfig, createClient } from 'wagmi'
 import { hardhat } from '@wagmi/core/chains'
 import { connect, disconnect } from '@wagmi/core'
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 import store from './store'
 import { Provider } from 'react-redux'
 import {

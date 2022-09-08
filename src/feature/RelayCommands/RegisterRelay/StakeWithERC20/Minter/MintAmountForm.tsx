@@ -20,7 +20,6 @@ export default function MintAmountForm () {
       const amountBigNumber = ethers.utils.parseEther(value)
       setLocalMintAmount(amountBigNumber)
     } catch (e: any) {
-      console.log(e)
       // suppress error
     }
   }

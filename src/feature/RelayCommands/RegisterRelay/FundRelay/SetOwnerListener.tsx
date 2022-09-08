@@ -13,7 +13,6 @@ import { toast } from 'react-toastify'
 
 export default function SetOwnerListener () {
   const dispatch = useAppDispatch()
-  const provider = useProvider()
   const { address: account } = useAccount()
   const funderData = useContext(FunderContext)
 
@@ -21,12 +20,15 @@ export default function SetOwnerListener () {
     listen,
     setListen,
     stakeManagerAddress,
-    relayManagerAddress
+    relayManagerAddress,
+    chainId
   } = funderData
+  const provider = useProvider({ chainId })
 
   useContractEvent({
     addressOrName: stakeManagerAddress,
     contractInterface: stakeManagerAbi,
+    chainId,
     eventName: 'OwnerSet',
     listener: () => {
       if (!listen && account !== undefined) {
@@ -41,6 +43,7 @@ export default function SetOwnerListener () {
     contractInterface: stakeManagerAbi,
     args: relayManagerAddress,
     functionName: 'getStakeInfo',
+    chainId,
     watch: false
   })
 
@@ -65,7 +68,6 @@ export default function SetOwnerListener () {
               newOwner !== constants.AddressZero &&
               isSameAddress(newOwner, account)
             ) {
-              toast.info('poll caught')
               dispatch(fetchRegisterStateData({ provider, account })).catch(console.error)
               break
             }

@@ -60,8 +60,9 @@ const relaySlice = createSlice({
       }
     },
     deleteRelayData (state: RelayState) {
-      state.relay = initialState.relay
       state.errorMsg = ''
+      state.relay = {} as PingResponse
+      state.relayUrl = initialState.relayUrl
     }
   },
   extraReducers: (builder) => {
@@ -79,6 +80,7 @@ const relaySlice = createSlice({
       state.loading = true
     })
     builder.addCase(fetchRelayData.rejected, (state, action) => {
+      state.relay = {} as PingResponse
       if (action.error.message === 'Aborted') {
         state.errorMsg = ''
       } else {

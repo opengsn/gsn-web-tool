@@ -11,6 +11,7 @@ export interface FunderContextInterface {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: string
   stakeManagerAddress: string
+  chainId: number
 }
 
 export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)
@@ -19,18 +20,20 @@ export default function Funder () {
   const [listen, setListen] = useState(false)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress, relayHubAddress } = relay
+  const chainId = Number(relay.chainId)
 
   const funds = BigNumber.from(ethers.utils.parseEther(('0.5')))
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as unknown as string
 
   return (
     <FunderContext.Provider value={{
-      funds: funds,
-      listen: listen,
-      setListen: setListen,
-      relayManagerAddress: relayManagerAddress,
-      stakeManagerAddress: stakeManagerAddress
+      funds,
+      listen,
+      setListen,
+      relayManagerAddress,
+      stakeManagerAddress,
+      chainId
     }}>
       <FundButton />
       <SetOwnerListener />

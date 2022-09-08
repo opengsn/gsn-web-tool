@@ -4,7 +4,8 @@ import { isSameAddress } from '../../utils/utils'
 
 import StakeManagerAbi from '../../contracts/stakeManager.json'
 import StakingTokenInfo from './StakingTokenInfo'
-import { useAppDispatch } from '../../hooks'
+
+import { useAppSelector, useAppDispatch } from '../../hooks'
 import { validateConfigOwnerInLineWithStakeManager } from '../Relay/relaySlice'
 
 interface stakeInfoProps {
@@ -13,20 +14,24 @@ interface stakeInfoProps {
 }
 
 export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
+  const relayData = useAppSelector((state) => state.relay.relay)
+  const chainId = Number(relayData.chainId)
+
   const dispatch = useAppDispatch()
   const { address } = useAccount()
-  const { data: stakeInfo, isLoading } = useContractRead({
+  const { data: stakeInfo, isSuccess } = useContractRead({
     addressOrName: stakeManagerAddress,
     contractInterface: StakeManagerAbi,
     functionName: 'getStakeInfo',
     args: relayManagerAddress,
+    chainId,
     watch: false,
     onSuccess (data) {
       dispatch(validateConfigOwnerInLineWithStakeManager(data[0].owner))
     }
   })
 
-  if (stakeInfo !== undefined) {
+  if (stakeInfo !== undefined && isSuccess) {
     const { owner, token } = stakeInfo[0]
     const ShowOwner = () => {
       if (address !== undefined && isSameAddress(address, owner)) {
@@ -43,11 +48,11 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
           <td>{owner}</td>
           <td><ShowOwner /></td>
         </tr>
-        <StakingTokenInfo stakingToken={token} />
+        <StakingTokenInfo stakingToken={token} chainId={chainId} />
       </>
     )
   }
 
-  if (isLoading) return <div>Loading stake data</div>
-  return <div>Failed to fetch stake data</div>
+  const LoadingRow = <tr><td colSpan={3}>Loading data</td></tr>
+  return <>{LoadingRow}{LoadingRow}</>
 }

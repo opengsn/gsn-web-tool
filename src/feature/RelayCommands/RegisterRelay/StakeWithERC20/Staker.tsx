@@ -19,6 +19,7 @@ export default function Stake () {
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress } = relay
+  const chainId = Number(relay.chainId)
 
   const text = 'Stake'
   const unstakeDelay = '15000'
@@ -36,6 +37,7 @@ export default function Stake () {
     functionName: 'allowance',
     args: [address, stakeManagerAddress],
     watch: true,
+    chainId,
     onSuccess () {
       refetch().catch(console.error)
     }

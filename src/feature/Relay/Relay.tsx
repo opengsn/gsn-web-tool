@@ -13,13 +13,13 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import ChainIdHandler from '../../components/ChainIdHandler'
-import SwitchRelayButton from './SwitchRelay'
 
 import RelayInfo from '../RelayInfo/Info'
 import RelayCommands from '../RelayCommands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
 import { toast, Flip } from 'react-toastify'
+import { Card } from 'react-bootstrap'
 
 export default function Relay () {
   const dispatch = useAppDispatch()
@@ -103,20 +103,49 @@ export default function Relay () {
 
   if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
     return (<>
-      <ChainIdHandler relayChainId={chainId} />
-      <SwitchRelayButton />
+      <Col md="2"></Col>
+      <Col md="auto" className="flex-fill">
+        {relay.loading
+          ? <span>Loading data...</span>
+          : null}
+        {relay.errorMsg !== ''
+          ? <Alert variant="danger">
+            <span>Error: {relay.errorMsg}</span>
+          </Alert>
+          : null}
+        <Form className="row" onSubmit={getRelayForm.handleSubmit}>
+          {/* URL from query  */}
+          {searchParams.get('relayUrl') === null
+            ? <>
+              <Form.Label htmlFor="url">Relay URL
+                <InputGroup><Form.Control
+                  id="url"
+                  name="url"
+                  type="text"
+                  onChange={getRelayForm.handleChange}
+                  value={getRelayForm.values.url}
+                />
+                </InputGroup></Form.Label>
+              <Button variant="success" type="submit">Fetch data</Button>
+            </>
+            : null}
+        </Form>
+      </Col>
+      <Col></Col>
     </>)
   }
 
-  if (chain?.id === chainId && relayDataFetched) {
+  const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
+  if (relayDataFetched) {
     return (
-      <div className="row">
-        <SwitchRelayButton />
-        <div className="col-10">
-          <div className="row">
-            <RelayInfo />
-            <RelayCommands />
-          </div>
+      <div className="col-10">
+        <div className="row">
+          <Card className="border border-bottom-0 rounded-0"><Card.Body>{relay.relayUrl}</Card.Body></Card>
+          <RelayInfo />
+          {connectedToWrongChainId
+            ? <ChainIdHandler relayChainId={chainId} />
+            : null}
+          <RelayCommands />
         </div>
       </div>
     )
