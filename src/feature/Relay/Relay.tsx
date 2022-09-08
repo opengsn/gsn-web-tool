@@ -76,14 +76,14 @@ export default function Relay () {
       <Row className="justify-content-center">
         <Col></Col>
         <Col md="auto" className="flex-fill">
-          { relay.loading
+          {relay.loading
             ? <span>Loading data...</span>
-            : null }
-          { relay.errorMsg !== ''
+            : null}
+          {relay.errorMsg !== ''
             ? <Alert variant="danger">
               <span>Error: {relay.errorMsg}</span>
             </Alert>
-            : null }
+            : null}
           <Form className="row" onSubmit={getRelayForm.handleSubmit}>
             <Form.Label htmlFor="url">Relay URL
               <InputGroup><Form.Control
@@ -100,6 +100,22 @@ export default function Relay () {
         <Col></Col>
       </Row>
     </>)
+  }
+
+  const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
+  if (relayDataFetched) {
+    return (
+      <div className="col-10">
+        <div className="row">
+          <Card className="border border-bottom-0 rounded-0"><Card.Body>{relay.relayUrl}</Card.Body></Card>
+          <RelayInfo />
+          {connectedToWrongChainId
+            ? <ChainIdHandler relayChainId={chainId} />
+            : null}
+          <RelayCommands />
+        </div>
+      </div>
+    )
   }
 
   if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
@@ -134,22 +150,6 @@ export default function Relay () {
       </Col>
       <Col></Col>
     </>)
-  }
-
-  const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
-  if (relayDataFetched) {
-    return (
-      <div className="col-10">
-        <div className="row">
-          <Card className="border border-bottom-0 rounded-0"><Card.Body>{relay.relayUrl}</Card.Body></Card>
-          <RelayInfo />
-          {connectedToWrongChainId
-            ? <ChainIdHandler relayChainId={chainId} />
-            : null}
-          <RelayCommands />
-        </div>
-      </div>
-    )
   }
 
   return <>Error initializing relay view</>
