@@ -24,7 +24,7 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     contractInterface: StakeManagerAbi,
     functionName: 'getStakeInfo',
     args: relayManagerAddress,
-    chainId
+    chainId,
     watch: false,
     onSuccess (data) {
       dispatch(validateConfigOwnerInLineWithStakeManager(data[0].owner))
