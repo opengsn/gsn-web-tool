@@ -39,9 +39,8 @@ export default function RelaysListWagmiWrapper () {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const client = createClient({
-    connectors: [new InjectedConnector({ chains })],
+    autoConnect: true,
     provider
   })
-
-  return <ChainsList />
+  return <WagmiConfig client={client}><ChainsList /></WagmiConfig>
 }
