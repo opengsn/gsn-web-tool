@@ -59,7 +59,7 @@ export default function App () {
       })
     ]
   )
-  
+
   // used when the RPC URL is only available through MetaMask connection
   // but prefers preconfigured RPC as JsonRpcProvider if available in gsn-networks.json
   const configureProvider = (config: { chainId?: number }) => {
