@@ -16,7 +16,7 @@ import { fetchNetworks } from '../feature/RelaysList/networkListSlice'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { ethers, getDefaultProvider } from 'ethers'
+import { getDefaultProvider, providers } from 'ethers'
 import { Spinner } from 'react-bootstrap'
 
 export default function App () {
@@ -45,7 +45,7 @@ export default function App () {
 
   if (gsnNetworks.length === 0) return LoadingCentered
 
-  const { chains } = configureChains(
+  const { chains, provider: wagmiProvider } = configureChains(
     gsnNetworks,
     [
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
@@ -60,14 +60,32 @@ export default function App () {
     ]
   )
 
+  // used when the RPC URL is only available through MetaMask connection
+  // but prefers preconfigured RPC as JsonRpcProvider if available in gsn-networks.json
+  const configureProvider = (config: { chainId?: number }) => {
+    if (config.chainId !== undefined) {
+      const configuredNetwork = gsnNetworks.find(x => x.id === config.chainId)
+      if (configuredNetwork !== undefined && config.chainId !== undefined && config.chainId !== 1337) {
+        return new providers.JsonRpcProvider(configuredNetwork.rpcUrls.default, configuredNetwork.id)
+      }
+      const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, config.chainId)
+      return provider
+    } else {
+      return getDefaultProvider()
+    }
+  }
+
+  let provider
+  if (window.ethereum?.isMetaMask) {
+    provider = configureProvider
+  } else {
+    provider = wagmiProvider
+  }
+
   const client = createClient({
     autoConnect: true,
     connectors: [new InjectedConnector({ chains })],
-    provider: (config) => {
-      if (config.chainId === undefined) return getDefaultProvider()
-      const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider, config.chainId)
-      return provider
-    }
+    provider
   })
 
   const RelayExtendedViewContainer = () => {

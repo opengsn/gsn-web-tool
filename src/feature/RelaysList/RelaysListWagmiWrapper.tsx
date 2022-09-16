@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { configureChains, createClient } from 'wagmi'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -39,9 +39,8 @@ export default function RelaysListWagmiWrapper () {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const client = createClient({
-    connectors: [new InjectedConnector({ chains })],
+    autoConnect: true,
     provider
   })
-
-  return <ChainsList />
+  return <WagmiConfig client={client}><ChainsList /></WagmiConfig>
 }
