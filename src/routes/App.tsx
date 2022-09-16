@@ -45,7 +45,7 @@ export default function App () {
 
   if (gsnNetworks.length === 0) return LoadingCentered
 
-  const { chains } = configureChains(
+  const { chains, provider: wagmiProvider } = configureChains(
     gsnNetworks,
     [
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
