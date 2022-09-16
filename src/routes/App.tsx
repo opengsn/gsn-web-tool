@@ -16,7 +16,7 @@ import { fetchNetworks } from '../feature/RelaysList/networkListSlice'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { ethers, getDefaultProvider, providers } from 'ethers'
+import { getDefaultProvider, providers } from 'ethers'
 import { Spinner } from 'react-bootstrap'
 
 export default function App () {
