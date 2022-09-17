@@ -51,7 +51,7 @@
   "scripts": {
     "lint": "eslint -f unix .",
     "start": "react-scripts start",
-    "build": "react-scripts build && cd build/ && mkdir manage && ln -s index.html manage/",
+    "build": "react-scripts build && cd build/ && mkdir manage && cp index.html manage/",
     "test": "react-scripts test",
     "citest": "node runTestsWithHardhat.mjs",
     "eject": "react-scripts eject"
