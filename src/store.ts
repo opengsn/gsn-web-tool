@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 import relayReducer from './feature/Relay/relaySlice'
-import networkListReducer from './feature/RelaysList/networkListSlice'
 import registerReducer from './feature/Relay/Commands/RegisterRelay/registerRelaySlice'
+import networkListReducer from './feature/GsnStatus/networkListSlice'
 
 const reducer = {
   relay: relayReducer,
