@@ -1,8 +1,15 @@
 import { useFormik } from 'formik'
 import { useEffect } from 'react'
-import { Alert, Button, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
+
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import Form from 'react-bootstrap/Form'
+import InputGroup from 'react-bootstrap/InputGroup'
+
 import { Flip, toast } from 'react-toastify'
+
 import { ROUTES } from '../../constants/routes'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { PingResponse } from '../../types'
