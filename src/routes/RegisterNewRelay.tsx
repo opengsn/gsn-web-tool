@@ -8,10 +8,10 @@ import RelayUrlForm from '../feature/Relay/RelayUrlForm'
 import Row from 'react-bootstrap/Row'
 
 function RegisterNewRelay () {
-  return <div><Row>
-    <RelayUrlForm />
-  </Row>
-  <Row>test</Row>
+  return <div>
+    <Row>
+      <RelayUrlForm />
+    </Row>
   </div>
 }
 
