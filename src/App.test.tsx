@@ -13,7 +13,7 @@ import {
   Route
 } from 'react-router-dom'
 
-import App from './routes/App'
+import GlobalWagmiWarpper from './feature/blockchain/GlobalWagmiWrapper'
 import { getSigners } from './test/utils'
 import Relay from './feature/Relay/Relay'
 
@@ -69,7 +69,7 @@ const client = createClient({
 
 describe('without wallet connected', () => {
   test('renders connect with mock connector button if connect', async () => {
-    render(<App />, { wrapper: WagmiConfigWrapper })
+    render(<GlobalWagmiWarpper />, { wrapper: WagmiConfigWrapper })
     const linkElement = screen.getByRole('button', { name: /connect with mock/i })
     expect(linkElement).toBeInTheDocument()
   })
