@@ -78,6 +78,11 @@ export default function Approver () {
       case isError:
         content = ApproveError
         break
+      case isSuccess || approveAmount.eq(ethers.constants.Zero):
+        content = <div>
+          {'Succesfully increased allowance. \'Stake\' button will unlock after the transaction is confirmed by the network'}
+        </div>
+        break
       case !prepareApproveTxIsError && prepareApproveTxError === null:
         content = <ApproveButton />
         break
@@ -91,11 +96,6 @@ export default function Approver () {
         break
       case isLoading:
         content = <LoadingButton />
-        break
-      case isSuccess || approveAmount.eq(ethers.constants.Zero):
-        content = <div>
-          {'Succesfully increased allowance. \'Stake\' button will unlock after the transaction is confirmed by the network'}
-        </div>
         break
     }
 
