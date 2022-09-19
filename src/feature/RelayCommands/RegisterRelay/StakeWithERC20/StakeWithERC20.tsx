@@ -1,7 +1,10 @@
 import { useEffect, useState, createContext } from 'react'
 import { ethers, constants } from 'ethers'
-import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
+import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork, useToken } from 'wagmi'
 
+import Col from 'react-bootstrap/Col'
+import InputGroup from 'react-bootstrap/InputGroup'
+import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Spinner from 'react-bootstrap/Spinner'
@@ -93,24 +96,54 @@ export default function StakeWithERC20 () {
       }
     })
 
+    const TokenSelectOption = ({ address }: { address: string }) => {
+      const { data: tokenData } = useToken({
+        address: address,
+        chainId
+      })
+
+      // TODO?: truncate address
+      return <option value={address}>{tokenData?.name} ({tokenData?.symbol})</option>
+    }
+
     const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
     return (
       <Form onSubmit={getTokenAddress.handleSubmit}>
         <Form.Label htmlFor="url">
-          ERC20 token address
-          <Form.Select
-            id="token"
-            name="token"
-            disabled={stakingTokenIsSet}
-            onChange={getTokenAddress.handleChange}
-            value={getTokenAddress.values.token}
-          >
-            <option value="">Select staking token</option>
-            {/* {chain.stakingTokens?.map((x) => {
-              return <option key={x} value={x}>{x} {isAddress}</option>
-            })} */}
-          </Form.Select>
+          Select ERC20 token address
         </Form.Label>
+        <Row>
+          <Col md={2}>
+            <Form.Select
+              id="token"
+              name="token"
+              disabled={stakingTokenIsSet}
+              onChange={getTokenAddress.handleChange}
+              value={getTokenAddress.values.token}
+            >
+              <option value="">Suggested: {chain.stakingTokens?.length !== undefined && chain.stakingTokens?.length > 0
+                ? chain.stakingTokens?.length
+                : '0'
+              }</option>
+              {chain.stakingTokens?.map((address) => {
+                return <TokenSelectOption key={address} address={address} />
+              })}
+            </Form.Select>
+          </Col> -
+          <Col md={6}>
+            <InputGroup className="mb-3">
+              <Form.Control
+                type="text"
+                name="token"
+                disabled={stakingTokenIsSet}
+                onChange={getTokenAddress.handleChange}
+                value={getTokenAddress.values.token}
+                placeholder="0x..."
+                aria-label="Address"
+              />
+            </InputGroup>
+          </Col>
+        </Row>
         <br />
         <Button disabled={!isAddress} variant="success" type="submit">Fetch token data</Button>
       </Form>
