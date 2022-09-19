@@ -34,7 +34,7 @@ export default function MintButton () {
 
   const createMintButton = () => {
     const text = <span>Mint {ethers.utils.formatEther(mintAmount)}</span>
-    const MintSuccess = () => <div>Minted succesfully</div>
+    const MintSuccess = () => <div>Minted succesfully. Waiting for confirmations before proceeding...</div>
     const MintError = () => <ErrorButton message={mintTokenError?.message} onClick={() => mintToken?.()}>
       <span>Retry {text}</span>
     </ErrorButton>

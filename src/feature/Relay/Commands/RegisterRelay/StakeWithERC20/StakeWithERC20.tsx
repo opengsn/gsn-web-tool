@@ -115,7 +115,7 @@ export default function StakeWithERC20 () {
             >
               <option value="">Suggested: {chain.stakingTokens?.length !== undefined && chain.stakingTokens?.length > 0
                 ? chain.stakingTokens?.length
-                : '0'
+                : 'none.'
               }</option>
               {chain.stakingTokens?.map((address) => {
                 return <TokenSelectOption key={address} address={address} />
@@ -221,9 +221,10 @@ export default function StakeWithERC20 () {
   }
 
   const getStakingView = () => {
+    let content
     const preprequisitesFulfilled = (token !== null && address !== undefined && minimumStakeForToken !== null)
     if (preprequisitesFulfilled && !minimumStakeForToken?.isZero()) {
-      <TokenContext.Provider value={{
+      content = <TokenContext.Provider value={{
         chainId,
         token,
         account: address,
@@ -250,29 +251,34 @@ export default function StakeWithERC20 () {
           : null}
       </TokenContext.Provider>
     } else if (minimumStakeForToken?.isZero() === true) {
-      <>
-        <SwitchTokenButton />
-        <br />
-        <span>This ERC20 Token is not supported</span>
-      </>
-    } else {
-      if (address === undefined) return <span>unable to get connected account address</span>
-      if (token === null) {
+      content = (
         <>
-          <TokenAddressForm />
+          <SwitchTokenButton />
           <br />
-          {chain.stakingTokens === undefined
-            ? <FindFirstTokenButton />
-            : null
-          }
+          <span>This ERC20 Token is not supported</span>
         </>
+      )
+    } else {
+      if (address === undefined) { content = <span>unable to get connected account address</span> }
+      if (token === null) {
+        content = (
+          <>
+            <TokenAddressForm />
+            <br />
+            {chain.stakingTokens === undefined
+              ? <FindFirstTokenButton />
+              : null
+            }
+          </>
+        )
       }
-      if (minimumStakeForToken === null) {
-        <span>Loading staking token data{' '}<Spinner animation="grow" size="sm" /></span>
+      if (token !== null && minimumStakeForToken === null) {
+        content = <span>Loading staking token data{' '}<Spinner animation="grow" size="sm" /></span>
       }
     }
 
-    return <span>Could not set up staking menu</span>
+    if (content === undefined) return <span>Could not set up staking menu</span>
+    return content
   }
 
   return getStakingView()
