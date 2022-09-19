@@ -38,7 +38,7 @@ export default function RelaysTable ({ relays, chain }: RelaysTableProps) {
             <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
           </td>
           <td><Balance address={x.manager} chainId={chain.id} /></td>
-          <td><Button disabled>View details</Button></td>
+          <td></td>
         </tr>)
       }
     })
