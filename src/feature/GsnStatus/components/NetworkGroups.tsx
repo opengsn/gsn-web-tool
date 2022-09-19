@@ -1,6 +1,7 @@
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { ROUTES } from '../../../constants/routes'
 import { useAppSelector } from '../../../hooks'
 import { INetwork } from '../networkListSlice'
 
@@ -22,7 +23,7 @@ export default function NetworkLinksNew () {
         <span>
           {netGroups[g].map((net: INetwork, index: number) =>
             <span key={net.chain.id}>{index > 0 ? ', ' : ''}
-              <Link to={{ hash: `#${net.chain.network}` }}>{net.chain.name}</Link> ({net.activeRelays})
+              <a href={`#${net.chain.network}`}>{net.chain.name}</a> ({net.activeRelays})
             </span>
           )}
         </span>
