@@ -39,7 +39,7 @@ export default function Relay () {
 
   const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
 
-  if (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched) {
+  if (chain?.id !== undefined && chain?.id !== chainId && !relayDataFetched) {
     return (<>
       <Col md="2"></Col>
       <Col md="auto" className="flex-fill">
