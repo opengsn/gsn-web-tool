@@ -1,12 +1,9 @@
-import { memo } from 'react'
 import Table from 'react-bootstrap/Table'
-import { useAccount, useContractRead } from 'wagmi'
 
 import { useAppSelector, useStakeManagerAddress } from '../../../hooks'
 import { PingResponse } from '../../../types/PingResponse'
 
 import StakeInfo from './StakeInfo'
-import relayHubAbi from '../../../contracts/relayHub.json'
 import PingResponseData from './PingResponseData'
 
 function Info () {
@@ -34,22 +31,10 @@ function Info () {
     </tr>
   </thead>
 
-  const TBody = () => {
-    const StakeMananagerInfoPreparePlaceholder = () => <>
-      <tr><td>Current Owner</td><td>loading</td><td></td></tr>
-      <tr><td>staking token</td><td>loading</td><td></td></tr>
-    </>
-
-    if (stakeManagerAddress === undefined) return
-    return (
-      <tbody>
-        {stakeManagerIsReady
-          ? <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-          : <StakeMananagerInfoPreparePlaceholder />
-        }
-      </tbody>
-    )
-  }
+  const StakeMananagerInfoPreparePlaceholder = () => <>
+    <tr><td>Current Owner</td><td>loading</td><td></td></tr>
+    <tr><td>staking token</td><td>loading</td><td></td></tr>
+  </>
 
   const stakeManagerIsReady = stakeManagerAddress !== undefined && !(isLoading || isFetching)
   return (
@@ -59,7 +44,7 @@ function Info () {
         <PingResponseData relayData={relayData} />
         {stakeManagerIsReady
           ? <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-          : null
+          : <StakeMananagerInfoPreparePlaceholder />
         }
       </tbody>
     </Table >

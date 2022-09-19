@@ -144,7 +144,6 @@ export function getProvider ({
   chains = allChains,
   chainId
 }: { chains?: Chain[], chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chain_.hardhat
   const network = getNetwork()
   const url = chain_.hardhat.rpcUrls.default.toString()
   const provider = new EthersProviderWrapper(url, network)

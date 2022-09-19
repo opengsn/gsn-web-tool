@@ -1,12 +1,9 @@
-import React from 'react'
 import { ethers } from 'ethers'
 import { useAccount, useBalance } from 'wagmi'
-import { useAppSelector } from '../../../hooks'
 import { PingResponse } from '../../../types'
 import { isSameAddress } from '../../../utils'
 
 function PingResponseData ({ relayData }: { relayData: PingResponse }) {
-  // const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
 

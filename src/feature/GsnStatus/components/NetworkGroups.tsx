@@ -1,7 +1,6 @@
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { ROUTES } from '../../../constants/routes'
 import { useAppSelector } from '../../../hooks'
 import { INetwork } from '../networkListSlice'
 
@@ -29,5 +28,5 @@ export default function NetworkLinksNew () {
         </span>
       </ListGroup.Item>
     })}
-  </ListGroup >
+  </ListGroup>
 }

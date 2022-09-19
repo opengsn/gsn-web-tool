@@ -1,6 +1,4 @@
-import { useBalance, useProvider } from 'wagmi'
-import React, { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
+import { useBalance } from 'wagmi'
 
 export interface ManagerBalanceProps {
   address: string

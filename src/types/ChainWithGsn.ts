@@ -1,4 +1,4 @@
-import { Chain } from "wagmi"
+import { Chain } from 'wagmi'
 
 export interface ChainWithGsn extends Chain {
   gsn: {

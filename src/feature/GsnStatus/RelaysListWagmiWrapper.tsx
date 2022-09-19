@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -22,7 +21,7 @@ export default function RelaysListWagmiWrapper () {
   }, [networks, gsnNetworks])
 
   if (gsnNetworks === null) return <></>
-  const { chains, provider } = configureChains(
+  const { provider } = configureChains(
     gsnNetworks,
     [
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
