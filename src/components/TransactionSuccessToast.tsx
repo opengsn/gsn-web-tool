@@ -22,7 +22,7 @@ export default function TransactionSuccessToast ({ text, hash }: TransactionSucc
 
   let txData
   if (chain?.blockExplorers !== undefined) {
-    txData = <a href={`${chain.blockExplorers.default.url}'/'${hash}`}>Block Explorer</a>
+    txData = <a href={`${chain.blockExplorers.default.url}/${hash}`}>Block Explorer</a>
   } else {
     txData = <b onClick={() => { copyToClipBoard(hash).catch(console.error) }}>{copyButtonText}</b>
   }
