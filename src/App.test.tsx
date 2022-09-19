@@ -1,9 +1,9 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockConnector, MockProvider } from '@wagmi/core/connectors/mock'
 import { WagmiConfig, createClient } from 'wagmi'
 import { hardhat } from '@wagmi/core/chains'
-import { connect } from '@wagmi/core'
+import { connect, disconnect } from '@wagmi/core'
 import { QueryClient } from '@tanstack/react-query'
 import store from './store'
 import { Provider } from 'react-redux'
@@ -13,7 +13,7 @@ import {
   Route
 } from 'react-router-dom'
 
-import GlobalWagmiWarpper from './feature/blockchain/GlobalWagmiWrapper'
+import App from './routes/App'
 import { getSigners } from './test/utils'
 import Relay from './feature/Relay/Relay'
 
@@ -69,7 +69,7 @@ const client = createClient({
 
 describe('without wallet connected', () => {
   test('renders connect with mock connector button if connect', async () => {
-    render(<GlobalWagmiWarpper />, { wrapper: WagmiConfigWrapper })
+    render(<App />, { wrapper: WagmiConfigWrapper })
     const linkElement = screen.getByRole('button', { name: /connect with mock/i })
     expect(linkElement).toBeInTheDocument()
   })
