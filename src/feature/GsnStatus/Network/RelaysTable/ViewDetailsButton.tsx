@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { createSearchParams, Link } from 'react-router-dom'
+import { ROUTES } from '../../../../constants/routes'
 
 export interface ViewDetailsButtonProps {
   url: string
@@ -6,7 +7,7 @@ export interface ViewDetailsButtonProps {
 
 export function ViewDetailsButton ({ url }: ViewDetailsButtonProps) {
   return (
-    <Link to={`manage?relayUrl=${url}`}>
+    <Link to={{ pathname: ROUTES.DetailedView, search: createSearchParams({ relayUrl: url }).toString() }}>
       <span>View details</span>
     </Link>
   )

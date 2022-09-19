@@ -1,5 +1,5 @@
 export enum ROUTES {
   List = '/',
-  RegisterNew = '/newRelay',
+  RegisterNew = '/new',
   DetailedView = '/manage'
 }
