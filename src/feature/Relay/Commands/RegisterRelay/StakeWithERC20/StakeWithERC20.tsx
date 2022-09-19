@@ -91,7 +91,7 @@ export default function StakeWithERC20 () {
 
     const TokenSelectOption = ({ address }: { address: string }) => {
       const { data: tokenData } = useToken({
-        address,
+        address: address,
         chainId
       })
 
