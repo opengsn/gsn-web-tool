@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 
 import GlobalWagmiWarpper from './feature/blockchain/GlobalWagmiWrapper'
@@ -14,9 +14,9 @@ const root = ReactDOM.createRoot(document.getElementById('root') as Element)
 
 root.render(
   <Provider store={store}>
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
+    <Router basename={process.env.PUBLIC_URL}>
       <ErrorBoundary>
         <GlobalWagmiWarpper />
       </ErrorBoundary>
-    </BrowserRouter>
+    </Router>
   </Provider >)
