@@ -91,7 +91,7 @@ export default function StakeWithERC20 () {
 
     const TokenSelectOption = ({ address }: { address: string }) => {
       const { data: tokenData } = useToken({
-        address: address,
+        address,
         chainId
       })
 
@@ -110,7 +110,6 @@ export default function StakeWithERC20 () {
             <Form.Select
               id="token"
               name="token"
-              disabled={stakingTokenIsSet}
               onChange={getTokenAddress.handleChange}
               value={getTokenAddress.values.token}
             >
@@ -128,7 +127,6 @@ export default function StakeWithERC20 () {
               <Form.Control
                 type="text"
                 name="token"
-                disabled={stakingTokenIsSet}
                 onChange={getTokenAddress.handleChange}
                 value={getTokenAddress.values.token}
                 placeholder="0x..."
