@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
 
-import App from './routes/App'
+import GlobalWagmiWarpper from './feature/blockchain/GlobalWagmiWrapper'
 import store from './store'
 
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -16,7 +16,7 @@ root.render(
   <Provider store={store}>
     <Router basename={process.env.PUBLIC_URL}>
       <ErrorBoundary>
-        <App />
+        <GlobalWagmiWarpper />
       </ErrorBoundary>
     </Router>
   </Provider >)
