@@ -198,14 +198,17 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
       return fulfillWithValue(3, null)
     } catch (error: any) {
-      if (error.message.includes('relay manager not staked') === true) {
-        return fulfillWithValue(2, null)
+      switch (true) {
+        case (error.message.includes('relay manager not staked')):
+          return fulfillWithValue(2, null)
+        case (error.message.includes('this hub is not authorized by SM')):
+          return fulfillWithValue(3, null)
+        case (error.message.includes('stake amount is too small')):
+          return fulfillWithValue(2, null)
+        default:
+          return rejectWithValue(null)
       }
-      if (error.message.includes('this hub is not authorized by SM') === true) {
-        return fulfillWithValue(3, null)
-      }
-      return rejectWithValue(null)
-    }
+    }}
   })
 
 interface fetchRegisterStateParams {
