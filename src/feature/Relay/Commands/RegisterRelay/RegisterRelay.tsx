@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button'
 import Collapse from 'react-bootstrap/Collapse'
 
 import { useAppDispatch, useAppSelector } from '../../../../hooks'
-import { fetchRegisterStateData, RegisterSteps } from './registerRelaySlice'
+import { fetchRegisterStateData, jumpToStep, RegisterSteps } from './registerRelaySlice'
 import Authorizer from './AuthorizeHub/Authorizer'
 import Funder from './FundRelay/Funder'
 import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
@@ -61,8 +61,10 @@ export default function RegisterRelay () {
 
         const passedStep = !isActionableStep && variant === 'success'
         return (<ListGroup.Item
+          action
           key={step}
           variant={variant}
+          onClick={() => dispatch(jumpToStep(index))}
         >{step}{' '}{passedStep ? <Check color="green"></Check> : null}</ListGroup.Item>
         )
       })
