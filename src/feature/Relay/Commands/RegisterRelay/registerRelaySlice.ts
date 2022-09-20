@@ -208,7 +208,7 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
         default:
           return rejectWithValue(null)
       }
-    }}
+    }
   })
 
 interface fetchRegisterStateParams {
