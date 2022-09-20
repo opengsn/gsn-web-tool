@@ -250,6 +250,9 @@ const registerSlice = createSlice({
     },
     highlightStepIdle (state: registerState) {
       state.status = 'idle'
+    },
+    jumpToStep (state: registerState, action: { payload: number, type: string }) {
+      state.step = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -338,9 +341,6 @@ const registerSlice = createSlice({
         state.step = 4
         state.status = 'success'
       } else if (action.payload === 3) {
-        state.step = 4
-        state.status = 'idle'
-      } else if (action.payload === 3) {
         state.step = 3
         state.status = 'idle'
       } else {
@@ -360,5 +360,5 @@ const registerSlice = createSlice({
   }
 })
 
-export const { highlightStepError, highlightStepIdle } = registerSlice.actions
+export const { highlightStepError, highlightStepIdle, jumpToStep } = registerSlice.actions
 export default registerSlice.reducer
