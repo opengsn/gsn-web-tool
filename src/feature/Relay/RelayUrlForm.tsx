@@ -52,21 +52,27 @@ export default function RelayUrlForm () {
       const formatURL = (url: string) => withHttps(withGetaddr(removeTrailingSlashes(url)))
 
       const extractedURL = values.url.match(regexpURL)
-      if (extractedURL === null) {
+
+      let URL: string
+      if (extractedURL !== null) {
+        URL = formatURL(extractedURL[0])
+      } else if (values.url.includes('localhost')) {
+        URL = values.url
+      } else {
         toast.dismiss()
         toast.error('Please enter a valid URL', { position: 'top-center', hideProgressBar: true, autoClose: 1300, closeOnClick: true, transition: Flip })
         return
       }
 
-      const URL = formatURL(extractedURL[0])
-      console.error(relay.errorMsg)
       dispatch(fetchRelayData(URL)).then((res) => {
         if (res.type.includes('fulfilled')) {
           const search = createSearchParams({ relayUrl: URL }).toString()
           navigate({ pathname: ROUTES.DetailedView, search })
+        } else if (res.type.includes('rejected')) {
+          if (URL.includes('localhost')) toast.info('endpoint must return relay config as JSON', { autoClose: 2000, closeButton: true })
         }
       }).catch((err) => {
-        toast.error(err)
+        toast.error('error while fetching relay data. try refreshing the page')
         console.error(err)
       })
     }
