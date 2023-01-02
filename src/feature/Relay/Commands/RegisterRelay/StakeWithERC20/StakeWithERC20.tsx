@@ -57,19 +57,20 @@ export default function StakeWithERC20 () {
   } = relay
 
   const provider = useProvider()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const relayHub = useContract({
-    addressOrName: relayHubAddress,
-    contractInterface: relayHubAbi,
+    address: relayHubAddress,
+    abi: relayHubAbi,
     signerOrProvider: provider
-  })
+  })!
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   const { data: newStakeInfoData } = useContractRead({
-    addressOrName: stakeManagerAddress,
-    contractInterface: stakeManagerAbi,
-    args: relayManagerAddress,
+    address: stakeManagerAddress,
+    abi: stakeManagerAbi,
+    args: relayManagerAddress as any,
     chainId,
     functionName: 'getStakeInfo'
   })
@@ -91,7 +92,7 @@ export default function StakeWithERC20 () {
 
     const TokenSelectOption = ({ address }: { address: string }) => {
       const { data: tokenData } = useToken({
-        address,
+        address: address as any,
         chainId
       })
 
@@ -150,9 +151,9 @@ export default function StakeWithERC20 () {
       const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)
 
       if (tokens.length === 0) {
-        throw new Error(`no registered staking tokens on relayhub ${relayHub.address as string}`)
+        throw new Error(`no registered staking tokens on relayhub ${relayHub.address}`)
       }
-      const foundToken = tokens[0].args.token
+      const foundToken = tokens[0]?.args?.token
 
       return foundToken
     }
@@ -180,7 +181,7 @@ export default function StakeWithERC20 () {
 
   useEffect(() => {
     if (newStakeInfoData !== undefined && address !== undefined) {
-      const newStakeInfo = newStakeInfoData[0]
+      const newStakeInfo = (newStakeInfoData as any)[0]
 
       if (newStakeInfo?.owner !== constants.AddressZero && isSameAddress(newStakeInfo?.owner, address)) {
         if (newStakeInfo?.token !== constants.AddressZero) {

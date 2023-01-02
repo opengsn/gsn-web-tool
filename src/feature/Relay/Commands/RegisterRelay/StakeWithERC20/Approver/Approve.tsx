@@ -27,24 +27,24 @@ export default function Approver () {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
-    addressOrName: token,
-    contractInterface: iErc20TokenAbi,
+    address: token as any,
+    abi: iErc20TokenAbi,
     functionName: 'allowance',
     chainId,
     args: [account, stakeManagerAddress],
     onSuccess (data) {
       setApproveAmount(
-        minimumStakeForToken.sub(data)
+        minimumStakeForToken.sub(data as any)
       )
     }
   })
 
   const { config, error: prepareApproveTxError, isError: prepareApproveTxIsError } = usePrepareContractWrite({
-    addressOrName: token,
-    contractInterface: iErc20TokenAbi,
+    address: token as any,
+    abi: iErc20TokenAbi,
     functionName: 'approve',
     args: [stakeManagerAddress, approveAmount]
   })

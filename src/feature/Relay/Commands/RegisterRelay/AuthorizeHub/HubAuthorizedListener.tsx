@@ -30,11 +30,11 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
     data: stakeManagerAddressData
   } = useStakeManagerAddress(relayHubAddress, chainId)
 
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   useContractEvent({
-    addressOrName: stakeManagerAddress,
-    contractInterface: stakeManagerAbi,
+    address: stakeManagerAddress,
+    abi: stakeManagerAbi,
     eventName: 'HubAuthorized',
     listener: () => {
       if (listen) return

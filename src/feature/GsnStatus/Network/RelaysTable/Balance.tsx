@@ -7,7 +7,7 @@ export interface ManagerBalanceProps {
 
 function Balance ({ address, chainId }: ManagerBalanceProps) {
   const { data: balanceData, isError, isSuccess, isLoading } = useBalance({
-    addressOrName: address,
+    address: address as any,
     watch: false,
     chainId
   })

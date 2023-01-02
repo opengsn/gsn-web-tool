@@ -38,8 +38,8 @@ export default function StakeAddedListener () {
   }, [listen, check, dispatch])
 
   useContractEvent({
-    addressOrName: stakeManagerAddress,
-    contractInterface: stakeManagerAbi,
+    address: stakeManagerAddress as any,
+    abi: stakeManagerAbi,
     eventName: 'StakeAdded',
     listener () {
       if (listen) return

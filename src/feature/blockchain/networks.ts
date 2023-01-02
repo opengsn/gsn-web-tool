@@ -82,10 +82,10 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
       shortName: 'arbnitro',
       rpc: ['https://nitro-devnet.arbitrum.io/rpc']
     }
-    if (chainList[43113] !== undefined) {
-      // allows querying events 5000 blocks back
-      chainList[43113].rpc = ['https://avalanchetestapi.terminet.io/ext/bc/C/rpc']
-    }
+    // if (chainList[43113] !== undefined) {
+    //   // allows querying events 5000 blocks back
+    //   chainList[43113].rpc = ['https://avalanchetestapi.terminet.io/ext/bc/C/rpc']
+    // }
   }
 
   const availableChains = Object.keys(gsnNetworks).reduce<ChainWithGsn[]>((set, chainId) => {
@@ -138,7 +138,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
         id: parseInt(chainId),
         network: gsnNetwork.name,
         name: gsnNetwork.title,
-        rpcUrls: { default: rpcUrl },
+        rpcUrls: { default: { http: [rpcUrl] } },
         nativeCurrency: { decimals: 18, symbol, name: symbol },
         blockExplorers,
         gsn: {

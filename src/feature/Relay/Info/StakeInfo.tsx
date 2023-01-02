@@ -20,14 +20,14 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
   const dispatch = useAppDispatch()
   const { address } = useAccount()
   const { data: stakeInfo, isSuccess } = useContractRead({
-    addressOrName: stakeManagerAddress,
-    contractInterface: StakeManagerAbi,
+    address: stakeManagerAddress as any,
+    abi: StakeManagerAbi,
     functionName: 'getStakeInfo',
-    args: relayManagerAddress,
+    args: relayManagerAddress as any,
     chainId,
     watch: false,
     onSuccess (data) {
-      dispatch(validateConfigOwnerInLineWithStakeManager(data[0].owner))
+      dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
     },
     onError (err) {
       console.log('error fetching data from stake manager.', { cause: err })
@@ -35,7 +35,7 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
   })
 
   if (stakeInfo !== undefined && isSuccess) {
-    const { owner, token } = stakeInfo[0]
+    const { owner, token } = (stakeInfo as any)[0]
     const ShowOwner = () => {
       if (address !== undefined && isSameAddress(address, owner)) {
         return <b>currently connected</b>
