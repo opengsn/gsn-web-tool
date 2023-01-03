@@ -8,8 +8,8 @@ export default function StakingTokenInfo () {
 
   const { address } = useAccount()
   const { data: tokenBalanceData } = useBalance({
-    addressOrName: address,
-    token,
+    address: address as any,
+    token: token as any,
     chainId
   })
 

@@ -25,11 +25,11 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
     data: stakeManagerAddressData
   } = useStakeManagerAddress(relayHubAddress, chainId)
 
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   const { config, error: authorizeTxError, isLoading, isSuccess, isError } = usePrepareContractWrite({
-    addressOrName: stakeManagerAddress,
-    contractInterface: StakeManagerAbi,
+    address: stakeManagerAddress,
+    abi: StakeManagerAbi,
     functionName: 'authorizeHubByOwner',
     args: [relayManagerAddress, relayHubAddress]
   })

@@ -8,12 +8,12 @@ function PingResponseData ({ relayData }: { relayData: PingResponse }) {
   const { address } = useAccount()
 
   const { data: relayManagerBalanceData } = useBalance({
-    addressOrName: relayData.relayManagerAddress,
+    address: relayData.relayManagerAddress as any,
     watch: true,
     chainId
   })
   const { data: relayWorkerBalanceData } = useBalance({
-    addressOrName: relayData.relayWorkerAddress,
+    address: relayData.relayWorkerAddress as any,
     watch: true,
     chainId
   })

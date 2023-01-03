@@ -8,8 +8,8 @@ interface stakingTokenProps {
 export default function StakingToken ({ stakingToken, chainId }: stakingTokenProps) {
   const { address } = useAccount()
   const { data: stakingTokenBalance } = useBalance({
-    addressOrName: address,
-    token: stakingToken,
+    address: address as any,
+    token: stakingToken as any,
     chainId
   })
 

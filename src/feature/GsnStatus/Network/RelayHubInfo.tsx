@@ -57,15 +57,15 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
   }, [curBlockNumberData, relayHubAddress, RelayHubAbi, provider])
 
   const { data: hubStateData } = useContractRead({
-    addressOrName: relayHubAddress,
-    contractInterface: RelayHubAbi,
+    address: relayHubAddress as any,
+    abi: RelayHubAbi,
     functionName: 'getConfiguration',
     chainId
   })
 
   const { data: versionData } = useContractRead({
-    addressOrName: relayHubAddress,
-    contractInterface: RelayHubAbi,
+    address: relayHubAddress as any,
+    abi: RelayHubAbi,
     functionName: 'versionHub',
     chainId
   })
@@ -84,12 +84,14 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
     <Card.Body>
       <ListGroup>
         <ListGroup.Item>
-          RelayHub: <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />{' '}<b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
+          RelayHub: <BlockExplorerUrl address={relayHubAddress}
+                                      url={blockExplorerUrl}/>{' '}<b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
         </ListGroup.Item>
         {hubStateData !== undefined
           ? <>
             <ListGroup.Item>
-              Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay)}.{' '}
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+              Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.{' '}
               {stakingTokens.length > 0
                 ? <span>token{stakingTokens.length > 1 ? 's' : null}:{' '}
                   {stakingTokens.map((foundToken: IFoundToken) => {
@@ -105,7 +107,10 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
               }
             </ListGroup.Item>
             <ListGroup.Item>
-              Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+              <>
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+                Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+              </>
             </ListGroup.Item>
           </>
           : null

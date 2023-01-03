@@ -15,7 +15,7 @@ function Info () {
     isFetching,
     isLoading
   } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   const THead = () => <thead>
     <tr>

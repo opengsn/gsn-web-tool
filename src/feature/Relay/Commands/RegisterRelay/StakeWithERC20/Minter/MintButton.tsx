@@ -20,8 +20,8 @@ export default function MintButton () {
   const defaultStateSwitchers = useDefaultStateSwitchers()
 
   const { error: mintTokenError, isIdle, isError, isLoading, isSuccess, write: mintToken } = useContractWrite({
-    addressOrName: token,
-    contractInterface: iErc20TokenAbi,
+    address: token as any,
+    abi: iErc20TokenAbi,
     functionName: 'deposit',
     overrides: { value: mintAmount },
     mode: 'recklesslyUnprepared',

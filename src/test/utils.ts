@@ -1,6 +1,7 @@
 import { Wallet } from 'ethers/lib/ethers'
 import { providers } from 'ethers'
-import { Chain, chain as chain_ } from '@wagmi/core'
+import { Chain } from '@wagmi/core'
+import wagmiChains from '@wagmi/chains'
 
 class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
   toJSON () {
@@ -15,6 +16,7 @@ export function getNetwork () {
     name: 'localhost'
   }
 }
+
 export function getSigners () {
   const provider = getProvider()
   const signers = accounts.map((x) => {
@@ -24,12 +26,13 @@ export function getSigners () {
   return signers
 }
 
-export const localhost = {
+export const localhost: Chain = {
   id: 31337,
   name: 'Localhost',
   network: 'localhost',
+  nativeCurrency: wagmiChains.mainnet.nativeCurrency,
   rpcUrls: {
-    default: 'http://127.0.0.1:8545'
+    default: { http: ['http://127.0.0.1:8545'] }
   }
 }
 
@@ -145,7 +148,7 @@ export function getProvider ({
   chainId
 }: { chains?: Chain[], chainId?: number } = {}) {
   const network = getNetwork()
-  const url = chain_.hardhat.rpcUrls.default.toString()
+  const url = wagmiChains.hardhat.rpcUrls.default.http[0].toString()
   const provider = new EthersProviderWrapper(url, network)
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })

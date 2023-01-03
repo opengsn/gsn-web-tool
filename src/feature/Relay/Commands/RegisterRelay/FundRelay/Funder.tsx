@@ -24,7 +24,7 @@ export default function Funder () {
 
   const funds = BigNumber.from(ethers.utils.parseEther(('0.5')))
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
-  const stakeManagerAddress = stakeManagerAddressData as unknown as string
+  const stakeManagerAddress = stakeManagerAddressData as any
 
   if (stakeManagerAddress === undefined) {
     return <div>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</div>

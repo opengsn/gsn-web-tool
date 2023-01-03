@@ -52,7 +52,7 @@ export default function GlobalWagmiWarpper () {
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
       jsonRpcProvider({
         rpc: (chain) => ({
-          http: chain.rpcUrls.default
+          http: chain.rpcUrls.default.http[0]
         })
       }),
       publicProvider()
@@ -65,7 +65,7 @@ export default function GlobalWagmiWarpper () {
     if (config.chainId !== undefined) {
       const configuredNetwork = gsnNetworks.find(x => x.id === config.chainId)
       if (configuredNetwork !== undefined && config.chainId !== undefined && config.chainId !== 1337) {
-        return new providers.JsonRpcProvider(configuredNetwork.rpcUrls.default, configuredNetwork.id)
+        return new providers.JsonRpcProvider(configuredNetwork.rpcUrls.default.http[0], configuredNetwork.id)
       }
       const provider = new providers.Web3Provider(window.ethereum as providers.ExternalProvider, config.chainId)
       return provider

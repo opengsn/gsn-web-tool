@@ -26,8 +26,8 @@ export default function SetOwnerListener () {
   const provider = useProvider({ chainId })
 
   useContractEvent({
-    addressOrName: stakeManagerAddress,
-    contractInterface: stakeManagerAbi,
+    address: stakeManagerAddress as any,
+    abi: stakeManagerAbi,
     chainId,
     eventName: 'OwnerSet',
     listener: () => {
@@ -39,9 +39,9 @@ export default function SetOwnerListener () {
   })
 
   const { data: stakeInfo, refetch } = useContractRead({
-    addressOrName: stakeManagerAddress,
-    contractInterface: stakeManagerAbi,
-    args: relayManagerAddress,
+    address: stakeManagerAddress as any,
+    abi: stakeManagerAbi,
+    args: relayManagerAddress as any,
     functionName: 'getStakeInfo',
     chainId,
     watch: false
@@ -49,7 +49,7 @@ export default function SetOwnerListener () {
 
   useEffect(() => {
     if (listen && account !== undefined && stakeInfo !== undefined) {
-      const { owner } = stakeInfo[0]
+      const { owner } = (stakeInfo as any)[0]
 
       const askIfOwnerIsSet = async () => {
         const sleepCount = 15
@@ -63,7 +63,7 @@ export default function SetOwnerListener () {
             if (newStakeInfo.data === undefined) {
               throw new Error('Failed to refetch StakeManager data')
             }
-            const newOwner = newStakeInfo.data[0].owner
+            const newOwner = (newStakeInfo.data as any)[0].owner
             if (
               newOwner !== constants.AddressZero &&
               isSameAddress(newOwner, account)

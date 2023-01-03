@@ -25,15 +25,15 @@ export default function Stake () {
   const unstakeDelay = '15000'
 
   const { config, error: prepareStakeTxError, refetch } = usePrepareContractWrite({
-    addressOrName: stakeManagerAddress,
-    contractInterface: StakeManagerAbi,
+    address: stakeManagerAddress as any,
+    abi: StakeManagerAbi,
     functionName: 'stakeForRelayManager',
     args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken]
   })
 
   useContractRead({
-    addressOrName: token,
-    contractInterface: iErc20TokenAbi,
+    address: token as any,
+    abi: iErc20TokenAbi,
     functionName: 'allowance',
     args: [address, stakeManagerAddress],
     watch: true,

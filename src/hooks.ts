@@ -6,8 +6,8 @@ import type { RootState, AppDispatch } from './store'
 import relayHubAbi from './contracts/relayHub.json'
 
 export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) => useContractRead({
-  addressOrName: relayHubAddress,
-  contractInterface: relayHubAbi,
+  address: relayHubAddress as any,
+  abi: relayHubAbi,
   functionName: 'getStakeManager',
   chainId,
   onError (err) {
