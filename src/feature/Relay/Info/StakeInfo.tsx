@@ -23,7 +23,7 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     address: stakeManagerAddress as any,
     abi: StakeManagerAbi,
     functionName: 'getStakeInfo',
-    args: relayManagerAddress as any,
+    args: [relayManagerAddress],
     chainId,
     watch: false,
     onSuccess (data) {

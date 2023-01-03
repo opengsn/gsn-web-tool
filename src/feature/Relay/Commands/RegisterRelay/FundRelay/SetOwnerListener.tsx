@@ -41,7 +41,7 @@ export default function SetOwnerListener () {
   const { data: stakeInfo, refetch } = useContractRead({
     address: stakeManagerAddress as any,
     abi: stakeManagerAbi,
-    args: relayManagerAddress as any,
+    args: [relayManagerAddress],
     functionName: 'getStakeInfo',
     chainId,
     watch: false

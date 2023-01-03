@@ -70,7 +70,7 @@ export default function StakeWithERC20 () {
   const { data: newStakeInfoData } = useContractRead({
     address: stakeManagerAddress,
     abi: stakeManagerAbi,
-    args: relayManagerAddress as any,
+    args: [relayManagerAddress],
     chainId,
     functionName: 'getStakeInfo'
   })
