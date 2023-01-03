@@ -90,6 +90,7 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
         {hubStateData !== undefined
           ? <>
             <ListGroup.Item>
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
               Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.{' '}
               {stakingTokens.length > 0
                 ? <span>token{stakingTokens.length > 1 ? 's' : null}:{' '}
@@ -107,6 +108,7 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
             </ListGroup.Item>
             <ListGroup.Item>
               <>
+                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
                 Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
               </>
             </ListGroup.Item>

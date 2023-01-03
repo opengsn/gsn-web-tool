@@ -151,7 +151,8 @@ export default function StakeWithERC20 () {
       const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)
 
       if (tokens.length === 0) {
-        throw new Error(`no registered staking tokens on relayhub ${relayHub.address}`)
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        throw new Error(`no registered staking tokens on relayhub ${relayHub.address as string}`)
       }
       const foundToken = tokens[0]?.args?.token
 
