@@ -27,9 +27,9 @@ export default function RelaysListWagmiWrapper () {
       infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
       jsonRpcProvider({
         rpc: (chain) => {
-          return ({
-            http: chain.rpcUrls.default
-          })
+          return {
+            http: chain.rpcUrls.default.http[0]
+          }
         },
         static: true
       })

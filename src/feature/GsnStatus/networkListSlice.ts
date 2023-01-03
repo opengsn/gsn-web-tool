@@ -114,7 +114,7 @@ export const fetchRelaysData = createAsyncThunk<fetchRelaysDataResponse, ChainWi
 const fetchRelaysFromRegistrar = async (chain: ChainWithGsn) => {
   try {
     const { relayHubAddress, RelayHubAbi } = chain.gsn
-    const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrls.default)
+    const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrls.default.http[0])
     const relayHub = new ethers.Contract(relayHubAddress, RelayHubAbi, provider)
 
     const registrarAddress = await relayHub.getRelayRegistrar()

@@ -28,11 +28,11 @@ export default function Minter () {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const provider = useProvider()
 
-  const { data: tokenData } = useToken({ address: token })
+  const { data: tokenData } = useToken({ address: token as any })
 
   const { data: tokenBalanceData } = useBalance({
-    addressOrName: account,
-    token,
+    address: account as any,
+    token: token as any,
     watch: true,
     onSuccess (data) {
       dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
