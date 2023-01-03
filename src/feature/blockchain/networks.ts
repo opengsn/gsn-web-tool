@@ -115,6 +115,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
       RelayHubContract = contracts.RelayHub
     } else {
       console.log('no hub for ', chainId)
+      return set
     }
 
     let symbol
