@@ -32,7 +32,7 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
         const relayHub = new Contract(relayHubAddress, RelayHubAbi, provider)
         const fromBlock = (await relayHub.functions.getCreationBlock())[0]
         const fromBlockNr: number = fromBlock.toNumber()
-        const toBlock = Math.min(fromBlockNr + 5000, curBlockNumber)
+        const toBlock = Math.min(fromBlockNr + 2048, curBlockNumber)
 
         const filters = relayHub.filters.StakingTokenDataChanged()
         const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)

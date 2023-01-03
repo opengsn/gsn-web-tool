@@ -145,7 +145,7 @@ export default function StakeWithERC20 () {
   const FindFirstTokenButton = () => {
     const findFirstToken = async (curBlockNumber: number) => {
       const fromBlock = (await relayHub.functions.getCreationBlock())[0]
-      const toBlock = Math.min(toNumber(fromBlock) + 5000, curBlockNumber)
+      const toBlock = Math.min(toNumber(fromBlock) + 2048, curBlockNumber)
 
       const filters = relayHub.filters.StakingTokenDataChanged()
       const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)

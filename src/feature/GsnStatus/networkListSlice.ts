@@ -123,8 +123,10 @@ const fetchRelaysFromRegistrar = async (chain: ChainWithGsn) => {
     const data = await registrar.readRelayInfos(relayHubAddress)
 
     return data
-  } catch (e) {
-    throw new Error('registrar unreachable')
+  } catch (e: any) {
+    console.error(e)
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    throw new Error('registrar unreachable' + e.message)
   }
 }
 
