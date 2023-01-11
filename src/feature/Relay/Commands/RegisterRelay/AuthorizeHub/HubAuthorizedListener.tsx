@@ -7,7 +7,7 @@ import { sleep } from '../../../../../utils'
 
 import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 
-import stakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 import { fetchRelayData } from '../../../../Relay/relaySlice'
 
 interface HubAuthorizedListenerProps {
@@ -34,7 +34,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
 
   useContractEvent({
     address: stakeManagerAddress,
-    abi: stakeManagerAbi,
+    abi: StakeManager.abi,
     eventName: 'HubAuthorized',
     listener: () => {
       if (listen) return

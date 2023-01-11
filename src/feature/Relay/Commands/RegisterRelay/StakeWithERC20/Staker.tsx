@@ -10,7 +10,7 @@ import LoadingButton from '../../../components/LoadingButton'
 import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
-import StakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 import { useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 
@@ -26,7 +26,7 @@ export default function Stake () {
 
   const { config, error: prepareStakeTxError, refetch } = usePrepareContractWrite({
     address: stakeManagerAddress as any,
-    abi: StakeManagerAbi,
+    abi: StakeManager.abi,
     functionName: 'stakeForRelayManager',
     args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken]
   })

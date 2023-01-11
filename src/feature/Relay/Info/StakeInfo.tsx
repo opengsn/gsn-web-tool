@@ -5,7 +5,7 @@ import { isSameAddress } from '../../../utils'
 
 import { validateConfigOwnerInLineWithStakeManager } from '../relaySlice'
 
-import StakeManagerAbi from '../../../contracts/stakeManager.json'
+import StakeManager from '../../../contracts/StakeManager.json'
 import StakingToken from './StakeManagerInfo/StakingToken'
 
 interface stakeInfoProps {
@@ -21,7 +21,7 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
   const { address } = useAccount()
   const { data: stakeInfo, isSuccess } = useContractRead({
     address: stakeManagerAddress as any,
-    abi: StakeManagerAbi,
+    abi: StakeManager.abi,
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
     chainId,

@@ -1,5 +1,8 @@
 import gsnNetworks from './gsn-networks.json'
 import axios, { AxiosResponse } from 'axios'
+
+import RelayHub from '../../contracts/RelayHub.json'
+
 import { ChainWithGsn } from '../../types/ChainWithGsn'
 
 // const infura = (document.location.href.match(/#.*infura=([^&]*)/) || [])[1] || 'f40be2b1a3914db682491dc62a19ad43'
@@ -86,6 +89,10 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
     //   // allows querying events 5000 blocks back
     //   chainList[43113].rpc = ['https://avalanchetestapi.terminet.io/ext/bc/C/rpc']
     // }
+    if (chainList[10] !== undefined) {
+      // less aggressive in throttling RPC calls
+      chainList[43113].rpc = ['https://rpc.ankr.com/optimism']
+    }
   }
 
   const availableChains = Object.keys(gsnNetworks).reduce<ChainWithGsn[]>((set, chainId) => {
@@ -145,7 +152,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
         gsn: {
           group: getGroup(gsnNetwork),
           relayHubAddress: RelayHubContract.address,
-          RelayHubAbi: RelayHubContract.abi,
+          RelayHubAbi: RelayHub.abi,
           contracts
         }
       }

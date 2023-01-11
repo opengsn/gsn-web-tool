@@ -1,7 +1,7 @@
 import { compose, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios'
 import { ethers } from 'ethers'
-import RelayRegistrarAbi from '../../contracts/relayRegistrar.json'
+import RelayRegistrar from '../../contracts/RelayRegistrar.json'
 
 import { PingResponse, ChainWithGsn } from '../../types'
 
@@ -118,7 +118,7 @@ const fetchRelaysFromRegistrar = async (chain: ChainWithGsn) => {
     const relayHub = new ethers.Contract(relayHubAddress, RelayHubAbi, provider)
 
     const registrarAddress = await relayHub.getRelayRegistrar()
-    const registrar = new ethers.Contract(registrarAddress, RelayRegistrarAbi, provider)
+    const registrar = new ethers.Contract(registrarAddress, RelayRegistrar.abi, provider)
 
     const data = await registrar.readRelayInfos(relayHubAddress)
 

@@ -3,11 +3,11 @@ import { useContractRead } from 'wagmi'
 
 import type { RootState, AppDispatch } from './store'
 
-import relayHubAbi from './contracts/relayHub.json'
+import RelayHub from './contracts/RelayHub.json'
 
 export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) => useContractRead({
   address: relayHubAddress as any,
-  abi: relayHubAbi,
+  abi: RelayHub.abi,
   functionName: 'getStakeManager',
   chainId,
   onError (err) {

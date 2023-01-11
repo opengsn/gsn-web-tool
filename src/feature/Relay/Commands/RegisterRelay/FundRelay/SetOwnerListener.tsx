@@ -7,7 +7,7 @@ import { fetchRegisterStateData } from '../registerRelaySlice'
 import { useAppDispatch } from '../../../../../hooks'
 import { FunderContext } from './Funder'
 
-import stakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 import { isSameAddress, sleep } from '../../../../../utils/utils'
 import { toast } from 'react-toastify'
 
@@ -27,7 +27,7 @@ export default function SetOwnerListener () {
 
   useContractEvent({
     address: stakeManagerAddress as any,
-    abi: stakeManagerAbi,
+    abi: StakeManager.abi,
     chainId,
     eventName: 'OwnerSet',
     listener: () => {
@@ -40,7 +40,7 @@ export default function SetOwnerListener () {
 
   const { data: stakeInfo, refetch } = useContractRead({
     address: stakeManagerAddress as any,
-    abi: stakeManagerAbi,
+    abi: StakeManager.abi,
     args: [relayManagerAddress],
     functionName: 'getStakeInfo',
     chainId,

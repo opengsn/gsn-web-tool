@@ -5,8 +5,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../../../store'
 
 import iErc20TokenAbi from '../../../../contracts/iERC20TokenAbi.json'
-import relayHubAbi from '../../../../contracts/relayHub.json'
-import stakeManagerAbi from '../../../../contracts/stakeManager.json'
+import RelayHub from '../../../../contracts/RelayHub.json'
+import StakeManager from '../../../../contracts/StakeManager.json'
 
 import { PingResponse } from '../../../../types/PingResponse'
 import { isSameAddress } from '../../../../utils'
@@ -66,10 +66,10 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
-      const relayHub = new ethers.Contract(relay.relayHubAddress, relayHubAbi, provider)
+      const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
 
       const stakeManagerAddress = await relayHub.getStakeManager()
-      const stakeManager = new ethers.Contract(stakeManagerAddress, stakeManagerAbi, provider)
+      const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
 
       const { tokenFromStakeInfo }: { tokenFromStakeInfo: string } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
 
@@ -157,9 +157,9 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
     dispatch
   }) => {
     try {
-      const relayHub = new ethers.Contract(relay.relayHubAddress, relayHubAbi, provider)
+      const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
       const stakeManagerAddress = await relayHub.getStakeManager()
-      const stakeManager = new ethers.Contract(stakeManagerAddress, stakeManagerAbi, provider)
+      const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
       const { owner } = (await stakeManager
         .getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
@@ -185,7 +185,7 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
   async ({ relayManagerAddress, relayHubAddress, provider }: validateIsRelayManagerStakedParams,
     { fulfillWithValue, rejectWithValue, dispatch, getState }) => {
     try {
-      const relayHub = new ethers.Contract(relayHubAddress, relayHubAbi, provider)
+      const relayHub = new ethers.Contract(relayHubAddress, RelayHub.abi, provider)
 
       await relayHub.verifyRelayManagerStaked(relayManagerAddress)
 

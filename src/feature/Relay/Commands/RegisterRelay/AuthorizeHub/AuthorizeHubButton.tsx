@@ -1,7 +1,7 @@
 import { usePrepareContractWrite, useContractWrite } from 'wagmi'
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
-import StakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 
 import Button from 'react-bootstrap/Button'
 
@@ -29,7 +29,7 @@ export default function AuthorizeButton ({ setListen }: AuthorizeButtonProps) {
 
   const { config, error: authorizeTxError, isLoading, isSuccess, isError } = usePrepareContractWrite({
     address: stakeManagerAddress,
-    abi: StakeManagerAbi,
+    abi: StakeManager.abi,
     functionName: 'authorizeHubByOwner',
     args: [relayManagerAddress, relayHubAddress]
   })

@@ -19,8 +19,8 @@ import StakingTokenInfo from './StakingTokenInfo'
 
 import { isSameAddress, toNumber } from '../../../../../utils'
 
-import relayHubAbi from '../../../../../contracts/relayHub.json'
-import stakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import RelayHub from '../../../../../contracts/RelayHub.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 
 import { ChainWithGsn } from '../../../../../types'
 import StakeAddedListener from './StakeAddedListener'
@@ -60,7 +60,7 @@ export default function StakeWithERC20 () {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const relayHub = useContract({
     address: relayHubAddress,
-    abi: relayHubAbi,
+    abi: RelayHub.abi,
     signerOrProvider: provider
   })!
 
@@ -69,7 +69,7 @@ export default function StakeWithERC20 () {
 
   const { data: newStakeInfoData } = useContractRead({
     address: stakeManagerAddress,
-    abi: stakeManagerAbi,
+    abi: StakeManager.abi,
     args: [relayManagerAddress],
     chainId,
     functionName: 'getStakeInfo'

@@ -6,7 +6,7 @@ import { validateIsRelayManagerStaked } from '../registerRelaySlice'
 import { TokenContext } from './StakeWithERC20'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
 
-import stakeManagerAbi from '../../../../../contracts/stakeManager.json'
+import StakeManager from '../../../../../contracts/StakeManager.json'
 import { sleep } from '../../../../../utils/utils'
 
 export default function StakeAddedListener () {
@@ -39,7 +39,7 @@ export default function StakeAddedListener () {
 
   useContractEvent({
     address: stakeManagerAddress as any,
-    abi: stakeManagerAbi,
+    abi: StakeManager.abi,
     eventName: 'StakeAdded',
     listener () {
       if (listen) return
