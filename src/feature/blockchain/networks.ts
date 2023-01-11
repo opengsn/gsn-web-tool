@@ -91,7 +91,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
     // }
     if (chainList[10] !== undefined) {
       // less aggressive in throttling RPC calls
-      chainList[43113].rpc = ['https://rpc.ankr.com/optimism']
+      chainList[10].rpc = ['https://rpc.ankr.com/optimism']
     }
   }
 
