@@ -14,7 +14,7 @@ export interface RelayLineProps {
 }
 
 export default function RelayLine ({ url, relay, blockExplorer, errorMsg }: RelayLineProps) {
-  const { relayManagerAddress, relayWorkerAddress, version, chainId } = relay
+  const { relayManagerAddress, relayWorkerAddress, ready, version, chainId } = relay
   if (chainId === undefined) return <tr><td>no data</td></tr>
 
   return <tr key={relayManagerAddress}>
@@ -22,7 +22,7 @@ export default function RelayLine ({ url, relay, blockExplorer, errorMsg }: Rela
       <RelayUrl url={url} />
     </td>
     <td>
-      <RelayStatus ready />
+      <RelayStatus ready={ready} />
     </td>
     <td>
       <RelayVersion version={version} />
