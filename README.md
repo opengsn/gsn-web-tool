@@ -14,7 +14,7 @@ Lucky - this project include npm scripts which makes it easy. they should be run
 
 1. `local-hardhat-node` - run [Hardhat](https://www.npmjs.com/package/hardhat) locally. Hardhat is an Ethereum development environment for professionals.
 2. `local-gsn`: run a local GSN
-3. `local-relay-serve`: run a local relay server
+3. `local-relay-server`: run a local relay server
 4. `start` - react dev server
 
 #### Install meta mask
