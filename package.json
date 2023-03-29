@@ -50,9 +50,9 @@
     ]
   },
   "scripts": {
-    "one-hardhat-node": "npx hardhat node",
-    "two-gsn-deploy": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic",
-    "three-relay-server": "npx gsn relayer-run --ethereumNodeUrl=http://localhost:8545 --managerStakeTokenAddress=0x610178dA211FEF7D417bC0e6FeD39F05609AD788 --relayHubAddress=0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9 --url=http://localhost:8090 --workdir=/tmp/relay101/ --ownerAddress=0xcd3B766CCDd6AE721141F452C550Ca635964ce71 --port=8090",
+    "local-hardhat-node": "npx hardhat node",
+    "local-gsn": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic",
+    "local-relay-server": "npx gsn relayer-run --ethereumNodeUrl=http://localhost:8545 --managerStakeTokenAddress=0x610178dA211FEF7D417bC0e6FeD39F05609AD788 --relayHubAddress=0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9 --url=http://localhost:8090 --workdir=/tmp/relay101/ --ownerAddress=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --port=8090",
     "lint": "eslint -f unix .",
     "start": "react-scripts start",
     "build": "react-scripts build && cd build/ && mkdir manage && cp index.html manage/",
