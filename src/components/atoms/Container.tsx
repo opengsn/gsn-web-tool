@@ -6,7 +6,7 @@ interface IProps {
 }
 
 const Container: FC<IProps> = ({ children }) => {
-  return <MuiContainer>{children}</MuiContainer>
+  return <MuiContainer maxWidth={false}>{children}</MuiContainer>
 }
 
 export default Container

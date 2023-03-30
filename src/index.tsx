@@ -10,24 +10,30 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
+import './index.css'
+import { ThemeProvider } from '@mui/material/styles'
+import { theme } from './theme'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element)
 
 root.render(
   <Provider store={store}>
-    <Router basename={process.env.PUBLIC_URL}>
-      <ErrorBoundary>
-        <GlobalWagmiWarpper />
-        <ToastContainer
-          position="top-right"
-          autoClose={false}
-          newestOnTop
-          style={{ width: '45vw' }}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
-        />
-      </ErrorBoundary>
-    </Router>
-  </Provider >)
+    <ThemeProvider theme={theme}>
+      <Router basename={process.env.PUBLIC_URL}>
+        <ErrorBoundary>
+          <GlobalWagmiWarpper />
+          <ToastContainer
+            position='top-right'
+            autoClose={false}
+            newestOnTop
+            style={{ width: '45vw' }}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable={false}
+          />
+        </ErrorBoundary>
+      </Router>
+    </ThemeProvider>
+  </Provider>
+)
