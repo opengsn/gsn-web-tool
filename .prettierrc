@@ -1,0 +1,9 @@
+{
+  "spaceBeforeFunctionParen": "always",
+  "singleQuote": true,
+  "arrowParens": "always",
+  "trailingComma": "none",
+  "printWidth": 140,
+  "semi": false,
+  "jsxSingleQuote": true
+}
