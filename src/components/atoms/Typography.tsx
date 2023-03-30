@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */ // fix this
 import { FC, ReactNode } from 'react'
 import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'

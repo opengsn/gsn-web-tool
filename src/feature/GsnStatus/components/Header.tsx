@@ -5,7 +5,7 @@ const sx = {
   root: {
     display: 'flex',
     alignItems: 'center',
-    p: 2
+    p: '8px'
   }
 }
 

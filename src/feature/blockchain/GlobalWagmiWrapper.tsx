@@ -16,7 +16,7 @@ import { GsnRelaysView, RegisterNewRelay, RelayDetailedView } from '../../routes
 import { ChainWithGsn } from '../../types'
 import { fetchNetworks } from '../GsnStatus/networkListSlice'
 import { getNetworks } from './networks'
-import { Container } from '../../components/atoms'
+import { Box } from '../../components/atoms'
 
 export default function GlobalWagmiWarpper() {
   const [gsnNetworks, setGsnNetworks] = useState<ChainWithGsn[]>([])
@@ -86,13 +86,13 @@ export default function GlobalWagmiWarpper() {
 
   return (
     <WagmiConfig client={client}>
-      <Container>
+      <Box p='8px'>
         <Routes>
           <Route path={ROUTES.List} element={<GsnRelaysView />} />
           <Route path={ROUTES.DetailedView} element={<RelayDetailedView />} />
           <Route path={ROUTES.RegisterNew} element={<RegisterNewRelay />} />
         </Routes>
-      </Container>
+      </Box>
     </WagmiConfig>
   )
 }

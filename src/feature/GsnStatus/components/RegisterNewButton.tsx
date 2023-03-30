@@ -6,18 +6,19 @@ import { ROUTES } from '../../../constants/routes'
 
 const RegisterNewButton = () => {
   return (
-    <div>
-      <Link to={ROUTES.RegisterNew}>
-        <Button size="lg" variant="success" className="h-75 w-100">
-          <PlusCircleFill size={24} style={{
+    <Link to={ROUTES.RegisterNew}>
+      <Button size='lg' variant='success' className='h-75 w-100'>
+        <PlusCircleFill
+          size={24}
+          style={{
             display: 'inline-block',
             marginBottom: '3px',
             marginRight: '4px'
-          }} />{' '}
-          <span>Register New Relay</span>
-        </Button>
-      </Link>
-    </div>
+          }}
+        />{' '}
+        <span>Register New Relay</span>
+      </Button>
+    </Link>
   )
 }
 
