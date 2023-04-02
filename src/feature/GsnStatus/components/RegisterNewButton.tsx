@@ -7,7 +7,8 @@ const RegisterNewButton = () => {
   return (
     <Link to={ROUTES.RegisterNew} style={{ textDecoration: 'none' }}>
       <Button.Contained>
-        <Icon.PlusCircleFill /> <Typography.Body5>Register New Relay</Typography.Body5>
+        <Icon.PlusCircleFill />
+        &nbsp; &nbsp;<Typography.Body5>Register New Relay</Typography.Body5>
       </Button.Contained>
     </Link>
   )
