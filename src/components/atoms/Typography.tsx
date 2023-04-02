@@ -2,7 +2,6 @@
 import { FC, ReactNode } from 'react'
 import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { colors } from '../../theme'
 
 interface ITypographyBase {
   color?: string
