@@ -21,7 +21,7 @@ export default function ChainsList() {
           <NetworkLinksNew />
         </Grid>
         <Grid item xs={12} md={9}>
-          <Box height='120px' width={{ xs: '100%', md: '290px' }} ml={{ md: 'auto' }}>
+          <Box height='90px' width={{ xs: '100%', md: '290px' }} ml={{ md: 'auto' }}>
             <RegisterNewButton />
           </Box>
         </Grid>

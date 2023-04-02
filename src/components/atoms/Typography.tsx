@@ -18,8 +18,8 @@ interface IText {
 const TypographyBase: any = styled(Typo, {
   shouldForwardProp: (prop: string) => prop !== 'color' && prop !== 'fontWeight'
 })<ITypographyBase>(({ theme, color, fontWeight }) => ({
-  color: color ?? colors.black,
-  fontWeight: fontWeight ?? theme.fontWeights.normal,
+  color: color ?? 'inherit',
+  fontWeight: fontWeight ?? 'inherit',
   whiteSpace: 'pre-line'
 }))
 
