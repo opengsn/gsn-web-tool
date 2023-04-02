@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { Button as MuiButton } from '@mui/material'
+import { Button as MuiButton, IconButton as MuiIconButton } from '@mui/material'
 import { colors } from '../../theme'
 import { styled } from '@mui/material/styles'
 
@@ -31,8 +31,17 @@ const Contained: FC<IProps> = ({ backgroundColor, children, onClick, disabled })
   )
 }
 
+const Icon: FC<IProps> = ({ children, onClick, disabled }) => {
+  return (
+    <MuiIconButton onClick={onClick} disabled={disabled} disableRipple>
+      {children}
+    </MuiIconButton>
+  )
+}
+
 const Button = {
-  Contained
+  Contained,
+  Icon
 }
 
 export default Button
