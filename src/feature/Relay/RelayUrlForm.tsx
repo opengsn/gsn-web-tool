@@ -4,7 +4,7 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 
 import { Flip, toast } from 'react-toastify'
 
-import { Box, Typography, VariantType, TextField, Button } from '../../components/atoms'
+import { Box, Typography, VariantType, TextField, Button, ButtonType } from '../../components/atoms'
 
 import { isIP } from 'is-ip'
 
@@ -13,7 +13,6 @@ import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
 import { PingResponse } from '../../types'
 import { deleteRelayData, fetchRelayData } from './relaySlice'
 import { texts } from '../../texts'
-import { ButtonType } from '../../components/atoms/Button'
 
 export default function RelayUrlForm() {
   const relay = useAppSelector((state) => state.relay)

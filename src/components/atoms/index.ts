@@ -1,6 +1,6 @@
 export { Box } from '@mui/material'
 export { default as Typography, VariantType } from './Typography'
-export { default as Button } from './Button'
+export { default as Button, ButtonType } from './Button'
 export { default as Icon } from './Icon'
 export { default as Card, CardContent, CardHeader } from './Card'
 export { default as List, ListItem } from './List'
