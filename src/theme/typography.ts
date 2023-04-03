@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
     h4: CSSProperties
     h5: CSSProperties
     h6: CSSProperties
+    xSmall: CSSProperties
   }
 }
 
@@ -37,5 +38,8 @@ export const typography: TypographyOptions | ((palette: Palette) => TypographyOp
   },
   h6: {
     fontSize: extraThemeOptions.fontSizes.small
+  },
+  xSmall: {
+    fontSize: extraThemeOptions.fontSizes.xSmall
   }
 }
