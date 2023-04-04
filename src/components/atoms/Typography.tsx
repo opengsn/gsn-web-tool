@@ -1,55 +1,35 @@
-/* eslint-disable react/prop-types */ // fix this
 import { FC, ReactNode } from 'react'
 import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'
+
+export enum VariantType {
+  H1 = 'h1', // 48px
+  H2 = 'h2', // 40px
+  H3 = 'h3', // 24px
+  H4 = 'h4', // 22px
+  H5 = 'h5', // 20px
+  H6 = 'h6', // 18px
+  XSMALL = 'xSmall' // 16px
+}
 
 interface ITypographyBase {
   color?: string
   fontWeight?: string
   children: ReactNode
-  variant?: string
-}
-
-interface IText {
-  [property: string]: FC<ITypographyBase>
+  variant?: VariantType
 }
 
 const TypographyBase: any = styled(Typo, {
   shouldForwardProp: (prop: string) => prop !== 'color' && prop !== 'fontWeight'
-})<ITypographyBase>(({ theme, color, fontWeight }) => ({
+})<ITypographyBase>(({ color, fontWeight }) => ({
   color: color ?? 'inherit',
-  fontWeight: fontWeight ?? 'inherit',
+  fontWeight: fontWeight ?? 400,
   whiteSpace: 'pre-line'
 }))
 
-const Typography: IText = {
-  Body1: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h1' component='span' color={color} fontWeight={fontWeight}>
-      {children}
-    </TypographyBase>
-  ),
-  Body2: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h2' component='span' color={color} fontWeight={fontWeight}>
-      {children}
-    </TypographyBase>
-  ),
-  Body3: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h3' component='span' color={color} fontWeight={fontWeight}>
-      {children}
-    </TypographyBase>
-  ),
-  Body4: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h4' component='span' color={color} fontWeight={fontWeight}>
-      {children}
-    </TypographyBase>
-  ),
-  Body5: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h5' component='span' color={color} fontWeight={fontWeight}>
-      {children}
-    </TypographyBase>
-  ),
-  Body6: ({ children, color, fontWeight }) => (
-    <TypographyBase variant='h6' component='span' color={color} fontWeight={fontWeight}>
+const Typography: FC<ITypographyBase> = ({ variant, children, color, fontWeight }) => {
+  return (
+    <TypographyBase variant={variant} component='span' color={color} fontWeight={fontWeight}>
       {children}
     </TypographyBase>
   )

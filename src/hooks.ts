@@ -5,15 +5,22 @@ import type { RootState, AppDispatch } from './store'
 
 import RelayHub from './contracts/RelayHub.json'
 
-export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) => useContractRead({
-  address: relayHubAddress as any,
-  abi: RelayHub.abi,
-  functionName: 'getStakeManager',
-  chainId,
-  onError (err) {
-    console.warn(err, chainId)
-  }
-})
+import { Theme, useMediaQuery } from '@mui/material'
+
+export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) =>
+  useContractRead({
+    address: relayHubAddress as any,
+    abi: RelayHub.abi,
+    functionName: 'getStakeManager',
+    chainId,
+    onError(err) {
+      console.warn(err, chainId)
+    }
+  })
+
+export const useIsDesktop = () => {
+  return useMediaQuery((theme: Theme) => theme.breakpoints.up('md'))
+}
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>()
