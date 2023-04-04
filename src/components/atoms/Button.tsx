@@ -53,9 +53,18 @@ const Icon: FC<IProps> = ({ children, onClick, disabled }) => {
   )
 }
 
+const Text: FC<IProps> = ({ children, onClick, disabled }) => {
+  return (
+    <MuiButton variant='text' onClick={onClick} disabled={disabled} sx={{ textTransform: 'none' }}>
+      {children}
+    </MuiButton>
+  )
+}
+
 const Button = {
   Contained,
-  Icon
+  Icon,
+  Text
 }
 
 export default Button
