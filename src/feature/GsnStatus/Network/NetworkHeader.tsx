@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card } from 'react-bootstrap'
+import { CardHeader } from '../../../components/atoms/Card'
 
 interface NetworkCardHeaderProps {
   networkAnchor: string
@@ -7,10 +7,16 @@ interface NetworkCardHeaderProps {
   name: string
 }
 
-function NetworkHeader ({ networkAnchor, group, name }: NetworkCardHeaderProps) {
-  return (<Card.Header id={networkAnchor}>
-    <h2>Network: {group} - {name}</h2>
-  </Card.Header>)
+function NetworkHeader({ networkAnchor, group, name }: NetworkCardHeaderProps) {
+  return (
+    <CardHeader
+      title={
+        <h2>
+          Network: {group} - {name}
+        </h2>
+      }
+    />
+  )
 }
 
 export default React.memo(NetworkHeader)

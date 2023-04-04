@@ -4,6 +4,9 @@
   "homepage": "/",
   "private": false,
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.15",
     "@reduxjs/toolkit": "^1.8.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -77,6 +80,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-n": "^15.2.4",
-    "hardhat": "^2.10.1"
+    "hardhat": "^2.10.1",
+    "prettier": "2.8.7"
   }
 }

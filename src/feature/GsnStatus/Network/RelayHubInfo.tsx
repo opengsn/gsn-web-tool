@@ -1,12 +1,12 @@
+/* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react'
 import { useBlockNumber, useContractRead, useProvider } from 'wagmi'
 
 import { BigNumber, Contract, ethers, utils } from 'ethers'
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
 
 import BlockExplorerUrl from '../components/BlockExplorerUrl'
 import { TokenValueInfo } from './TokenValueInfo'
+import { List, ListItem, CardContent } from '../../../components/atoms'
 
 interface RelayHubInfoProps {
   relayHubAddress: string
@@ -20,7 +20,7 @@ export interface IFoundToken {
   minimumStake: BigNumber
 }
 
-export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplorerUrl, chainId }: RelayHubInfoProps) {
+export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplorerUrl, chainId }: RelayHubInfoProps) {
   const ver = (version: string) => version.replace(/\+opengsn.*/, '')
   const { data: curBlockNumberData } = useBlockNumber({ chainId })
   const provider = useProvider({ chainId })
@@ -70,52 +70,57 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
     chainId
   })
 
-  function formatDays (days: ethers.BigNumber) {
+  function formatDays(days: ethers.BigNumber) {
     const daysNumber = days.toNumber()
-    if (daysNumber > 2) { return `${Math.round(daysNumber)} days` }
+    if (daysNumber > 2) {
+      return `${Math.round(daysNumber)} days`
+    }
     const hours = daysNumber * 24
-    if (hours > 2) { return `${Math.round(hours)} hrs` }
+    if (hours > 2) {
+      return `${Math.round(hours)} hrs`
+    }
 
     const min = hours * 60
     return `${Math.round(min)} mins`
   }
 
   return (
-    <Card.Body>
-      <ListGroup>
-        <ListGroup.Item>
-          RelayHub: <BlockExplorerUrl address={relayHubAddress}
-                                      url={blockExplorerUrl}/>{' '}<b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
-        </ListGroup.Item>
-        {hubStateData !== undefined
-          ? <>
-            <ListGroup.Item>
+    <CardContent>
+      <List>
+        <ListItem>
+          RelayHub: <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />{' '}
+          <b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
+        </ListItem>
+        {hubStateData !== undefined ? (
+          <>
+            <ListItem>
               {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
               Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.{' '}
-              {stakingTokens.length > 0
-                ? <span>token{stakingTokens.length > 1 ? 's' : null}:{' '}
+              {stakingTokens.length > 0 ? (
+                <span>
+                  token{stakingTokens.length > 1 ? 's' : null}:{' '}
                   {stakingTokens.map((foundToken: IFoundToken) => {
-                    return <TokenValueInfo
-                      token={foundToken.token}
-                      minimumStake={foundToken.minimumStake}
-                      chainId={chainId}
-                      key={foundToken.token}
-                    />
+                    return (
+                      <TokenValueInfo
+                        token={foundToken.token}
+                        minimumStake={foundToken.minimumStake}
+                        chainId={chainId}
+                        key={foundToken.token}
+                      />
+                    )
                   })}
                 </span>
-                : null
-              }
-            </ListGroup.Item>
-            <ListGroup.Item>
+              ) : null}
+            </ListItem>
+            <ListItem>
               <>
                 {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
                 Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
               </>
-            </ListGroup.Item>
+            </ListItem>
           </>
-          : null
-        }
-      </ListGroup>
-    </Card.Body >
+        ) : null}
+      </List>
+    </CardContent>
   )
 }

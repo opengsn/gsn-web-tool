@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { Route, Routes } from 'react-router-dom'
 
-import Container from 'react-bootstrap/Container'
-
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -18,8 +16,9 @@ import { GsnRelaysView, RegisterNewRelay, RelayDetailedView } from '../../routes
 import { ChainWithGsn } from '../../types'
 import { fetchNetworks } from '../GsnStatus/networkListSlice'
 import { getNetworks } from './networks'
+import { Box } from '../../components/atoms'
 
-export default function GlobalWagmiWarpper () {
+export default function GlobalWagmiWarpper() {
   const [gsnNetworks, setGsnNetworks] = useState<ChainWithGsn[]>([])
   const dispatch = useAppDispatch()
 
@@ -38,32 +37,30 @@ export default function GlobalWagmiWarpper () {
     fetchNets().catch(console.error)
   }, [dispatch, gsnNetworks.length])
 
-  const LoadingCentered =
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-white">
+  const LoadingCentered = (
+    <div className='d-flex align-items-center justify-content-center vh-100 bg-white'>
       <div>
-        <Spinner variant="success" animation="grow"></Spinner>
+        <Spinner variant='success' animation='grow'></Spinner>
       </div>
     </div>
+  )
 
   if (gsnNetworks.length === 0) return LoadingCentered
-  const { chains, provider: wagmiProvider } = configureChains(
-    gsnNetworks,
-    [
-      infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
-      jsonRpcProvider({
-        rpc: (chain) => ({
-          http: chain.rpcUrls.default.http[0]
-        })
-      }),
-      publicProvider()
-    ]
-  )
+  const { chains, provider: wagmiProvider } = configureChains(gsnNetworks, [
+    infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: chain.rpcUrls.default.http[0]
+      })
+    }),
+    publicProvider()
+  ])
 
   // used when the RPC URL is only available through MetaMask connection
   // but prefers preconfigured RPC as JsonRpcProvider if available in gsn-networks.json
   const configureProvider = (config: { chainId?: number }) => {
     if (config.chainId !== undefined) {
-      const configuredNetwork = gsnNetworks.find(x => x.id === config.chainId)
+      const configuredNetwork = gsnNetworks.find((x) => x.id === config.chainId)
       if (configuredNetwork !== undefined && config.chainId !== undefined && config.chainId !== 1337) {
         return new providers.JsonRpcProvider(configuredNetwork.rpcUrls.default.http[0], configuredNetwork.id)
       }
@@ -89,13 +86,13 @@ export default function GlobalWagmiWarpper () {
 
   return (
     <WagmiConfig client={client}>
-      <Container fluid className="p-2">
+      <Box p='8px'>
         <Routes>
           <Route path={ROUTES.List} element={<GsnRelaysView />} />
           <Route path={ROUTES.DetailedView} element={<RelayDetailedView />} />
           <Route path={ROUTES.RegisterNew} element={<RegisterNewRelay />} />
         </Routes>
-      </Container>
+      </Box>
     </WagmiConfig>
   )
 }
