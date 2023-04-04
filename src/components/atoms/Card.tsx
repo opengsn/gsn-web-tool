@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { Card as MuiCard, CardHeader as MuiCardHeader, CardContent as MuiCardContent, styled } from '@mui/material'
 import { colors } from '../../theme'
-import { Border } from 'react-bootstrap-icons'
 
 interface IProps {
   children: ReactNode
