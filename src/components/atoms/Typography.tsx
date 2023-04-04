@@ -14,7 +14,7 @@ export enum VariantType {
 
 interface ITypographyBase {
   color?: string
-  fontWeight?: string
+  fontWeight?: number
   children: ReactNode
   variant?: VariantType
 }

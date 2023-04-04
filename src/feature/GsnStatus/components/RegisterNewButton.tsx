@@ -7,7 +7,7 @@ import { colors } from '../../../theme'
 const RegisterNewButton = () => {
   return (
     <Link to={ROUTES.RegisterNew} style={{ textDecoration: 'none' }}>
-      <Button.Contained color={colors.white} backgroundColor={colors.green}>
+      <Button.Contained color={colors.white} backgroundColor={colors.success}>
         <Icon.PlusCircleFill />
         &nbsp; &nbsp;<Typography variant={VariantType.H5}>Register New Relay</Typography>
       </Button.Contained>
