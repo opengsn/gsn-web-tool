@@ -1,13 +1,10 @@
 import { useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
-import { useAppDispatch, useAppSelector } from '../../hooks'
+import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import Alert from 'react-bootstrap/Alert'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Card from 'react-bootstrap/Card'
+import { Accordion, AccordionDetails, AccordionSummary, Box, Typography, VariantType } from '../../components/atoms'
 
 import ChainIdHandler from './components/ChainIdHandler'
 
@@ -16,14 +13,16 @@ import RelayCommands from './Commands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
 
-export default function Relay () {
+export default function Relay() {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
-  const relayDataFetched = (Object.keys(relayData).length > 0)
+  const relayDataFetched = Object.keys(relayData).length > 0
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
   const abortFetch = useRef<unknown>()
+  const isDesktop = useIsDesktop()
+  const variant = isDesktop ? VariantType.H3 : VariantType.H4
 
   const [searchParams] = useSearchParams()
 
@@ -37,35 +36,38 @@ export default function Relay () {
     }
   }, [relay.relayUrl, searchParams, dispatch, relay.errorMsg, relayDataFetched])
 
-  const connectedToWrongChainId = (chain?.id !== undefined && chain?.id !== chainId && relayDataFetched)
-
-  if (chain?.id !== undefined && chain?.id !== chainId && !relayDataFetched) {
-    return (<>
-      <Col md="2"></Col>
-      <Col md="auto" className="flex-fill">
-        {relay.loading
-          ? <span>Loading data...</span>
-          : null}
-        {relay.errorMsg !== ''
-          ? <Alert variant="danger">
-            <span>Error: {relay.errorMsg}</span>
-          </Alert>
-          : null}
-      </Col>
-      <Col></Col>
-    </>)
-  }
+  const connectedToWrongChainId = chain?.id !== undefined && chain?.id !== chainId && relayDataFetched
 
   if (relayDataFetched) {
     return (
-      <Row className="mx-4">
-        <Card className="border border-bottom-0 rounded-0"><Card.Body>{relay.relayUrl}</Card.Body></Card>
-        <RelayInfo />
-        {connectedToWrongChainId
-          ? <ChainIdHandler relayChainId={chainId} />
-          : <RelayCommands />
-        }
-      </Row>
+      <Box width='95%' mx='auto' py={{ md: '50px', xs: '25px' }}>
+        <Box mb='25px'>
+          <Typography variant={VariantType.H2}>Relay server info</Typography>
+        </Box>
+        <Accordion>
+          <AccordionSummary>
+            <Box
+              display='flex'
+              flexDirection={{
+                xs: 'column',
+                md: 'row'
+              }}
+              sx={{ overflowWrap: 'anywhere' }}
+            >
+              <Typography fontWeight={600} variant={variant}>
+                Relay address:
+              </Typography>
+              &nbsp;
+              <Typography variant={variant}>{relay.relayUrl}</Typography>
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box display='flex' alignItems='center' justifyContent='center'></Box>
+            <RelayInfo />
+          </AccordionDetails>
+        </Accordion>
+        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
+      </Box>
     )
   }
 

@@ -1,53 +1,78 @@
-import Table from 'react-bootstrap/Table'
-
 import { useAppSelector, useStakeManagerAddress } from '../../../hooks'
 import { PingResponse } from '../../../types/PingResponse'
 
 import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
+import { Table, TableBody, TableCell, TableHead, TableRow, Typography, VariantType } from '../../../components/atoms'
 
-function Info () {
+function Info() {
   const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
-  const {
-    data: stakeManagerAddressData,
-    isFetching,
-    isLoading
-  } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
+  const { data: stakeManagerAddressData, isFetching, isLoading } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
-  const THead = () => <thead>
-    <tr>
-      <th>
-        Name
-      </th>
-      <th>
-        Value
-      </th>
-      <th>
-        Extra
-      </th>
-    </tr>
-  </thead>
+  const THead = () => (
+    <TableHead>
+      <TableRow>
+        <TableCell>
+          <Typography fontWeight={600} variant={VariantType.H6}>
+            Name
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography fontWeight={600} variant={VariantType.H6}>
+            Value
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography fontWeight={600} variant={VariantType.H6}>
+            Extra
+          </Typography>
+        </TableCell>
+      </TableRow>
+    </TableHead>
+  )
 
-  const StakeMananagerInfoPreparePlaceholder = () => <>
-    <tr><td>Current Owner</td><td>loading</td><td></td></tr>
-    <tr><td>staking token</td><td>loading</td><td></td></tr>
-  </>
+  const StakeMananagerInfoPreparePlaceholder = () => (
+    <>
+      <TableRow>
+        <TableCell>
+          <Typography variant={VariantType.H6}>Current Owner</Typography>
+        </TableCell>
+
+        <TableCell>
+          <Typography variant={VariantType.H6}>loading</Typography>
+        </TableCell>
+        <TableCell>{''}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell>
+          <Typography variant={VariantType.H6}>staking token</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant={VariantType.H6}>loading</Typography>
+        </TableCell>
+        <TableCell>{''}</TableCell>
+      </TableRow>
+    </>
+  )
 
   const stakeManagerIsReady = stakeManagerAddress !== undefined && !(isLoading || isFetching)
   return (
-    <Table striped bordered size="sm">
+    <Table>
       <THead />
-      <tbody>
+      <TableBody>
         <PingResponseData relayData={relayData} />
         {stakeManagerIsReady
-          ? <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-          : <StakeMananagerInfoPreparePlaceholder />
-        }
-      </tbody>
-    </Table >
+          ? (
+          <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
+            )
+          : (
+          <StakeMananagerInfoPreparePlaceholder />
+            )}
+      </TableBody>
+    </Table>
   )
 }
 

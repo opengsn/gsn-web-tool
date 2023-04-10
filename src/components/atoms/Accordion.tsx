@@ -41,7 +41,8 @@ interface IAccordionDetailsProps {
 }
 
 const AccordionDetailsBase = styled(MuiAccordionDetails)<IAccordionDetailsProps>(({ theme }) => ({
-  padding: '15px 20px'
+  padding: '15px 20px',
+  overflowX: 'auto'
 }))
 
 export const AccordionDetails: FC<IAccordionDetailsProps> = ({ children }) => {

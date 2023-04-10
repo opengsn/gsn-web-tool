@@ -7,7 +7,7 @@ export interface RelayStatusProps {
 
 export default function RelayStatus({ ready }: RelayStatusProps) {
   return (
-    <Box component='span' sx={{ color: ready ? colors.lightGreen : colors.warning }}>
+    <Box component='span' sx={{ color: ready ? colors.success : colors.warning }}>
       {ready ? 'Ready' : 'pending'}
     </Box>
   )
