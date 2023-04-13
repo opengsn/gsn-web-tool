@@ -20,12 +20,12 @@ interface IProps {
 const ButtonBase: any = styled(MuiButton, {
   shouldForwardProp: (prop: string) => prop !== 'backgroundColor' && prop !== 'color'
 })<IProps>(({ backgroundColor, color }) => ({
-  backgroundColor: backgroundColor ?? colors.azure,
-  color: color ?? colors.black,
+  backgroundColor: backgroundColor ?? colors.success,
+  color: color ?? colors.white,
   textTransform: 'none',
   height: '100%',
   '&:hover': {
-    backgroundColor: backgroundColor ?? colors.azure
+    backgroundColor: backgroundColor ?? colors.success
   }
 }))
 

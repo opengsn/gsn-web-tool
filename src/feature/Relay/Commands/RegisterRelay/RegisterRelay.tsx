@@ -12,7 +12,7 @@ import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { toast } from 'react-toastify'
 import { Check } from 'react-bootstrap-icons'
-import { Box, Button, Typography, VariantType } from '../../../../components/atoms'
+import { Box, Button, Icon, Typography, VariantType } from '../../../../components/atoms'
 
 export default function RegisterRelay() {
   const relayData = useAppSelector((state) => state.relay.relay)
@@ -98,6 +98,14 @@ export default function RegisterRelay() {
 
   return (
     <>
+      <Box my='10px'>
+        <Typography variant={VariantType.H6}>
+          Please note before registration:
+          <br />
+          <Icon.Info /> You are connected to your cryptocurrency wallet.
+          <br /> <Icon.Info /> Your wallet was reset to interact with new relay connection.
+        </Typography>
+      </Box>
       <CollapseButton />
       {showRegisterRelay
         ? (

@@ -27,8 +27,15 @@ interface IAccordionSummaryProps {
 export const AccordionSummaryBase = styled(MuiAccordionSummary)<IAccordionSummaryProps>(({ theme }) => ({
   padding: '5px 20px',
   borderBottom: `1px solid ${colors.grey}`,
+  width: '100%',
   '& .MuiAccordionSummary-content': {
-    margin: 0
+    margin: 0,
+    overflowX: 'auto'
+  },
+  '& .MuiAccordionSummary-expandIconWrapper': {
+    position: 'absolute',
+    right: 20,
+    top: 20
   }
 }))
 

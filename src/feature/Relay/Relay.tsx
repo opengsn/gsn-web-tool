@@ -6,8 +6,6 @@ import { fetchRelayData, deleteRelayData } from './relaySlice'
 
 import { Accordion, AccordionSummary, Box, Divider, Typography, VariantType } from '../../components/atoms'
 
-import ChainIdHandler from './components/ChainIdHandler'
-
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
 
@@ -76,7 +74,7 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
+        {connectedToWrongChainId ? <>Wrong chain</> : <RelayCommands />}
       </Box>
     )
   }

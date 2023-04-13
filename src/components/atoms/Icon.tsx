@@ -4,6 +4,7 @@ import { ReactComponent as ClipboardCheck } from '../../assets/icons/clipboard-c
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg'
 import { ReactComponent as Success } from '../../assets/icons/success.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit.svg'
+import { ReactComponent as Info } from '../../assets/icons/info.svg'
 
 const Icon = {
   PlusCircleFill: (props: { fill?: string }) => <PlusCircleFill {...props} />,
@@ -11,7 +12,8 @@ const Icon = {
   ClipboardCheck,
   Chevron,
   Success,
-  Edit
+  Edit,
+  Info
 }
 
 export default Icon
