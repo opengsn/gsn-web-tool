@@ -1,14 +1,14 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography, VariantType } from '../../components/atoms'
+import { Accordion, AccordionSummary, Box, Divider, Typography, VariantType } from '../../components/atoms'
 
 import ChainIdHandler from './components/ChainIdHandler'
 
-import RelayInfo from './Info/Info'
+import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
@@ -22,7 +22,8 @@ export default function Relay() {
   const { chain } = useNetwork()
   const abortFetch = useRef<unknown>()
   const isDesktop = useIsDesktop()
-  const variant = isDesktop ? VariantType.H3 : VariantType.H4
+  const [expanded, setExpanded] = useState<boolean>(false)
+  const variant = isDesktop ? VariantType.H4 : VariantType.H5
 
   const [searchParams] = useSearchParams()
 
@@ -40,31 +41,40 @@ export default function Relay() {
 
   if (relayDataFetched) {
     return (
-      <Box width='95%' mx='auto' py={{ md: '50px', xs: '25px' }}>
-        <Box mb='25px'>
+      <Box width='95%' mx='auto' py='25px'>
+        <Box mb='25px' textAlign='center'>
           <Typography variant={VariantType.H2}>Relay server info</Typography>
         </Box>
-        <Accordion>
+        <Accordion
+          expanded={expanded}
+          onChange={(event, isExpanded) => {
+            setExpanded(isExpanded)
+          }}
+        >
           <AccordionSummary>
-            <Box
-              display='flex'
-              flexDirection={{
-                xs: 'column',
-                md: 'row'
-              }}
-              sx={{ overflowWrap: 'anywhere' }}
-            >
-              <Typography fontWeight={600} variant={variant}>
-                Relay address:
-              </Typography>
-              &nbsp;
-              <Typography variant={variant}>{relay.relayUrl}</Typography>
+            <Box width='100%' p='10px'>
+              <Box
+                display='flex'
+                flexDirection={{
+                  xs: 'column',
+                  md: 'row'
+                }}
+                sx={{ overflowWrap: 'anywhere' }}
+              >
+                <Typography fontWeight={600} variant={variant}>
+                  Relay address:
+                </Typography>
+                &nbsp;
+                <Typography variant={variant}>{relay.relayUrl}</Typography>
+              </Box>
+              <Box my='10px'>
+                <Divider />
+              </Box>
+              <Box>
+                <RelayInfo showAllInfo={expanded} />
+              </Box>
             </Box>
           </AccordionSummary>
-          <AccordionDetails>
-            <Box display='flex' alignItems='center' justifyContent='center'></Box>
-            <RelayInfo />
-          </AccordionDetails>
         </Accordion>
         {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
       </Box>

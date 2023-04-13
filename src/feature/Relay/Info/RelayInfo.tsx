@@ -5,7 +5,11 @@ import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, VariantType } from '../../../components/atoms'
 
-function Info() {
+interface IProps {
+  showAllInfo?: boolean
+}
+
+function RelayInfo({ showAllInfo }: IProps) {
   const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
@@ -63,7 +67,7 @@ function Info() {
     <Table>
       <THead />
       <TableBody>
-        <PingResponseData relayData={relayData} />
+        <PingResponseData relayData={relayData} showAllInfo={showAllInfo} />
         {stakeManagerIsReady
           ? (
           <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
@@ -76,4 +80,4 @@ function Info() {
   )
 }
 
-export default Info
+export default RelayInfo

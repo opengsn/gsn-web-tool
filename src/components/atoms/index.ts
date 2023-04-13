@@ -1,4 +1,4 @@
-export { Box, TableBody, Grid } from '@mui/material'
+export { Box, TableBody, Grid, Divider } from '@mui/material'
 export { default as Typography, VariantType } from './Typography'
 export { default as Button, ButtonType } from './Button'
 export { default as Icon } from './Icon'

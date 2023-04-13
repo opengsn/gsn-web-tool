@@ -4,7 +4,14 @@ import { PingResponse } from '../../../types'
 import { isSameAddress } from '../../../utils'
 import { TableCell, TableRow, Typography, VariantType } from '../../../components/atoms'
 
-function PingResponseData({ relayData }: { relayData: PingResponse }) {
+const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
+
+interface IProps {
+  relayData: PingResponse
+  showAllInfo?: boolean
+}
+
+function PingResponseData({ relayData, showAllInfo }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
 
@@ -104,7 +111,11 @@ function PingResponseData({ relayData }: { relayData: PingResponse }) {
               <TableCell>
                 <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
-              <TableCell>{relayData[x as keyof PingResponse] === true ? <span>ready</span> : <span>not ready</span>}</TableCell>
+              <TableCell>
+                <Typography variant={VariantType.H6}>
+                  {relayData[x as keyof PingResponse] === true ? <span>ready</span> : <span>not ready</span>}
+                </Typography>
+              </TableCell>
               <TableCell>{''}</TableCell>
             </>
           )
@@ -121,7 +132,15 @@ function PingResponseData({ relayData }: { relayData: PingResponse }) {
             </>
           )
         }
-        return <TableRow key={i}>{data}</TableRow>
+        return showAllInfo ?? false
+          ? (
+          <TableRow key={i}>{data}</TableRow>
+            )
+          : accordionSummaryInfoArr.includes(x)
+            ? (
+          <TableRow key={i}>{data}</TableRow>
+              )
+            : null
       })}
     </>
   )

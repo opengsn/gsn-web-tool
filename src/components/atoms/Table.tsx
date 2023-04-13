@@ -21,7 +21,9 @@ export const TableHead: FC<IProps> = ({ children }) => {
   return <TableHeadBase>{children}</TableHeadBase>
 }
 
-const TableCellBase = styled(MuiTableCell)(({ theme }) => ({}))
+const TableCellBase = styled(MuiTableCell)(({ theme }) => ({
+  padding: '5px'
+}))
 
 export const TableCell: FC<IProps> = ({ children }) => {
   return <TableCellBase>{children}</TableCellBase>
