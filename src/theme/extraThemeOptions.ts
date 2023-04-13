@@ -30,12 +30,12 @@ export const extraThemeOptions: ExtraThemeOptions = {
     xBold: 900
   },
   fontSizes: {
-    xSmall: '16px',
-    small: '18px',
-    normal: '20px',
-    medium: '22px',
+    xSmall: '14px',
+    small: '16px',
+    normal: '18px',
+    medium: '20px',
     large: '24px',
-    xLarge: '40px',
-    xxLarge: '48px'
+    xLarge: '32px',
+    xxLarge: '40px'
   }
 }

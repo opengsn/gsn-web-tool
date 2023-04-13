@@ -1,11 +1,12 @@
 import { useAccount, useBalance } from 'wagmi'
+import { TableCell, TableRow, Typography, VariantType } from '../../../../components/atoms'
 
 interface stakingTokenProps {
   stakingToken: string
   chainId: number
 }
 
-export default function StakingToken ({ stakingToken, chainId }: stakingTokenProps) {
+export default function StakingToken({ stakingToken, chainId }: stakingTokenProps) {
   const { address } = useAccount()
   const { data: stakingTokenBalance } = useBalance({
     address: address as any,
@@ -15,19 +16,29 @@ export default function StakingToken ({ stakingToken, chainId }: stakingTokenPro
 
   const BalanceData = () => {
     if (address !== undefined) {
-      return <span>Balance <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}</span>
+      return (
+        <span>
+          Balance <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}
+        </span>
+      )
     } else {
       return <></>
     }
   }
 
   return (
-    <tr>
-      <td>Staking Token</td>
-      <td>{stakingToken}</td>
-      <td>
-        <BalanceData />
-      </td>
-    </tr>
+    <TableRow>
+      <TableCell>
+        <Typography variant={VariantType.H6}>Staking Token</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant={VariantType.H6}>{stakingToken}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography variant={VariantType.H6}>
+          <BalanceData />
+        </Typography>
+      </TableCell>
+    </TableRow>
   )
 }

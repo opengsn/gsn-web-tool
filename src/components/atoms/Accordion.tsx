@@ -25,10 +25,17 @@ interface IAccordionSummaryProps {
 }
 
 export const AccordionSummaryBase = styled(MuiAccordionSummary)<IAccordionSummaryProps>(({ theme }) => ({
-  padding: '15px 20px',
+  padding: '5px 20px',
   borderBottom: `1px solid ${colors.grey}`,
+  width: '100%',
   '& .MuiAccordionSummary-content': {
-    margin: 0
+    margin: 0,
+    overflowX: 'auto'
+  },
+  '& .MuiAccordionSummary-expandIconWrapper': {
+    position: 'absolute',
+    right: 20,
+    top: 20
   }
 }))
 
@@ -41,7 +48,8 @@ interface IAccordionDetailsProps {
 }
 
 const AccordionDetailsBase = styled(MuiAccordionDetails)<IAccordionDetailsProps>(({ theme }) => ({
-  padding: '15px 20px'
+  padding: '5px 20px',
+  overflowX: 'auto'
 }))
 
 export const AccordionDetails: FC<IAccordionDetailsProps> = ({ children }) => {

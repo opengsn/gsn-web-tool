@@ -3,13 +3,13 @@ import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 export enum VariantType {
-  H1 = 'h1', // 48px
-  H2 = 'h2', // 40px
+  H1 = 'h1', // 40px
+  H2 = 'h2', // 32px
   H3 = 'h3', // 24px
-  H4 = 'h4', // 22px
-  H5 = 'h5', // 20px
-  H6 = 'h6', // 18px
-  XSMALL = 'xSmall' // 16px
+  H4 = 'h4', // 20px
+  H5 = 'h5', // 18px
+  H6 = 'h6', // 16px
+  XSMALL = 'xSmall' // 14px
 }
 
 interface ITypographyBase {

@@ -7,13 +7,14 @@ import { validateConfigOwnerInLineWithStakeManager } from '../relaySlice'
 
 import StakeManager from '../../../contracts/StakeManager.json'
 import StakingToken from './StakeManagerInfo/StakingToken'
+import { TableCell, TableRow, Typography, VariantType } from '../../../components/atoms'
 
 interface stakeInfoProps {
   stakeManagerAddress: string
   relayManagerAddress: string
 }
 
-export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
+export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
   const relayData = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
@@ -26,10 +27,10 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
     args: [relayManagerAddress],
     chainId,
     watch: false,
-    onSuccess (data) {
+    onSuccess(data) {
       dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
     },
-    onError (err) {
+    onError(err) {
       console.log('error fetching data from stake manager.', { cause: err })
     }
   })
@@ -46,16 +47,30 @@ export default function StakeInfo ({ stakeManagerAddress, relayManagerAddress }:
 
     return (
       <>
-        <tr>
-          <td>Current Owner</td>
-          <td>{owner}</td>
-          <td><ShowOwner /></td>
-        </tr>
+        <TableRow>
+          <TableCell>
+            <Typography variant={VariantType.H6}>Current Owner</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography variant={VariantType.H6}>{owner}</Typography>
+          </TableCell>
+          <TableCell>
+            <Typography variant={VariantType.H6}>
+              <ShowOwner />
+            </Typography>
+          </TableCell>
+        </TableRow>
         <StakingToken stakingToken={token} chainId={chainId} />
       </>
     )
   }
 
-  const LoadingRow = <tr><td colSpan={3}>Loading info from stakemanager... If , refreshing the page might help</td></tr>
+  const LoadingRow = (
+    <TableRow>
+      <TableCell>
+        <Typography variant={VariantType.H6}>Loading info from stakemanager... If , refreshing the page might help</Typography>
+      </TableCell>
+    </TableRow>
+  )
   return <>{LoadingRow}</>
 }

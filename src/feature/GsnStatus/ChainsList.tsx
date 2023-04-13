@@ -1,12 +1,10 @@
-import { Grid } from '@mui/material'
-
 import NetworkCard from './Network/NetworkCard'
 import NetworkLinksNew from './components/NetworkGroups'
 
 import { useAppSelector } from '../../hooks'
 import Header from './components/Header'
 import RegisterNewButton from './components/RegisterNewButton'
-import { Box } from '../../components/atoms'
+import { Box, Grid } from '../../components/atoms'
 
 export default function ChainsList() {
   const networks = useAppSelector((state) => state.networkList.networks)
@@ -14,7 +12,6 @@ export default function ChainsList() {
   return (
     <>
       <Header />
-
       {/* mx-0 prevents horizontal scrollbar from appearing within container-fluid  */}
       <Grid container px='12px'>
         <Grid item xs={12} md={3}>
