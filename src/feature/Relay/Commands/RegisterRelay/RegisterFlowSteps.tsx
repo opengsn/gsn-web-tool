@@ -1,45 +1,54 @@
-/* eslint-disable curly */
-import React, { FC, useState } from 'react'
-import AccordionStep from '../../../../components/molecules/AccordionStep'
-import AccordionSuccess from '../../../../components/molecules/AccordionSuccess'
+import React, { Fragment, useState } from 'react'
+import AccordionStep from './AccordionStep'
+import AccordionSuccess from './AccordionSuccess'
+import Funder from './FundRelay/Funder'
+import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
 
 export enum RegisterSteps {
   'Funding relay',
-  'Select token and mint',
+  'Token selection',
   'Staking with ERC20 token',
   'Authorizing Hub',
   'Waiting for Relay to be Ready'
 }
 
-const steps = [
-  {
-    title: 'Funding relay',
-    description: 'Funding relay with 0.1 ETH',
-    children: <div>test</div>,
-    step: RegisterSteps['Funding relay']
-  }
-]
-
 interface IProps {
   currentStep: RegisterSteps
 }
 
-const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
-  const [expanded, setExpanded] = useState<RegisterSteps | null>(RegisterSteps['Funding relay'])
+const RegisterFlowSteps = ({ currentStep }: IProps) => {
+  const [expanded, setExpanded] = useState<RegisterSteps | null>(null)
+
+  const steps = [
+    {
+      title: 'Funding relay',
+      children: <Funder success={currentStep > RegisterSteps['Funding relay']} />,
+      step: RegisterSteps['Funding relay']
+    },
+    {
+      title: 'Token selection',
+      children: <StakeWithERC20 success={currentStep > RegisterSteps['Token selection']} />,
+      step: RegisterSteps['Token selection']
+    }
+  ]
 
   const onChange = (step: RegisterSteps | null) => {
     setExpanded(step)
   }
 
-  return (
-    <>
-      {steps.map((step, index) => {
-        if (currentStep <= index) {
-          return <AccordionStep {...step} expanded={expanded === step.step} onChange={onChange} />
-        } else return <AccordionSuccess {...step} />
-      })}
-    </>
-  )
+  return steps.map((step, index) => (
+    <Fragment key={index}>
+      {currentStep <= index
+        ? (
+        <AccordionStep {...step} expanded={expanded === step.step} onChange={onChange}>
+          {step.children}
+        </AccordionStep>
+          )
+        : (
+        <AccordionSuccess {...step}>{step.children}</AccordionSuccess>
+          )}
+    </Fragment>
+  ))
 }
 
 export default RegisterFlowSteps
