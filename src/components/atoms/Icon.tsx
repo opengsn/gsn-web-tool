@@ -5,6 +5,9 @@ import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg'
 import { ReactComponent as Success } from '../../assets/icons/success.svg'
 import { ReactComponent as Edit } from '../../assets/icons/edit.svg'
 import { ReactComponent as Info } from '../../assets/icons/info.svg'
+import { ReactComponent as Token } from '../../assets/icons/token.svg'
+import { ReactComponent as CopyToClipboard } from '../../assets/icons/copy-to-clipboard.svg'
+import { ReactComponent as Redirect } from '../../assets/icons/redirect.svg'
 
 const Icon = {
   PlusCircleFill: (props: { fill?: string }) => <PlusCircleFill {...props} />,
@@ -13,7 +16,10 @@ const Icon = {
   Chevron,
   Success,
   Edit,
-  Info
+  Info: (props: { fill?: string; width?: string; height?: string }) => <Info {...props} />,
+  Token,
+  CopyToClipboard,
+  Redirect
 }
 
 export default Icon

@@ -1,13 +1,9 @@
+/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable multiline-ternary */
 import { useEffect, useState, createContext } from 'react'
 import { ethers, constants } from 'ethers'
 import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork, useToken } from 'wagmi'
 
-import Col from 'react-bootstrap/Col'
-import InputGroup from 'react-bootstrap/InputGroup'
-import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
-import Spinner from 'react-bootstrap/Spinner'
 import { toast } from 'react-toastify'
 
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
@@ -17,7 +13,7 @@ import Minter from './Minter/Minter'
 import Staker from './Staker'
 import StakingTokenInfo from './StakingTokenInfo'
 
-import { isSameAddress, toNumber } from '../../../../../utils'
+import { isLocalHost, isSameAddress, toNumber } from '../../../../../utils'
 
 import RelayHub from '../../../../../contracts/RelayHub.json'
 import StakeManager from '../../../../../contracts/StakeManager.json'
@@ -25,6 +21,9 @@ import StakeManager from '../../../../../contracts/StakeManager.json'
 import { ChainWithGsn } from '../../../../../types'
 import StakeAddedListener from './StakeAddedListener'
 import { useFormik } from 'formik'
+import { Box, Button, ButtonType, Icon, Typography, VariantType } from '../../../../../components/atoms'
+import { colors } from '../../../../../theme'
+import TokenSelectOption from './TokenSelectOption'
 
 export interface TokenContextInterface {
   chainId: number
@@ -38,12 +37,15 @@ export interface TokenContextInterface {
 
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
 
-export default function StakeWithERC20 () {
+interface IProps {
+  success: boolean
+}
+
+export default function StakeWithERC20({ success }: IProps) {
   const currentStep = useAppSelector((state) => state.register.step)
   const [token, setToken] = useState<string | null>(null)
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [listen, setListen] = useState(false)
-
   const relay = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relay.chainId)
 
@@ -51,10 +53,7 @@ export default function StakeWithERC20 () {
   const { chain: chainData } = useNetwork()
   const chain = chainData as unknown as ChainWithGsn
 
-  const {
-    relayManagerAddress,
-    relayHubAddress
-  } = relay
+  const { relayManagerAddress, relayHubAddress } = relay
 
   const provider = useProvider()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -85,60 +84,44 @@ export default function StakeWithERC20 () {
       initialValues: {
         token: ''
       },
-      onSubmit: values => {
+      onSubmit: (values) => {
         setToken(values.token)
       }
     })
 
-    const TokenSelectOption = ({ address }: { address: string }) => {
-      const { data: tokenData } = useToken({
-        address: address as any,
-        chainId
-      })
-
-      // TODO?: truncate address
-      return <option value={address}>{tokenData?.name} ({tokenData?.symbol})</option>
+    const handleChangeToken = (address: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      getTokenAddress.setFieldValue('token', address)
     }
 
     const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
+
     return (
-      <Form onSubmit={getTokenAddress.handleSubmit}>
-        <Form.Label htmlFor="url">
-          Select ERC20 token address
-        </Form.Label>
-        <Row>
-          <Col md={2}>
-            <Form.Select
-              id="token"
-              name="token"
-              onChange={getTokenAddress.handleChange}
-              value={getTokenAddress.values.token}
-            >
-              <option value="">Suggested: {chain.stakingTokens?.length !== undefined && chain.stakingTokens?.length > 0
-                ? chain.stakingTokens?.length
-                : 'none.'
-              }</option>
-              {chain.stakingTokens?.map((address) => {
-                return <TokenSelectOption key={address} address={address} />
-              })}
-            </Form.Select>
-          </Col> -
-          <Col md={6}>
-            <InputGroup className="mb-3">
-              <Form.Control
-                type="text"
-                name="token"
-                onChange={getTokenAddress.handleChange}
-                value={getTokenAddress.values.token}
-                placeholder="0x..."
-                aria-label="Address"
-              />
-            </InputGroup>
-          </Col>
-        </Row>
-        <br />
-        <Button disabled={!isAddress} variant="success" type="submit">Fetch token data</Button>
-      </Form>
+      <Box component='form' onSubmit={getTokenAddress.handleSubmit}>
+        <Typography>Suggested Tokens from server</Typography> &nbsp;
+        <Button.Icon onClick={() => {}}>
+          <Icon.Info fill={colors.black} width='16px' height='16px' />
+        </Button.Icon>
+        <Box>
+          <Typography variant={VariantType.XSMALL}>Select token from list:</Typography>
+        </Box>
+        {chain.stakingTokens?.map((stakingToken) => {
+          return (
+            <TokenSelectOption
+              key={stakingToken}
+              address={stakingToken}
+              chainId={chainId}
+              handleChangeToken={handleChangeToken}
+              checked={getTokenAddress.values.token === stakingToken}
+            />
+          )
+        })}
+        <Box width='180px' height='60px' mt='20px'>
+          <Button.Contained type={ButtonType.SUBMIT}>
+            <Typography variant={VariantType.H6}>Fetch token</Typography>
+          </Button.Contained>
+        </Box>
+      </Box>
     )
   }
 
@@ -161,23 +144,21 @@ export default function StakeWithERC20 () {
 
     const handleFindFirstTokenButton = () => {
       if (curBlockData !== undefined) {
-        findFirstToken(curBlockData).then(setToken).catch((e) => {
-          console.error(e.message)
-          toast.error(
-            <>
-              <p>Error while fetching first available token</p>
-              <p>See console for error message</p>
-            </>
-          )
-        })
+        findFirstToken(curBlockData)
+          .then(setToken)
+          .catch((e) => {
+            console.error(e.message)
+            toast.error(
+              <>
+                <p>Error while fetching first available token</p>
+                <p>See console for error message</p>
+              </>
+            )
+          })
       }
     }
 
-    return (
-      <Button onClick={() => handleFindFirstTokenButton()}>
-        Fetch first available token
-      </Button>
-    )
+    return <></>
   }
 
   useEffect(() => {
@@ -196,7 +177,7 @@ export default function StakeWithERC20 () {
     if (token !== null) {
       const fetchMinimumStakeForToken = async () => {
         const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
-
+        console.log('minimumStake', minimumStake)
         setMinimumStakeForToken(minimumStake[0])
       }
 
@@ -215,68 +196,77 @@ export default function StakeWithERC20 () {
   const SwitchTokenButton = () => {
     const handleSwitchToken = () => setToken(null)
 
-    return (
-      <Button onClick={handleSwitchToken} variant='secondary'>
-        Switch Token
-      </Button>
-    )
+    return <Button.Contained onClick={handleSwitchToken}>Switch Token</Button.Contained>
   }
 
   const getStakingView = () => {
     let content
 
-    const preprequisitesFulfilled = (token !== null && address !== undefined && minimumStakeForToken !== null)
+    const preprequisitesFulfilled = token !== null && address !== undefined && minimumStakeForToken !== null
     if (preprequisitesFulfilled && !minimumStakeForToken?.isZero()) {
-      content = <TokenContext.Provider value={{
-        chainId,
-        token,
-        account: address,
-        minimumStakeForToken,
-        stakeManagerAddress,
-        listen,
-        setListen
-      }}>
-        <div>
-          <StakingTokenInfo />
-        </div>
-        <SwitchTokenButton />
-        <hr />
-        {currentStep === 1
-          ? <><Minter />< br /></>
-          : null}
-        {currentStep === 2
-          ? <>
-            <Approver />
-            <br />
-            <Staker />
-            <StakeAddedListener />
-          </>
-          : null}
-      </TokenContext.Provider>
+      content = (
+        <TokenContext.Provider
+          value={{
+            chainId,
+            token,
+            account: address,
+            minimumStakeForToken,
+            stakeManagerAddress,
+            listen,
+            setListen
+          }}
+        >
+          <div>
+            <StakingTokenInfo />
+          </div>
+          <SwitchTokenButton />
+          <hr />
+          {currentStep === 1 ? (
+            <>
+              <Minter />
+              <br />
+            </>
+          ) : null}
+          {currentStep === 2 ? (
+            <>
+              <Approver />
+              <br />
+              <Staker />
+              <StakeAddedListener />
+            </>
+          ) : null}
+        </TokenContext.Provider>
+      )
     } else if (minimumStakeForToken?.isZero() === true) {
-      content = <>
-        <SwitchTokenButton />
-        <br />
-        <span>This ERC20 Token is not supported</span>
-      </>
-    } else {
-      if (address === undefined) { content = <span>unable to get connected account address</span> }
-      if (token === null) {
-        content = <>
-          <TokenAddressForm />
+      console.log('minimumStakeForToken', minimumStakeForToken)
+      content = (
+        <>
+          <SwitchTokenButton />
           <br />
-          {chain.stakingTokens === undefined
-            ? <FindFirstTokenButton />
-            : null
-          }
+          <span>This ERC20 Token is not supported</span>
         </>
+      )
+    } else {
+      if (address === undefined) {
+        content = <span>unable to get connected account address</span>
+      }
+      if (token === null) {
+        content = (
+          <>
+            <TokenAddressForm />
+            <br />
+            {chain.stakingTokens === undefined ? <FindFirstTokenButton /> : null}
+          </>
+        )
       }
       if (token !== null && minimumStakeForToken === null) {
-        content = <span>Loading staking token data{' '}<Spinner animation="grow" size="sm" /></span>
+        content = <span>Loading staking token data</span>
       }
     }
 
-    if (content === undefined) { content = <span>Could not set up staking menu</span> }
+    if (content === undefined) {
+      content = <span>Could not set up staking menu</span>
+    }
     return content
   }
 

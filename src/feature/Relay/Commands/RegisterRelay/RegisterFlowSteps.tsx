@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { FC, Fragment, useState } from 'react'
 import AccordionStep from './AccordionStep'
 import AccordionSuccess from './AccordionSuccess'
 import Funder from './FundRelay/Funder'
@@ -16,7 +16,7 @@ interface IProps {
   currentStep: RegisterSteps
 }
 
-const RegisterFlowSteps = ({ currentStep }: IProps) => {
+const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
   const [expanded, setExpanded] = useState<RegisterSteps | null>(null)
 
   const steps = [
@@ -36,19 +36,23 @@ const RegisterFlowSteps = ({ currentStep }: IProps) => {
     setExpanded(step)
   }
 
-  return steps.map((step, index) => (
-    <Fragment key={index}>
-      {currentStep <= index
-        ? (
-        <AccordionStep {...step} expanded={expanded === step.step} onChange={onChange}>
-          {step.children}
-        </AccordionStep>
-          )
-        : (
-        <AccordionSuccess {...step}>{step.children}</AccordionSuccess>
-          )}
-    </Fragment>
-  ))
+  return (
+    <>
+      {steps.map((step, index) => (
+        <Fragment key={index}>
+          {currentStep <= index
+            ? (
+            <AccordionStep {...step} expanded={expanded === step.step} onChange={onChange}>
+              {step.children}
+            </AccordionStep>
+              )
+            : (
+            <AccordionSuccess {...step}>{step.children}</AccordionSuccess>
+              )}
+        </Fragment>
+      ))}
+    </>
+  )
 }
 
 export default RegisterFlowSteps

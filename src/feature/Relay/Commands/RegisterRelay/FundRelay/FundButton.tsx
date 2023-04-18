@@ -63,7 +63,6 @@ export default function FundButton() {
       <Box height='60px' width='150px'>
         <Button.Contained disabled={isLoading || isSuccess} onClick={() => fundRelay?.()}>
           <Typography variant={VariantType.H5}>{isLoading || isSuccess ? <>loading...</> : <>Fund relay</>}</Typography>
-          {(isLoading || isSuccess) && <>loading...</>}
         </Button.Contained>
       </Box>
       {prepareIsError && <Alert severity='error'>Error: {prepareFundTxError?.message}</Alert>}

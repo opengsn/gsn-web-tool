@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { Button as MuiButton, IconButton as MuiIconButton } from '@mui/material'
+import { Button as MuiButton, IconButton as MuiIconButton, Radio as MuiRadio } from '@mui/material'
 import { colors } from '../../theme'
 import { styled } from '@mui/material/styles'
 
@@ -20,12 +20,12 @@ interface IProps {
 const ButtonBase: any = styled(MuiButton, {
   shouldForwardProp: (prop: string) => prop !== 'backgroundColor' && prop !== 'color'
 })<IProps>(({ backgroundColor, color }) => ({
-  backgroundColor: backgroundColor ?? colors.success,
-  color: color ?? colors.white,
+  backgroundColor: backgroundColor ?? colors.azure,
+  color: color ?? colors.black,
   textTransform: 'none',
   height: '100%',
   '&:hover': {
-    backgroundColor: backgroundColor ?? colors.success
+    backgroundColor: backgroundColor ?? colors.azure
   }
 }))
 
@@ -61,10 +61,21 @@ const Text: FC<IProps> = ({ children, onClick, disabled }) => {
   )
 }
 
+interface IRadioProps {
+  onChange: () => void
+  value: string
+  checked: boolean
+}
+
+const Radio: FC<IRadioProps> = ({ onChange, checked, value }) => {
+  return <MuiRadio onChange={onChange} checked={checked} value={value} />
+}
+
 const Button = {
   Contained,
   Icon,
-  Text
+  Text,
+  Radio
 }
 
 export default Button
