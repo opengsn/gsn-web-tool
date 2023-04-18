@@ -311,5 +311,14 @@ export default function StakeWithERC20({ success }: IProps) {
     return content
   }
 
+  if (success) {
+    return (
+      <Box>
+        <Icon.Token /> &nbsp;
+        <Typography>Token name</Typography>
+      </Box>
+    )
+  }
+
   return getStakingView()
 }
