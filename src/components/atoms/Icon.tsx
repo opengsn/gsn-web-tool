@@ -16,10 +16,10 @@ const Icon = {
   Chevron,
   Success,
   Edit,
-  Info: (props: { fill?: string; width?: string; height?: string }) => <Info {...props} />,
+  Info: (props: { fill?: string, width?: string, height?: string }) => <Info {...props} />,
   Token,
   CopyToClipboard,
-  Redirect
+  Redirect: (props: { width?: string, height?: string }) => <Redirect {...props} />
 }
 
 export default Icon

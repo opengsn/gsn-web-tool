@@ -1,22 +1,31 @@
 /* eslint-disable multiline-ternary */
 import { ethers } from 'ethers'
 import { useFormik } from 'formik'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
 import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
-import { isLocalHost } from '../../../../../../utils'
+import { isLocalHost, truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
 import { useAppDispatch } from '../../../../../../hooks'
+import { useToken } from 'wagmi'
 
 interface IProps {
   success: boolean
 }
 
 const TokenSelection: FC<IProps> = ({ success }) => {
-  const { chain, chainId, handleFindFirstTokenButton, setToken } = useContext(TokenContext)
+  const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
+  const { data: tokenData, refetch } = useToken({ address: token as any })
+
+  useEffect(() => {
+    if (token != null) {
+      refetch().catch(console.error)
+    }
+  }, [token])
+
   const dispatch = useAppDispatch()
   const [radioValue, setRadioValue] = useState(0)
   const getTokenAddress = useFormik({
@@ -70,9 +79,15 @@ const TokenSelection: FC<IProps> = ({ success }) => {
 
   if (success) {
     return (
-      <Box>
-        <Icon.Token /> &nbsp;
-        <Typography>Token name</Typography>
+      <Box display='flex' gap={2} alignItems='center'>
+        <Icon.Token />
+        <Typography>
+          <b>{tokenData?.name}</b>
+        </Typography>
+        <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+        <Button.Icon onClick={() => {}}>
+          <Icon.Redirect width='14px' height='14px' />
+        </Button.Icon>
       </Box>
     )
   }

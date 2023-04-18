@@ -45,7 +45,7 @@ export default function Minter() {
     }
   })
 
-  if (mintAmount === null) return <>mintAmount - {mintAmount}</>
+  if (mintAmount === null) return <>mintAmount is null</>
 
   return (
     <MinterContext.Provider
