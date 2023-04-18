@@ -12,6 +12,7 @@ export async function sleep(ms: number): Promise<void> {
   return await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// check if relayUrl
 export const isLocalHost =
   ['localhost', '127.0.0.1', '::1', ''].includes(window.location.hostname) || window.location.hostname.endsWith('.localhost')
 

@@ -8,7 +8,7 @@ import Tabs from 'react-bootstrap/Tabs'
 import MintButton from './MintButton'
 import MintAmountForm from './MintAmountForm'
 
-import { TokenContext } from '../StakeWithERC20'
+import { TokenContext } from '../TokenContextWrapper'
 import { checkIsMintingRequired } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 
@@ -20,7 +20,7 @@ export interface MinterContextInterface {
 
 export const MinterContext = createContext<MinterContextInterface>({} as MinterContextInterface)
 
-export default function Minter () {
+export default function Minter() {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
@@ -34,31 +34,35 @@ export default function Minter () {
     address: account as any,
     token: token as any,
     watch: true,
-    onSuccess (data) {
-      dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
-      const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-      if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
-      setOutstandingMintAmount(outstandingTokenAmountCalculated)
-      setMintAmount(outstandingTokenAmountCalculated)
+    onSuccess(data) {
+      if (account != null && token != null && minimumStakeForToken != null) {
+        // dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
+        const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
+        if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
+        setOutstandingMintAmount(outstandingTokenAmountCalculated)
+        setMintAmount(outstandingTokenAmountCalculated)
+      }
     }
   })
 
-  if (mintAmount === null) return <></>
+  if (mintAmount === null) return <>mintAmount - {mintAmount}</>
 
   return (
-    <MinterContext.Provider value={{
-      mintAmount,
-      outstandingMintAmount,
-      setMintAmount
-    }}>
-      <Tabs defaultActiveKey="basic"
-        unmountOnExit={true}
-      >
-        <span>Available: <b>{tokenBalanceData?.formatted}</b> {tokenData?.symbol}</span>
-        <Tab eventKey="basic" title="Basic">
+    <MinterContext.Provider
+      value={{
+        mintAmount,
+        outstandingMintAmount,
+        setMintAmount
+      }}
+    >
+      <Tabs defaultActiveKey='basic' unmountOnExit={true}>
+        <span>
+          Available: <b>{tokenBalanceData?.formatted}</b> {tokenData?.symbol}
+        </span>
+        <Tab eventKey='basic' title='Basic'>
           <MintButton />
         </Tab>
-        <Tab eventKey="advanced" title="Advanced (custom amount)">
+        <Tab eventKey='advanced' title='Advanced (custom amount)'>
           <MintAmountForm />
           <MintButton />
         </Tab>

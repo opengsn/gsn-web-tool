@@ -28,7 +28,8 @@ export default function FundButton() {
     sendTransaction: fundRelay,
     isLoading,
     isSuccess,
-    isError
+    isError,
+    error
   } = useSendTransaction({
     ...config,
     ...defaultStateSwitchers,
@@ -37,7 +38,7 @@ export default function FundButton() {
     }
   })
 
-  if (isError) return <span>Error while creating FundButton</span>
+  if (isError) return <Alert severity='error'>Error : {error?.message}</Alert>
 
   return (
     <Box my='10px'>

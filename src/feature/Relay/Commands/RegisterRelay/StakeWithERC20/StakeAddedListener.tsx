@@ -3,13 +3,13 @@ import { useContractEvent, useProvider } from 'wagmi'
 import { toast } from 'react-toastify'
 import { validateIsRelayManagerStaked } from '../registerRelaySlice'
 
-import { TokenContext } from './StakeWithERC20'
+import { TokenContext } from './TokenContextWrapper'
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
 
 import StakeManager from '../../../../../contracts/StakeManager.json'
 import { sleep } from '../../../../../utils/utils'
 
-export default function StakeAddedListener () {
+export default function StakeAddedListener() {
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress, relayHubAddress } = relay
   const dispatch = useAppDispatch()
@@ -41,7 +41,7 @@ export default function StakeAddedListener () {
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     eventName: 'StakeAdded',
-    listener () {
+    listener() {
       if (listen) return
       dispatch(check).catch(toast.error)
     }
