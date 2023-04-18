@@ -15,8 +15,9 @@ export const theme = createTheme(
       }
 
       if (spacingSizeArray.includes(value as number)) {
-        return value
+        return +value * 4
       }
+
       throw new Error(`Spacing with ${value} value is not from the spacing system`)
     }
   },

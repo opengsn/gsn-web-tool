@@ -24,6 +24,9 @@ import { useFormik } from 'formik'
 import { Box, Button, ButtonType, Icon, Typography, VariantType } from '../../../../../components/atoms'
 import { colors } from '../../../../../theme'
 import TokenSelectOption from './TokenSelectOption'
+import SuggestedTokenFromServer from './TokenSelection/SuggestedTokenFromServer'
+import InsertERC20TokenAddress from './TokenSelection/InsertERC20TokenAddress'
+import Paper from '../../../../../components/atoms/Paper'
 
 export interface TokenContextInterface {
   chainId: number
@@ -79,12 +82,34 @@ export default function StakeWithERC20({ success }: IProps) {
     chainId
   })
 
+  const handleFindFirstTokenButton = async () => {
+    if (curBlockData !== undefined) {
+      const fromBlock = (await relayHub.functions.getCreationBlock())[0]
+      const toBlock = Math.min(toNumber(fromBlock) + 2048, curBlockData)
+
+      const filters = relayHub.filters.StakingTokenDataChanged()
+      const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)
+
+      if (tokens.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        throw new Error(`no registered staking tokens on relayhub ${relayHub.address as string}`)
+      }
+      const foundToken = tokens[0]?.args?.token
+      return foundToken
+    }
+  }
+
   const TokenAddressForm = () => {
+    const [radioValue, setRadioValue] = useState(0)
     const getTokenAddress = useFormik({
       initialValues: {
         token: ''
       },
-      onSubmit: (values) => {
+      onSubmit: async (values) => {
+        if (radioValue === 2) {
+          const token = await handleFindFirstTokenButton()
+          setToken(token)
+        }
         setToken(values.token)
       }
     })
@@ -96,69 +121,83 @@ export default function StakeWithERC20({ success }: IProps) {
 
     const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
 
+    const elements = [
+      {
+        label: 'Suggested Tokens from server',
+        children: (
+          <SuggestedTokenFromServer
+            chainId={chainId}
+            handleChangeToken={handleChangeToken}
+            chain={chain}
+            getTokenAddress={getTokenAddress}
+          />
+        ),
+        disabled: radioValue !== 0,
+        show: chain.stakingTokens?.length !== undefined && chain.stakingTokens?.length > 0
+      },
+      {
+        label: 'Insert ERC20 token address',
+        children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} />,
+        disabled: radioValue !== 1,
+        show: true
+      },
+      {
+        label: 'Fetch first available token',
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        children: <></>,
+        disabled: radioValue !== 2,
+        show: true
+      }
+    ]
+
     return (
       <Box component='form' onSubmit={getTokenAddress.handleSubmit}>
-        <Typography>Suggested Tokens from server</Typography> &nbsp;
-        <Button.Icon onClick={() => {}}>
-          <Icon.Info fill={colors.black} width='16px' height='16px' />
-        </Button.Icon>
-        <Box>
-          <Typography variant={VariantType.XSMALL}>Select token from list:</Typography>
-        </Box>
-        {chain.stakingTokens?.map((stakingToken) => {
-          return (
-            <TokenSelectOption
-              key={stakingToken}
-              address={stakingToken}
-              chainId={chainId}
-              handleChangeToken={handleChangeToken}
-              checked={getTokenAddress.values.token === stakingToken}
-            />
-          )
-        })}
-        <Box width='180px' height='60px' mt='20px'>
-          <Button.Contained type={ButtonType.SUBMIT}>
-            <Typography variant={VariantType.H6}>Fetch token</Typography>
-          </Button.Contained>
-        </Box>
+        {isLocalHost ? (
+          <Box>
+            {elements.map((element, index) => {
+              if (element.show) {
+                return (
+                  <Paper elevation={radioValue === index ? 5 : 2}>
+                    <Box my={4} p={4}>
+                      <Box display='flex' key={index}>
+                        <Box>
+                          <Button.Radio
+                            checked={radioValue === index}
+                            onChange={() => {
+                              setRadioValue(index)
+                            }}
+                          />
+                        </Box>
+                        <Box>
+                          <Typography>{element.label}</Typography>
+                          {element.children}
+                          <Box mt={2} width='200px'>
+                            <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
+                              Fetch Token
+                            </Button.Contained>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Paper>
+                )
+              }
+              return <></>
+            })}
+          </Box>
+        ) : (
+          <Box>
+            <Box>
+              <Typography>{elements[0].label}</Typography>
+              {elements[0].children}
+            </Box>
+            <Box>
+              <Button.Contained type={ButtonType.SUBMIT}>Fetch Token</Button.Contained>
+            </Box>
+          </Box>
+        )}
       </Box>
     )
-  }
-
-  const FindFirstTokenButton = () => {
-    const findFirstToken = async (curBlockNumber: number) => {
-      const fromBlock = (await relayHub.functions.getCreationBlock())[0]
-      const toBlock = Math.min(toNumber(fromBlock) + 2048, curBlockNumber)
-
-      const filters = relayHub.filters.StakingTokenDataChanged()
-      const tokens = await relayHub.queryFilter(filters, fromBlock._hex, toBlock)
-
-      if (tokens.length === 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        throw new Error(`no registered staking tokens on relayhub ${relayHub.address as string}`)
-      }
-      const foundToken = tokens[0]?.args?.token
-
-      return foundToken
-    }
-
-    const handleFindFirstTokenButton = () => {
-      if (curBlockData !== undefined) {
-        findFirstToken(curBlockData)
-          .then(setToken)
-          .catch((e) => {
-            console.error(e.message)
-            toast.error(
-              <>
-                <p>Error while fetching first available token</p>
-                <p>See console for error message</p>
-              </>
-            )
-          })
-      }
-    }
-
-    return <></>
   }
 
   useEffect(() => {
@@ -196,7 +235,11 @@ export default function StakeWithERC20({ success }: IProps) {
   const SwitchTokenButton = () => {
     const handleSwitchToken = () => setToken(null)
 
-    return <Button.Contained onClick={handleSwitchToken}>Switch Token</Button.Contained>
+    return (
+      <Box width='200px'>
+        <Button.Contained onClick={handleSwitchToken}>Switch Token</Button.Contained>
+      </Box>
+    )
   }
 
   const getStakingView = () => {
@@ -254,8 +297,6 @@ export default function StakeWithERC20({ success }: IProps) {
         content = (
           <>
             <TokenAddressForm />
-            <br />
-            {chain.stakingTokens === undefined ? <FindFirstTokenButton /> : null}
           </>
         )
       }

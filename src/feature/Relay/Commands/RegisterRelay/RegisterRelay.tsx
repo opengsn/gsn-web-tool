@@ -31,14 +31,18 @@ export default function RegisterRelay() {
       <Box
         width={{
           xs: '95%',
-          md: '380px'
+          md: '300px'
         }}
         mx='auto'
         mt='25px'
-        height='70px'
       >
-        <Button.Contained onClick={handleShowRegisterRelay} aria-controls='register-relay-form' aria-expanded={showRegisterRelay}>
-          <Typography variant={VariantType.H5}>Register</Typography>
+        <Button.Contained
+          size='large'
+          onClick={handleShowRegisterRelay}
+          aria-controls='register-relay-form'
+          aria-expanded={showRegisterRelay}
+        >
+          Register
         </Button.Contained>
       </Box>
     )

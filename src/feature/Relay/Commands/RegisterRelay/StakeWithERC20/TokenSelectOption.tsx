@@ -37,7 +37,6 @@ const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, ch
           onChange={() => {
             handleChangeToken(address)
           }}
-          value={address}
           checked={checked}
         />
       </Box>
