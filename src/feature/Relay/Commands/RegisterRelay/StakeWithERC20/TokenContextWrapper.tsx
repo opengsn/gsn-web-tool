@@ -98,15 +98,14 @@ export default function TokenContextWrapper({ children }: IProps) {
     }
   }, [newStakeInfoData, address])
 
+  const fetchMinimumStakeForToken = async () => {
+    const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
+    setMinimumStakeForToken(minimumStake[0])
+  }
+
   useEffect(() => {
     console.log('token changed', token)
     if (token !== null) {
-      console.log('fetching minimum stake for token', token)
-      const fetchMinimumStakeForToken = async () => {
-        const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
-        setMinimumStakeForToken(minimumStake[0])
-      }
-
       fetchMinimumStakeForToken().catch((e) => {
         console.error(e.message)
         toast.error(

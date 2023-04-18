@@ -61,7 +61,7 @@ export default function FundButton() {
           placeholder='Type amount'
         />
       </Box>
-      <Box height='60px' width='150px'>
+      <Box width='150px'>
         <Button.Contained disabled={isLoading || isSuccess} onClick={() => fundRelay?.()}>
           <Typography variant={VariantType.H5}>{isLoading || isSuccess ? <>loading...</> : <>Fund relay</>}</Typography>
         </Button.Contained>

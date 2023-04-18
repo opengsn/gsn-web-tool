@@ -53,7 +53,6 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
     try {
-      console.log('checkIsMintingRequired', relay)
       const { relayManagerAddress, relayHubAddress } = relay
 
       const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
@@ -133,7 +132,7 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
       const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
       const { owner } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
+        // dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -308,15 +307,15 @@ const registerSlice = createSlice({
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 4) {
         // check this line
         state.step = 4
         state.status = 'success'
-      } else if (action.payload === 4) {
-        state.step = 4
+      } else if (action.payload === 3) {
+        state.step = 3
         state.status = 'idle'
       } else {
-        state.step = 3
+        state.step = 2
         state.status = 'idle'
       }
     })
@@ -327,7 +326,7 @@ const registerSlice = createSlice({
     })
     builder.addCase(validateIsRelayManagerStaked.rejected, (state) => {
       state.status = 'idle'
-      state.step = 2
+      state.step = 3
     })
   }
 })
