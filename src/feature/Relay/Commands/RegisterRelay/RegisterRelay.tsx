@@ -1,18 +1,17 @@
+/* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react'
 import { useAccount, useProvider } from 'wagmi'
 
-import Collapse from 'react-bootstrap/Collapse'
-
 import { useAppDispatch, useAppSelector } from '../../../../hooks'
-import { fetchRegisterStateData, jumpToStep, RegisterSteps } from './registerRelaySlice'
+import { fetchRegisterStateData } from './registerRelaySlice'
 import Authorizer from './AuthorizeHub/Authorizer'
 import Funder from './FundRelay/Funder'
 import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
 
-import ListGroup from 'react-bootstrap/ListGroup'
 import { toast } from 'react-toastify'
-import { Check } from 'react-bootstrap-icons'
 import { Box, Button, Icon, Typography, VariantType } from '../../../../components/atoms'
+import Collapse from '../../../../components/atoms/Collapse'
+import RegisterFlowSteps from './RegisterFlowSteps'
 
 export default function RegisterRelay() {
   const relayData = useAppSelector((state) => state.relay.relay)
@@ -44,43 +43,43 @@ export default function RegisterRelay() {
       </Box>
     )
   }
-  const RegisterFlowSteps = () => {
-    const steps = Object.keys(RegisterSteps)
-    const listElems = steps
-      .filter((i) => isNaN(parseInt(i, 10)))
-      .map((step, index) => {
-        let variant = currentStep >= index ? 'success' : ''
+  // const RegisterFlowSteps = () => {
+  //   const steps = Object.keys({})
+  //   const listElems = steps
+  //     .filter((i) => isNaN(parseInt(i, 10)))
+  //     .map((step, index) => {
+  //       let variant = currentStep >= index ? 'success' : ''
 
-        const isActionableStep = currentStep === index && currentStep !== 4
-        if (isActionableStep) {
-          if (currentStep === index && status !== 'error') {
-            variant = 'primary'
-          } else if (currentStep === index && status === 'error') {
-            variant = 'danger'
-          } else {
-            variant = ''
-          }
-        } else if (index === 4 && status === 'idle') {
-          variant = ''
-        }
+  //       const isActionableStep = currentStep === index && currentStep !== 4
+  //       if (isActionableStep) {
+  //         if (currentStep === index && status !== 'error') {
+  //           variant = 'primary'
+  //         } else if (currentStep === index && status === 'error') {
+  //           variant = 'danger'
+  //         } else {
+  //           variant = ''
+  //         }
+  //       } else if (index === 4 && status === 'idle') {
+  //         variant = ''
+  //       }
 
-        const passedStep = !isActionableStep && variant === 'success'
-        return (
-          <ListGroup.Item action key={step} variant={variant} onClick={() => dispatch(jumpToStep(index))}>
-            {step} {passedStep ? <Check color='green'></Check> : null}
-          </ListGroup.Item>
-        )
-      })
+  //       const passedStep = !isActionableStep && variant === 'success'
+  //       return (
+  //         <ListGroup.Item action key={step} variant={variant} onClick={() => dispatch(jumpToStep(index))}>
+  //           {step} {passedStep ? <Check color='green'></Check> : null}
+  //         </ListGroup.Item>
+  //       )
+  //     })
 
-    const showDivider = currentStep <= 3
+  //   const showDivider = currentStep <= 3
 
-    return (
-      <>
-        <ListGroup>{listElems}</ListGroup>
-        {showDivider ? <hr /> : null}
-      </>
-    )
-  }
+  //   return (
+  //     <>
+  //       <ListGroup>{listElems}</ListGroup>
+  //       {showDivider ? <hr /> : null}
+  //     </>
+  //   )
+  // }
 
   useEffect(() => {
     if (address !== undefined) {
@@ -97,28 +96,30 @@ export default function RegisterRelay() {
   }, [address, dispatch, provider])
 
   return (
-    <>
-      <Box my='10px'>
-        <Typography variant={VariantType.H6}>
-          Please note before registration:
-          <br />
-          <Icon.Info /> You are connected to your cryptocurrency wallet.
-          <br /> <Icon.Info /> Your wallet was reset to interact with new relay connection.
-        </Typography>
-      </Box>
-      <CollapseButton />
-      {showRegisterRelay
-        ? (
-        <Collapse in={showRegisterRelay}>
-          <div className='border px-3 py-2' id='register-relay-form'>
-            <RegisterFlowSteps />
-            {currentStep === 0 ? <Funder /> : null}
-            {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
-            {currentStep === 3 ? <Authorizer /> : null}
-          </div>
-        </Collapse>
-          )
-        : null}
-    </>
+    <Box my='25px'>
+      {!showRegisterRelay && (
+        <>
+          <Typography variant={VariantType.H6}>
+            Please note before registration:
+            <br />
+            <Icon.Info /> You are connected to your cryptocurrency wallet.
+            <br /> <Icon.Info /> Your wallet was reset to interact with new relay connection.
+          </Typography>
+          <CollapseButton />
+        </>
+      )}
+      <Collapse in={!!showRegisterRelay}>
+        <Box textAlign='center' mb='25px'>
+          <Typography variant={VariantType.H2}>Registration</Typography>
+        </Box>
+        <Box>
+          <RegisterFlowSteps currentStep={currentStep} />
+          {/* {currentStep === 0 ? <Funder /> : null}
+          {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
+          {currentStep === 3 ? <Authorizer /> : null} */}
+          {/* <Steps /> */}
+        </Box>
+      </Collapse>
+    </Box>
   )
 }

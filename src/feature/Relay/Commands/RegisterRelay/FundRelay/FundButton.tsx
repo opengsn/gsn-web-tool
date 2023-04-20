@@ -2,65 +2,72 @@ import { useContext } from 'react'
 import { toast } from 'react-toastify'
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
-import Button from 'react-bootstrap/Button'
-
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import { FunderContext } from './Funder'
 
-import ErrorButton from '../../../components/ErrorButton'
-import LoadingButton from '../../../components/LoadingButton'
 import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
+import { Box, Button, TextField, Typography, VariantType } from '../../../../../components/atoms'
+import { TextFieldType } from '../../../../../components/atoms/TextField'
+import { BigNumber, ethers } from 'ethers'
 
-export default function FundButton () {
+export default function FundButton() {
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { relayManagerAddress, funds, setListen } = useContext(FunderContext)
+  const { relayManagerAddress, funds, setListen, handleChangeFunds } = useContext(FunderContext)
 
-  const { config, error: prepareFundTxError, isError: prepareIsError } = usePrepareSendTransaction({
+  const {
+    config,
+    error: prepareFundTxError,
+    isError: prepareIsError
+  } = usePrepareSendTransaction({
     request: {
       to: relayManagerAddress,
-      value: funds
+      value: BigNumber.from(ethers.utils.parseEther(funds.toString()))
     }
   })
 
-  const { sendTransaction: fundRelay, error: fundTxError, isIdle, isError, isLoading, isSuccess } = useSendTransaction({
+  const {
+    sendTransaction: fundRelay,
+    error: fundTxError,
+    isIdle,
+    isError,
+    isLoading,
+    isSuccess
+  } = useSendTransaction({
     ...config,
-    ...defaultStateSwitchers,
-    onSuccess (data) {
-      const text = 'Funded relay.'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-      setListen(true)
-    }
+    ...defaultStateSwitchers
+    // onSuccess(data) {
+    //   const text = 'Funded relay.'
+    //   toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+    //   setListen(true)
+    // }
   })
 
-  function createButton () {
-    let FundButton
-    const text = <span>Fund Relay with 0.5 ETH</span>
-
-    switch (true) {
-      case isIdle:
-        FundButton = <>
-          <Button disabled={isLoading} onClick={() => fundRelay?.()}>
-            {text}
-          </Button>
-          {prepareIsError ? <span>Error: {prepareFundTxError?.message}</span> : null}
-        </>
-        break
-      case isLoading || isSuccess:
-        FundButton = <LoadingButton />
-        break
-      case isError:
-        FundButton = <ErrorButton message={fundTxError?.message} onClick={() => fundRelay?.()}>
-          <span>Retry {text}</span>
-        </ErrorButton>
-        break
-    }
-
-    if (FundButton !== undefined) {
-      return FundButton
-    } else {
-      return <span>Error while creating FundButton</span>
-    }
-  }
-
-  return createButton()
+  return (
+    <Box my='10px'>
+      <Box mb='5px'>
+        <Typography variant={VariantType.H6}>
+          Transfer ETH to the server in order to - this is an explanatory text about funding relay and how it works. Learn more{' '}
+          {/* learn more */}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography variant={VariantType.XSMALL}>Funding amount (Recommended amount 0.5 ETH) </Typography>
+      </Box>
+      <Box width='400px' mb='10px'>
+        <TextField
+          type={TextFieldType.Number}
+          onChange={(e) => {
+            handleChangeFunds(+e.target.value)
+          }}
+          value={funds.toString()}
+          placeholder='Type amount'
+        />
+      </Box>
+      <Box height='60px' width='150px'>
+        <Button.Contained disabled={isLoading} onClick={() => fundRelay?.()}>
+          <Typography variant={VariantType.H5}>Fund relay</Typography>
+        </Button.Contained>
+      </Box>
+    </Box>
+  )
 }

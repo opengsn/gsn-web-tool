@@ -1,28 +1,38 @@
-import { ethers, BigNumber } from 'ethers'
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import React, { useState, createContext } from 'react'
+import { Typography, VariantType } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
+import { colors } from '../../../../../theme'
 
 export interface FunderContextInterface {
-  funds: BigNumber
+  funds: number
   listen: boolean
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: string
   stakeManagerAddress: string
   chainId: number
+  handleChangeFunds: (value: number) => void
 }
 
 export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)
 
-export default function Funder () {
+interface IProps {
+  success?: boolean
+}
+
+export default function Funder({ success }: IProps) {
   const [listen, setListen] = useState(false)
+  const [funds, setFunds] = useState<number>(0.5)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress, relayHubAddress } = relay
   const chainId = Number(relay.chainId)
 
-  const funds = BigNumber.from(ethers.utils.parseEther(('0.5')))
+  const handleChangeFunds = (value: number) => {
+    setFunds(value)
+  }
+
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
@@ -30,15 +40,26 @@ export default function Funder () {
     return <div>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</div>
   }
 
+  if (success ?? false) {
+    return (
+      <Typography variant={VariantType.XSMALL} color={colors.grey}>
+        Relay funded with {funds} ETH
+      </Typography>
+    )
+  }
+
   return (
-    <FunderContext.Provider value={{
-      funds,
-      listen,
-      setListen,
-      relayManagerAddress,
-      stakeManagerAddress,
-      chainId
-    }}>
+    <FunderContext.Provider
+      value={{
+        funds,
+        listen,
+        setListen,
+        relayManagerAddress,
+        stakeManagerAddress,
+        chainId,
+        handleChangeFunds
+      }}
+    >
       <FundButton />
       <SetOwnerListener />
     </FunderContext.Provider>
