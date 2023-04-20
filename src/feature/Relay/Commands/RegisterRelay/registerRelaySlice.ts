@@ -164,11 +164,11 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
       // passes? might be that the relay is ready. let's check
       const state = getState() as RootState
       if (state.relay.relay.ready) {
-        return fulfillWithValue(4, null)
+        return fulfillWithValue(5, null)
       }
       dispatch(fetchRelayData(state.relay.relayUrl)).catch(console.error)
 
-      return fulfillWithValue(3, null)
+      return fulfillWithValue(4, null)
     } catch (error: any) {
       switch (true) {
         case error.message.includes('relay manager not staked'):
@@ -307,12 +307,12 @@ const registerSlice = createSlice({
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 4) {
+      if (action.payload === 5) {
         // check this line
-        state.step = 4
+        state.step = 5
         state.status = 'success'
-      } else if (action.payload === 3) {
-        state.step = 3
+      } else if (action.payload === 4) {
+        state.step = 4
         state.status = 'idle'
       } else {
         state.step = 3 // changed to 3 from 2

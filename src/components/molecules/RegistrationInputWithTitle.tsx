@@ -3,16 +3,16 @@ import { Alert, Box, Button, TextField, Typography, VariantType } from '../atoms
 import { TextFieldType } from '../atoms/TextField'
 
 interface IProps {
-  onChange: (value: string) => void
+  title: string
   onClick: () => void
-  value?: string
-  type: TextFieldType
+  onChange?: (value: string) => void
+  buttonText: string
   isLoading: boolean
   isSuccess: boolean
+  type?: TextFieldType
   error?: string
-  title: string
   label?: string
-  buttonText: string
+  value?: string
   placeholder?: string
 }
 
@@ -39,17 +39,19 @@ const RegistrationInputWithTitle: FC<IProps> = ({
           <Typography variant={VariantType.XSMALL}>{label}</Typography>
         </Box>
       )}
-      <Box width='400px' mb='10px'>
-        <TextField
-          type={type}
-          onChange={(e) => {
-            onChange(e.target.value)
-          }}
-          value={value}
-          placeholder={placeholder}
-        />
-      </Box>
-      <Box width='150px'>
+      {onChange != null && (
+        <Box width='400px' mb='10px'>
+          <TextField
+            type={type}
+            onChange={(e) => {
+              onChange(e.target.value)
+            }}
+            value={value}
+            placeholder={placeholder}
+          />
+        </Box>
+      )}
+      <Box width='150px' mb='10px'>
         <Button.Contained disabled={isLoading || isSuccess} onClick={onClick}>
           <Typography variant={VariantType.H5}>{isLoading || isSuccess ? <>loading...</> : <>{buttonText}</>}</Typography>
         </Button.Contained>

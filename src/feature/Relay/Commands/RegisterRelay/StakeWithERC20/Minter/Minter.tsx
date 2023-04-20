@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react'
+import React, { createContext, useState, useContext, useEffect } from 'react'
 import { useBalance, useContractWrite, useProvider } from 'wagmi'
 import { ethers } from 'ethers'
 
@@ -35,11 +35,17 @@ export default function Minter({ success }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
 
-  const { data: tokenBalanceData } = useBalance({
+  useEffect(() => {
+    if (!(minimumStakeForToken == null)) {
+      refetch().catch(console.error)
+    }
+  }, [minimumStakeForToken])
+
+  const { data: tokenBalanceData, refetch } = useBalance({
     address: account as any,
     token: token as any,
     watch: true,
-    enabled: !(minimumStakeForToken == null),
+    enabled: false,
     onSuccess: (data) => {
       console.log('account', account, 'token', token, 'minimumStakeForToken', minimumStakeForToken)
       if (account != null && token != null && minimumStakeForToken != null) {
@@ -83,7 +89,7 @@ export default function Minter({ success }: IProps) {
   if (mintAmount === null) return <>loading...</>
 
   if (isSuccess) return <>Success</>
-  console.log('localMintAmount', localMintAmount.toString())
+
   if (success) {
     return (
       <Typography variant={VariantType.XSMALL} color={colors.grey}>
@@ -102,7 +108,7 @@ export default function Minter({ success }: IProps) {
     >
       <RegistrationInputWithTitle
         title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-        label={`Minting amount (minimum amount ${localMintAmount.toString() /* stakeInfo in state */ ?? 'error'} ETH)`}
+        label={`Minting amount (minimum amount ${mintAmount.toString() /* stakeInfo in state */ ?? 'error'} ETH)`}
         onClick={() => {
           if (mintAmount !== null) return mintToken?.()
         }}
