@@ -16,7 +16,11 @@ import { TokenContext } from '../TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 
-export default function Approver() {
+interface IProps {
+  success: boolean
+}
+
+export default function Approver({ success }: IProps) {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const defaultStateSwitchers = useDefaultStateSwitchers()
 
