@@ -1,6 +1,6 @@
 import { useEffect, useState, createContext, ReactNode } from 'react'
 import { ethers, constants } from 'ethers'
-import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork, useToken } from 'wagmi'
+import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
 
 import { toast } from 'react-toastify'
 
@@ -98,12 +98,11 @@ export default function TokenContextWrapper({ children }: IProps) {
     }
   }, [newStakeInfoData, address])
 
-  const fetchMinimumStakeForToken = async () => {
-    const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
-    setMinimumStakeForToken(minimumStake[0])
-  }
-
   useEffect(() => {
+    const fetchMinimumStakeForToken = async () => {
+      const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
+      setMinimumStakeForToken(minimumStake[0])
+    }
     console.log('token changed', token)
     if (token !== null) {
       fetchMinimumStakeForToken().catch((e) => {

@@ -298,9 +298,9 @@ const registerSlice = createSlice({
     })
     builder.addCase(checkIsMintingRequired.fulfilled, (state, action) => {
       if (action.payload) {
-        state.step = 2
+        state.step = 3
       } else {
-        state.step = 1
+        state.step = 2
       }
     })
 
@@ -315,7 +315,7 @@ const registerSlice = createSlice({
         state.step = 3
         state.status = 'idle'
       } else {
-        state.step = 2
+        state.step = 3 // changed to 3 from 2
         state.status = 'idle'
       }
     })

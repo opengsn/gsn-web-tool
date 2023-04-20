@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
+import { Typography, VariantType } from '../../../../../../components/atoms'
+import { colors } from '../../../../../../theme'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -19,7 +21,11 @@ export interface MinterContextInterface {
 
 export const MinterContext = createContext<MinterContextInterface>({} as MinterContextInterface)
 
-export default function Minter() {
+interface IProps {
+  success: boolean
+}
+
+export default function Minter({ success }: IProps) {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
@@ -77,6 +83,14 @@ export default function Minter() {
   if (mintAmount === null) return <>loading...</>
 
   if (isSuccess) return <>Success</>
+  console.log('localMintAmount', localMintAmount.toString())
+  if (success) {
+    return (
+      <Typography variant={VariantType.XSMALL} color={colors.grey}>
+        Mint amount: {localMintAmount.toString()}
+      </Typography>
+    )
+  }
 
   return (
     <MinterContext.Provider
@@ -88,7 +102,7 @@ export default function Minter() {
     >
       <RegistrationInputWithTitle
         title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-        label={`Minting amount (minimum amount ${minimumStakeForToken?.toString()} ETH)`}
+        label={`Minting amount (minimum amount ${localMintAmount.toString() /* stakeInfo in state */ ?? 'error'} ETH)`}
         onClick={() => {
           if (mintAmount !== null) return mintToken?.()
         }}
