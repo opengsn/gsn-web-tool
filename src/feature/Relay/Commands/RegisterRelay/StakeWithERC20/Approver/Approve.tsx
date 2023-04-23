@@ -12,8 +12,8 @@ import TransactionSuccessToast from '../../../../components/TransactionSuccessTo
 import { TokenContext } from '../TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
-import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { jumpToStep } from '../../registerRelaySlice'
+import RegistrationInputWithTitle from '../../RegistrationInputWithTitle'
 
 interface IProps {
   success: boolean

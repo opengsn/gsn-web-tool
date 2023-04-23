@@ -7,11 +7,11 @@ import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 import { TokenContext } from '../TokenContextWrapper'
 import { checkIsMintingRequired } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
-import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography, VariantType } from '../../../../../../components/atoms'
 import { colors } from '../../../../../../theme'
+import RegistrationInputWithTitle from '../../RegistrationInputWithTitle'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -89,7 +89,6 @@ export default function Minter({ success }: IProps) {
   if (mintAmount === null) return <>loading...</>
 
   if (isSuccess) return <>Success</>
-
   if (success) {
     return (
       <Typography variant={VariantType.XSMALL} color={colors.grey}>

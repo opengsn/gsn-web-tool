@@ -53,6 +53,7 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
     try {
+      console.log('checkIsMintingRequired', relay)
       const { relayManagerAddress, relayHubAddress } = relay
 
       const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
