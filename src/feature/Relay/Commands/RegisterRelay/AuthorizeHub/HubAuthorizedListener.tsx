@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAccount, useContractEvent, useProvider } from 'wagmi'
 import { toast } from 'react-toastify'
-import { fetchRegisterStateData } from '../registerRelaySlice'
+import { fetchRegisterStateData, jumpToStep } from '../registerRelaySlice'
 
 import { sleep } from '../../../../../utils'
 
@@ -9,13 +9,14 @@ import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../..
 
 import StakeManager from '../../../../../contracts/StakeManager.json'
 import { fetchRelayData } from '../../../../Relay/relaySlice'
+import { RegisterSteps } from '../RegisterFlowSteps'
 
 interface HubAuthorizedListenerProps {
   listen: boolean
   setListen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function HubAuthorizedListener ({ listen, setListen }: HubAuthorizedListenerProps) {
+export default function HubAuthorizedListener({ listen, setListen }: HubAuthorizedListenerProps) {
   // used to avoid listening for event and polling data at the same time
   const relay = useAppSelector((state) => state.relay.relay)
   const relayUrl = useAppSelector((state) => state.relay.relayUrl)
@@ -26,9 +27,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
   const provider = useProvider()
   const { address: account } = useAccount()
 
-  const {
-    data: stakeManagerAddressData
-  } = useStakeManagerAddress(relayHubAddress, chainId)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as any
 
@@ -38,8 +37,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
     eventName: 'HubAuthorized',
     listener: () => {
       if (listen) return
-      dispatch(fetchRelayData(relayUrl))
-        .catch(console.error)
+      dispatch(fetchRelayData(relayUrl)).catch(console.error)
     }
   })
 
@@ -63,7 +61,7 @@ export default function HubAuthorizedListener ({ listen, setListen }: HubAuthori
 
   useEffect(() => {
     if (relay.ready && account !== undefined) {
-      dispatch(fetchRegisterStateData({ provider, account })).catch(toast.error)
+      dispatch(fetchRegisterStateData({ provider, account })).catch(() => jumpToStep(RegisterSteps.Error as number))
     } else if (relay.ready) {
       console.error('relay is ready but could not fetch account address')
     }

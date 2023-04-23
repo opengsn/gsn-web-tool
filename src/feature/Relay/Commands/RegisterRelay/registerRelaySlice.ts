@@ -51,9 +51,10 @@ interface checkIsMintingRequiredParams {
 // step 0 -> 1
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
-  async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
+    const state = getState() as RootState // check why checkIsMintingRequired is run
+    if (state.register.step > 3) return fulfillWithValue(true, null)
     try {
-      console.log('checkIsMintingRequired', relay)
       const { relayManagerAddress, relayHubAddress } = relay
 
       const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
@@ -62,7 +63,6 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
       const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
 
       const { tokenFromStakeInfo }: { tokenFromStakeInfo: string } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
-
       if (tokenFromStakeInfo === constants.AddressZero || tokenFromStakeInfo === undefined) {
         if (token !== undefined) {
           const tokenContract = new ethers.Contract(token, iErc20TokenAbi, provider)
@@ -165,19 +165,19 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
       // passes? might be that the relay is ready. let's check
       const state = getState() as RootState
       if (state.relay.relay.ready) {
-        return fulfillWithValue(5, null)
+        return fulfillWithValue(6, null)
       }
       dispatch(fetchRelayData(state.relay.relayUrl)).catch(console.error)
 
-      return fulfillWithValue(4, null)
+      return fulfillWithValue(5, null)
     } catch (error: any) {
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(2, null)
-        case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(3, null)
+        case error.message.includes('this hub is not authorized by SM'):
+          return fulfillWithValue(4, null)
         case error.message.includes('stake amount is too small'):
-          return fulfillWithValue(2, null)
+          return fulfillWithValue(3, null)
         default:
           return rejectWithValue(null)
       }
@@ -197,7 +197,7 @@ export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStat
     try {
       const relay = state.relay.relay
       if (relay.ready) {
-        return fulfillWithValue(5, null)
+        return fulfillWithValue(6, null) // relay is ready
       }
       // start the chain of checks
       dispatch(validateIsRelayFunded({ account, relay, provider })).catch(rejectWithValue)
@@ -297,6 +297,7 @@ const registerSlice = createSlice({
     builder.addCase(checkIsMintingRequired.rejected, (state) => {
       state.status = 'idle'
     })
+
     builder.addCase(checkIsMintingRequired.fulfilled, (state, action) => {
       if (action.payload) {
         state.step = 3
@@ -316,7 +317,7 @@ const registerSlice = createSlice({
         state.step = 4
         state.status = 'idle'
       } else {
-        state.step = 3 // changed to 3 from 2
+        state.step = +action.payload // changed to 3 from 2
         state.status = 'idle'
       }
     })
@@ -327,7 +328,7 @@ const registerSlice = createSlice({
     })
     builder.addCase(validateIsRelayManagerStaked.rejected, (state) => {
       state.status = 'idle'
-      state.step = 3
+      state.step = 4
     })
   }
 })
