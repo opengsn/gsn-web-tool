@@ -5,7 +5,7 @@ import { ethers } from 'ethers'
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 
 import { TokenContext } from '../TokenContextWrapper'
-import { checkIsMintingRequired } from '../../registerRelaySlice'
+import { checkIsMintingRequired, jumpToStep } from '../../registerRelaySlice'
 import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
@@ -28,26 +28,33 @@ interface IProps {
 export default function Minter({ success }: IProps) {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
+  const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
   const [outstandingMintAmount, setOutstandingMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useState(ethers.constants.Zero)
+  const [localMintAmount, setLocalMintAmount] = useState<ethers.BigNumber>(ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
 
   useEffect(() => {
-    if (!(minimumStakeForToken == null)) {
+    if (currentStep === 2) {
       refetch().catch(console.error)
     }
-  }, [minimumStakeForToken])
+    return () => {
+      setMintAmount(minimumStakeForToken)
+    }
+  }, [minimumStakeForToken, setMintAmount])
 
-  const { data: tokenBalanceData, refetch } = useBalance({
+  const {
+    data: tokenBalanceData,
+    refetch,
+    isError
+  } = useBalance({
     address: account as any,
     token: token as any,
     watch: true,
     enabled: false,
     onSuccess: (data) => {
-      console.log('account', account, 'token', token, 'minimumStakeForToken', minimumStakeForToken)
       if (account != null && token != null && minimumStakeForToken != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
         const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
@@ -67,11 +74,12 @@ export default function Minter({ success }: IProps) {
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'deposit',
-    overrides: { value: localMintAmount },
+    overrides: { value: localMintAmount as any },
     mode: 'recklesslyUnprepared',
     ...defaultStateSwitchers,
     onSuccess(data) {
-      console.log('mintToken', data)
+      console.log('mintToken', data) // take hash from here
+      !isError && dispatch(jumpToStep(3))
     }
   })
 
@@ -86,17 +94,17 @@ export default function Minter({ success }: IProps) {
     }
   }
 
-  if (mintAmount === null) return <>loading...</>
-
-  if (isSuccess) return <>Success</>
-
   if (success) {
     return (
       <Typography variant={VariantType.XSMALL} color={colors.grey}>
-        Mint amount: {localMintAmount.toString()}
+        Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
       </Typography>
     )
   }
+
+  if (mintAmount === null) return <>mintAmount is null</>
+
+  if (isSuccess) return <>Success</>
 
   return (
     <MinterContext.Provider
@@ -108,9 +116,9 @@ export default function Minter({ success }: IProps) {
     >
       <RegistrationInputWithTitle
         title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-        label={`Minting amount (minimum amount ${mintAmount.toString() /* stakeInfo in state */ ?? 'error'} ETH)`}
+        label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
         onClick={() => {
-          if (mintAmount !== null) return mintToken?.()
+          mintToken?.()
         }}
         onChange={(value) => handleSetMintAmount(value)}
         error={mintTokenError?.message}

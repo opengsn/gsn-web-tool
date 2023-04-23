@@ -8,12 +8,11 @@ interface IAccordionStep {
   title: string
   step: RegisterSteps
   expanded: boolean
-  onChange: (step: RegisterSteps | null) => void
 }
 
-const AccordionStep: FC<IAccordionStep> = ({ children, title, step, expanded, onChange }) => {
+const AccordionStep: FC<IAccordionStep> = ({ children, title, step, expanded }) => {
   return (
-    <Accordion expanded={expanded} onChange={() => onChange(expanded ? null : step)}>
+    <Accordion expanded={expanded}>
       <AccordionSummary>
         <Box display='flex' gap='10px' width='100%' alignItems='center'>
           <Typography variant={VariantType.H5} fontWeight={600}>

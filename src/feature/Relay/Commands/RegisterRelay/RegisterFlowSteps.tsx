@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment } from 'react'
 import AccordionStep from './AccordionStep'
 import AccordionSuccess from './AccordionSuccess'
 import Funder from './FundRelay/Funder'
@@ -6,13 +6,21 @@ import TokenSelection from './StakeWithERC20/TokenSelection/TokenSelection'
 import TokenContextWrapper from './StakeWithERC20/TokenContextWrapper'
 import Minter from './StakeWithERC20/Minter/Minter'
 import Approver from './StakeWithERC20/Approver/Approve'
+import Staker from './StakeWithERC20/Staker'
+import StakeAddedListener from './StakeWithERC20/StakeAddedListener'
+import Authorizer from './AuthorizeHub/Authorizer'
+import SuccessModal from '../../../../components/molecules/SuccessModal'
+import ErrorModal from '../../../../components/molecules/ErrorModal'
 
 export enum RegisterSteps {
   'Funding relay',
   'Token selection',
   'Mint Selection',
   'Approve allowance',
-  'Authorizing Hub'
+  'Stake token',
+  'Authorizing',
+  'Success',
+  'Error'
 }
 
 interface IProps {
@@ -20,8 +28,6 @@ interface IProps {
 }
 
 const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
-  const [expanded, setExpanded] = useState<RegisterSteps | null>(null)
-
   const steps = [
     {
       title: 'Funding relay',
@@ -42,12 +48,18 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       title: 'Approve allowance',
       children: <Approver success={currentStep > RegisterSteps['Approve allowance']} />,
       step: RegisterSteps['Approve allowance']
+    },
+    {
+      title: 'Stake token',
+      children: (
+        <>
+          <Staker success={currentStep > RegisterSteps['Stake token']} />
+          <StakeAddedListener />
+        </>
+      ),
+      step: RegisterSteps['Stake token']
     }
   ]
-
-  const onChange = (step: RegisterSteps | null) => {
-    setExpanded(step)
-  }
 
   return (
     <TokenContextWrapper>
@@ -55,7 +67,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
         <Fragment key={index}>
           {currentStep <= step.step
             ? (
-            <AccordionStep {...step} expanded={currentStep === step.step} onChange={onChange}>
+            <AccordionStep {...step} expanded={currentStep === step.step}>
               {step.children}
             </AccordionStep>
               )
@@ -64,6 +76,9 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
               )}
         </Fragment>
       ))}
+      {currentStep === 5 && <Authorizer />}
+      {currentStep === 6 && <SuccessModal />}
+      {currentStep === 1 && <ErrorModal />}
     </TokenContextWrapper>
   )
 }

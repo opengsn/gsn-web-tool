@@ -14,6 +14,7 @@ import { TokenContext } from '../TokenContextWrapper'
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { jumpToStep } from '../../registerRelaySlice'
+import { Alert } from '../../../../../../components/atoms'
 
 interface IProps {
   success: boolean
@@ -28,26 +29,33 @@ export default function Approver({ success }: IProps) {
   const { relayHubAddress } = relay
   const chainId = Number(relay.chainId)
   // TODO: approve amount outstanding
-  const { token, account } = useContext(TokenContext)
+  const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
-  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
+  const {
+    data: currentAllowanceData,
+    isError: currentAllowanceIsError,
+    isLoading: currentAllowanceIsLoading
+  } = useContractRead({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'allowance',
     chainId,
     args: [account, stakeManagerAddress],
     onSuccess(data) {
-      // setApproveAmount(minimumStakeForToken.sub(data as any))
+      if (minimumStakeForToken != null) {
+        setApproveAmount(minimumStakeForToken.sub(data as any))
+      }
     }
   })
 
   const {
     config,
     error: prepareApproveTxError,
-    isError: prepareApproveTxIsError
+    isError: prepareApproveTxIsError,
+    isLoading: prepareApproveTxIsLoading
   } = usePrepareContractWrite({
     address: token as any,
     abi: iErc20TokenAbi,
@@ -66,7 +74,7 @@ export default function Approver({ success }: IProps) {
     onSuccess(data) {
       const text = 'Approved Stake Manager for spend'
       toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-      dispatch(jumpToStep(4))
+      !prepareApproveTxIsError && approveTxError == null && !currentAllowanceIsError && dispatch(jumpToStep(4))
     }
   })
 
@@ -77,16 +85,14 @@ export default function Approver({ success }: IProps) {
           <RegistrationInputWithTitle
             title='This is a short explanatory text about the allowance approval.'
             buttonText='Approve'
-            isLoading={isLoading}
+            isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading}
             isSuccess={isSuccess}
             error={approveTxError?.message}
             onClick={() => approve?.()}
           />
         )}
-        {currentAllowanceIsError && <>Error fetching token allowance</>}
-        {prepareApproveTxIsError && prepareApproveTxError !== null && (
-          <>Error preparing approve transaction. - {prepareApproveTxError?.message}</>
-        )}
+        {currentAllowanceIsError && <Alert severity='error'>Error fetching token allowance</Alert>}
+        {prepareApproveTxIsError && <Alert severity='error'>Error preparing approve transaction. - {prepareApproveTxError?.message}</Alert>}
         {isSuccess || (approveAmount.eq(ethers.constants.Zero) && <>success</>)}
       </>
     )
