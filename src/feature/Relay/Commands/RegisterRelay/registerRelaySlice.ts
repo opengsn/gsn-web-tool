@@ -53,6 +53,7 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
     try {
+      console.log('checkIsMintingRequired', relay)
       const { relayManagerAddress, relayHubAddress } = relay
 
       const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
@@ -311,8 +312,8 @@ const registerSlice = createSlice({
         // check this line
         state.step = 4
         state.status = 'success'
-      } else if (action.payload === 3) {
-        state.step = 3
+      } else if (action.payload === 4) {
+        state.step = 4
         state.status = 'idle'
       } else {
         state.step = 3 // changed to 3 from 2

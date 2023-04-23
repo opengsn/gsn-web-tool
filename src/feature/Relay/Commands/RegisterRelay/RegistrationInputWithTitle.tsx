@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { Alert, Box, Button, TextField, Typography, VariantType } from '../atoms'
-import { TextFieldType } from '../atoms/TextField'
+import { Alert, Box, Button, TextField, Typography, VariantType } from '../../../../components/atoms'
+import { TextFieldType } from '../../../../components/atoms/TextField'
 
 interface IProps {
   onChange: (value: string) => void
