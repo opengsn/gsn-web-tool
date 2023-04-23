@@ -5,13 +5,14 @@ import Funder from './FundRelay/Funder'
 import TokenSelection from './StakeWithERC20/TokenSelection/TokenSelection'
 import TokenContextWrapper from './StakeWithERC20/TokenContextWrapper'
 import Minter from './StakeWithERC20/Minter/Minter'
+import Approver from './StakeWithERC20/Approver/Approve'
 
 export enum RegisterSteps {
   'Funding relay',
   'Token selection',
   'Mint Selection',
-  'Authorizing Hub',
-  'Waiting for Relay to be Ready'
+  'Approve allowance',
+  'Authorizing Hub'
 }
 
 interface IProps {
@@ -34,8 +35,13 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
     },
     {
       title: 'Mint Selection',
-      children: <Minter />,
+      children: <Minter success={currentStep > RegisterSteps['Mint Selection']} />,
       step: RegisterSteps['Mint Selection']
+    },
+    {
+      title: 'Approve allowance',
+      children: <Approver success={currentStep > RegisterSteps['Approve allowance']} />,
+      step: RegisterSteps['Approve allowance']
     }
   ]
 
