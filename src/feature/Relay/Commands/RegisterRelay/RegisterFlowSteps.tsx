@@ -78,7 +78,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       ))}
       {currentStep === 5 && <Authorizer />}
       {currentStep === 6 && <SuccessModal />}
-      {currentStep === 1 && <ErrorModal />}
+      {currentStep === 7 && <ErrorModal />}
     </TokenContextWrapper>
   )
 }
