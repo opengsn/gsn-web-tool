@@ -1,47 +1,28 @@
 import React, { FC, ReactNode } from 'react'
-import { Button as MuiButton, IconButton as MuiIconButton } from '@mui/material'
-import { colors } from '../../theme'
-import { styled } from '@mui/material/styles'
+import { Button as MuiButton, IconButton as MuiIconButton, Radio as MuiRadio } from '@mui/material'
 
 export enum ButtonType {
   SUBMIT = 'submit',
   BUTTON = 'button'
 }
 
+type Color = 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'inherit'
+type Size = 'small' | 'medium' | 'large'
+
 interface IProps {
-  backgroundColor?: string
   children: ReactNode
   onClick?: () => void
   disabled?: boolean
-  color?: string
+  color?: Color
   type?: ButtonType
+  size?: Size
 }
 
-const ButtonBase: any = styled(MuiButton, {
-  shouldForwardProp: (prop: string) => prop !== 'backgroundColor' && prop !== 'color'
-})<IProps>(({ backgroundColor, color }) => ({
-  backgroundColor: backgroundColor ?? colors.success,
-  color: color ?? colors.white,
-  textTransform: 'none',
-  height: '100%',
-  '&:hover': {
-    backgroundColor: backgroundColor ?? colors.success
-  }
-}))
-
-const Contained: FC<IProps> = ({ backgroundColor, children, onClick, disabled, color, type }) => {
+const Contained: FC<IProps> = ({ children, onClick, disabled, color, type, size }) => {
   return (
-    <ButtonBase
-      variant='contained'
-      onClick={onClick}
-      disabled={disabled}
-      backgroundColor={backgroundColor}
-      color={color}
-      type={type}
-      fullWidth
-    >
+    <MuiButton variant='contained' onClick={onClick} disabled={disabled} color={color} type={type} size={size} fullWidth>
       {children}
-    </ButtonBase>
+    </MuiButton>
   )
 }
 
@@ -61,10 +42,20 @@ const Text: FC<IProps> = ({ children, onClick, disabled }) => {
   )
 }
 
+interface IRadioProps {
+  onChange: () => void
+  checked: boolean
+}
+
+const Radio: FC<IRadioProps> = ({ onChange, checked }) => {
+  return <MuiRadio onChange={onChange} checked={checked} />
+}
+
 const Button = {
   Contained,
   Icon,
-  Text
+  Text,
+  Radio
 }
 
 export default Button

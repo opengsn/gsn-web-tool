@@ -1,18 +1,17 @@
 import { useContext } from 'react'
-import { toast } from 'react-toastify'
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import { FunderContext } from './Funder'
 
-import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
 import { Box, Button, TextField, Typography, VariantType } from '../../../../../components/atoms'
 import { TextFieldType } from '../../../../../components/atoms/TextField'
 import { BigNumber, ethers } from 'ethers'
+import Alert from '../../../../../components/atoms/Alert'
 
 export default function FundButton() {
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { relayManagerAddress, funds, setListen, handleChangeFunds } = useContext(FunderContext)
+  const { relayManagerAddress, funds, handleChangeFunds, setListen } = useContext(FunderContext)
 
   const {
     config,
@@ -27,20 +26,19 @@ export default function FundButton() {
 
   const {
     sendTransaction: fundRelay,
-    error: fundTxError,
-    isIdle,
-    isError,
     isLoading,
-    isSuccess
+    isSuccess,
+    isError,
+    error
   } = useSendTransaction({
     ...config,
-    ...defaultStateSwitchers
-    // onSuccess(data) {
-    //   const text = 'Funded relay.'
-    //   toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
-    //   setListen(true)
-    // }
+    ...defaultStateSwitchers,
+    onSuccess: () => {
+      setListen(true)
+    }
   })
+
+  if (isError) return <Alert severity='error'>Error : {error?.message}</Alert>
 
   return (
     <Box my='10px'>
@@ -64,10 +62,11 @@ export default function FundButton() {
         />
       </Box>
       <Box height='60px' width='150px'>
-        <Button.Contained disabled={isLoading} onClick={() => fundRelay?.()}>
-          <Typography variant={VariantType.H5}>Fund relay</Typography>
+        <Button.Contained disabled={isLoading || isSuccess} onClick={() => fundRelay?.()}>
+          <Typography variant={VariantType.H5}>{isLoading || isSuccess ? <>loading...</> : <>Fund relay</>}</Typography>
         </Button.Contained>
       </Box>
+      {prepareIsError && <Alert severity='error'>Error: {prepareFundTxError?.message}</Alert>}
     </Box>
   )
 }

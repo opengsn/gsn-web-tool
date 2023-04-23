@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 import { useAccount, useBalance } from 'wagmi'
 
-import { TokenContext } from './StakeWithERC20'
+import { TokenContext } from './TokenContextWrapper'
 
-export default function StakingTokenInfo () {
+export default function StakingTokenInfo() {
   const { token, chainId } = useContext(TokenContext)
 
   const { address } = useAccount()
@@ -13,5 +13,11 @@ export default function StakingTokenInfo () {
     chainId
   })
 
-  return <><span><b>{tokenBalanceData?.formatted}</b> {tokenBalanceData?.symbol}</span></>
+  return (
+    <>
+      <span>
+        <b>{tokenBalanceData?.formatted}</b> {tokenBalanceData?.symbol}
+      </span>
+    </>
+  )
 }

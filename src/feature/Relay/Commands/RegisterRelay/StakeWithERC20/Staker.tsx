@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import { TokenContext } from './StakeWithERC20'
+import { TokenContext } from './TokenContextWrapper'
 
 import Button from 'react-bootstrap/Button'
 
@@ -14,7 +14,7 @@ import StakeManager from '../../../../../contracts/StakeManager.json'
 import { useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 
-export default function Stake () {
+export default function Stake() {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { address } = useAccount()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
@@ -24,7 +24,11 @@ export default function Stake () {
 
   const unstakeDelay = '15000'
 
-  const { config, error: prepareStakeTxError, refetch } = usePrepareContractWrite({
+  const {
+    config,
+    error: prepareStakeTxError,
+    refetch
+  } = usePrepareContractWrite({
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'stakeForRelayManager',
@@ -38,15 +42,21 @@ export default function Stake () {
     args: [address, stakeManagerAddress],
     watch: true,
     chainId,
-    onSuccess () {
+    onSuccess() {
       refetch().catch(console.error)
     }
   })
 
-  const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite({
+  const {
+    error: stakeTxError,
+    isSuccess,
+    isError,
+    isLoading,
+    write: stakeRelayer
+  } = useContractWrite({
     ...config,
     ...defaultStateSwitchers,
-    onSuccess (data) {
+    onSuccess(data) {
       const text = 'Staked relay'
       toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
       setListen(true)
@@ -58,7 +68,11 @@ export default function Stake () {
     const text = 'Stake'
     switch (true) {
       case isError:
-        content = <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer?.()}>{text}</ErrorButton>
+        content = (
+          <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer?.()}>
+            {text}
+          </ErrorButton>
+        )
         break
       case isLoading:
         content = <LoadingButton />
@@ -67,22 +81,25 @@ export default function Stake () {
         content = <div>Relayer successfully staked</div>
         break
       default:
-        content = <>
-          {prepareStakeTxError !== null
-            ? <>
-              <div className="p-3 mt-4 my-1 bg-warning">
-                <span className="text-dark">Account is not prepared for staking. Please try increasing allowance</span>
-              </div>
+        content = (
+          <>
+            {prepareStakeTxError !== null ? (
+              <>
+                <div className='p-3 mt-4 my-1 bg-warning'>
+                  <span className='text-dark'>Account is not prepared for staking. Please try increasing allowance</span>
+                </div>
 
-              <Button disabled className="my-2">
+                <Button disabled className='my-2'>
+                  {text}
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => stakeRelayer?.()} className='my-2'>
                 {text}
               </Button>
-            </>
-            : <Button onClick={() => stakeRelayer?.()} className="my-2">
-              {text}
-            </Button>
-          }
-        </>
+            )}
+          </>
+        )
     }
 
     if (content === undefined) return <span>unable to initialize stake button</span>

@@ -2,6 +2,22 @@ import { FC, ReactNode } from 'react'
 import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
+// type VariantType =
+//   | 'body1'
+//   | 'body2'
+//   | 'button'
+//   | 'caption'
+//   | 'h1'
+//   | 'h2'
+//   | 'h3'
+//   | 'h4'
+//   | 'h5'
+//   | 'h6'
+//   | 'inherit'
+//   | 'overline'
+//   | 'subtitle1'
+//   | 'subtitle2'
+
 export enum VariantType {
   H1 = 'h1', // 40px
   H2 = 'h2', // 32px

@@ -4,6 +4,8 @@ import { typography } from './typography'
 import colors from './colors'
 export { default as colors } from './colors'
 
+const muiSpacingToPixelIndex = 4
+
 export const spacingSizeArray = [0, 1, 2, 3, 4, 8]
 
 export const theme = createTheme(
@@ -15,8 +17,9 @@ export const theme = createTheme(
       }
 
       if (spacingSizeArray.includes(value as number)) {
-        return value
+        return +value * muiSpacingToPixelIndex
       }
+
       throw new Error(`Spacing with ${value} value is not from the spacing system`)
     }
   },

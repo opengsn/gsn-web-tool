@@ -107,8 +107,8 @@ export default function RelayUrlForm() {
             <TextField onChange={getRelayForm.handleChange} value={getRelayForm.values.url} name='url' />
           </Box>
           <Box width={{ md: '380px' }} mx='auto' height='70px'>
-            <Button.Contained type={ButtonType.SUBMIT}>
-              <Typography variant={VariantType.H5}>Fetch data</Typography>
+            <Button.Contained size='large' type={ButtonType.SUBMIT}>
+              Fetch data
             </Button.Contained>
           </Box>
         </Box>

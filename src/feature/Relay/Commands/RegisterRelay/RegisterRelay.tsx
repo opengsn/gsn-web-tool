@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../../hooks'
 import { fetchRegisterStateData } from './registerRelaySlice'
 import Authorizer from './AuthorizeHub/Authorizer'
 import Funder from './FundRelay/Funder'
-import StakeWithERC20 from './StakeWithERC20/StakeWithERC20'
+import StakeWithERC20 from './StakeWithERC20/TokenContextWrapper'
 
 import { toast } from 'react-toastify'
 import { Box, Button, Icon, Typography, VariantType } from '../../../../components/atoms'
@@ -31,14 +31,18 @@ export default function RegisterRelay() {
       <Box
         width={{
           xs: '95%',
-          md: '380px'
+          md: '300px'
         }}
         mx='auto'
         mt='25px'
-        height='70px'
       >
-        <Button.Contained onClick={handleShowRegisterRelay} aria-controls='register-relay-form' aria-expanded={showRegisterRelay}>
-          <Typography variant={VariantType.H5}>Register</Typography>
+        <Button.Contained
+          size='large'
+          onClick={handleShowRegisterRelay}
+          aria-controls='register-relay-form'
+          aria-expanded={showRegisterRelay}
+        >
+          Register
         </Button.Contained>
       </Box>
     )
