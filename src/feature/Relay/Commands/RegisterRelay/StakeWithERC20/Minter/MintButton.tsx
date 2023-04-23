@@ -2,7 +2,6 @@ import { useContext } from 'react'
 import { useContractWrite } from 'wagmi'
 import { toast } from 'react-toastify'
 import { ethers } from 'ethers'
-import Button from 'react-bootstrap/Button'
 
 import ErrorButton from '../../../../components/ErrorButton'
 
@@ -13,6 +12,7 @@ import TransactionSuccessToast from '../../../../components/TransactionSuccessTo
 import LoadingButton from '../../../../components/LoadingButton'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
+import { Button } from '../../../../../../components/atoms'
 
 export default function MintButton() {
   const { token } = useContext(TokenContext)
@@ -55,13 +55,10 @@ export default function MintButton() {
         break
       case isIdle:
         content = (
-          <Button onClick={() => mintToken?.()} className='mt-2'>
-            {text}
-          </Button>
+          <Button.Contained disabled={isLoading} onClick={() => mintToken?.()}>
+            {isLoading ? <>loading..</> : <>text</>}
+          </Button.Contained>
         )
-        break
-      case isLoading:
-        content = <LoadingButton />
         break
       case isSuccess:
         content = <MintSuccess />

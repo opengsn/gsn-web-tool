@@ -1,10 +1,9 @@
 import { useEffect, useContext, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 
-import Form from 'react-bootstrap/Form'
-
 import { MinterContext } from './Minter'
 import { TokenContext } from '../TokenContextWrapper'
+import { TextField } from '../../../../../../components/atoms'
 
 export default function MintAmountForm() {
   const [localMintAmount, setLocalMintAmount] = useState(ethers.constants.Zero)
@@ -37,12 +36,5 @@ export default function MintAmountForm() {
     }
   }, [minimumStakeForToken, setMintAmount])
 
-  return (
-    <Form className='my-2'>
-      <Form.Label>
-        <Form.Control id='amount' name='amount' type='text' ref={inputValue} onChange={() => handleSetMintAmount()} />
-      </Form.Label>
-      <br />
-    </Form>
-  )
+  return <TextField name='amount' ref={inputValue} onChange={() => handleSetMintAmount()} />
 }

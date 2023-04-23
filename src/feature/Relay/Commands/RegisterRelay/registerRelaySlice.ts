@@ -133,7 +133,7 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
       const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
       const { owner } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
+        // dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -299,16 +299,16 @@ const registerSlice = createSlice({
     })
     builder.addCase(checkIsMintingRequired.fulfilled, (state, action) => {
       if (action.payload) {
-        state.step = 2
+        state.step = 3
       } else {
-        state.step = 1
+        state.step = 2
       }
     })
 
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 4) {
         // check this line
         state.step = 4
         state.status = 'success'
@@ -316,7 +316,7 @@ const registerSlice = createSlice({
         state.step = 4
         state.status = 'idle'
       } else {
-        state.step = 3
+        state.step = 3 // changed to 3 from 2
         state.status = 'idle'
       }
     })
@@ -327,7 +327,7 @@ const registerSlice = createSlice({
     })
     builder.addCase(validateIsRelayManagerStaked.rejected, (state) => {
       state.status = 'idle'
-      state.step = 2
+      state.step = 3
     })
   }
 })

@@ -45,24 +45,7 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
       }
     }
 
-    return (
-      <>
-        <TableRow>
-          <TableCell>
-            <Typography variant={VariantType.H6}>Current Owner</Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant={VariantType.H6}>{owner}</Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant={VariantType.H6}>
-              <ShowOwner />
-            </Typography>
-          </TableCell>
-        </TableRow>
-        <StakingToken stakingToken={token} chainId={chainId} />
-      </>
-    )
+    return <StakingToken stakingToken={token} chainId={chainId} />
   }
 
   const LoadingRow = (

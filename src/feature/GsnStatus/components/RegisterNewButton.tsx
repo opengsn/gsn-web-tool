@@ -6,7 +6,7 @@ import { ROUTES } from '../../../constants/routes'
 const RegisterNewButton = () => {
   return (
     <Link to={ROUTES.RegisterNew} style={{ textDecoration: 'none' }}>
-      <Button.Contained>
+      <Button.Contained size='large'>
         <Icon.PlusCircleFill />
         &nbsp; &nbsp;<Typography variant={VariantType.H5}>Register New Relay</Typography>
       </Button.Contained>
