@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import Accordion, { AccordionDetails, AccordionSummary } from '../../../../components/atoms/Accordion'
-import { Box, Typography, VariantType } from '../../../../components/atoms'
+import { Box, Typography } from '../../../../components/atoms'
 import { RegisterSteps } from './RegisterFlowSteps'
 
 interface IAccordionStep {
@@ -15,10 +15,10 @@ const AccordionStep: FC<IAccordionStep> = ({ children, title, step, expanded }) 
     <Accordion expanded={expanded}>
       <AccordionSummary>
         <Box display='flex' gap='10px' width='100%' alignItems='center'>
-          <Typography variant={VariantType.H5} fontWeight={600}>
+          <Typography variant={'body1'} fontWeight={600}>
             Step {step + 1}:
           </Typography>
-          <Typography variant={VariantType.H5} fontWeight={500}>
+          <Typography variant={'body1'} fontWeight={500}>
             {title}
           </Typography>
         </Box>

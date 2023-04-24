@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import { AccordionBase, AccordionSummaryBase } from '../../../../components/atoms/Accordion'
-import { Box, Icon, Typography, VariantType } from '../../../../components/atoms'
+import { Box, Icon, Typography } from '../../../../components/atoms'
 import { colors } from '../../../../theme'
 import { RegisterSteps } from './RegisterFlowSteps'
 
@@ -27,10 +27,10 @@ const AccordionSuccess: FC<IAccordionSuccessProps> = ({ children, title, step })
       >
         <Box display='flex' gap='10px' width='100%' alignItems='center'>
           <Icon.Success />
-          <Typography variant={VariantType.H5} color={colors.success} fontWeight={600}>
+          <Typography variant={'body1'} color={'success.main'} fontWeight={600}>
             Step {step + 1}:
           </Typography>
-          <Typography variant={VariantType.H5} color={colors.success} fontWeight={500}>
+          <Typography variant={'body1'} color={'success.main'} fontWeight={500}>
             {title}
           </Typography>
           {children}

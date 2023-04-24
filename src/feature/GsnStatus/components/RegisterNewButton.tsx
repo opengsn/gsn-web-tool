@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Typography, Icon, VariantType } from '../../../components/atoms'
+import { Button, Typography, Icon } from '../../../components/atoms'
 import { ROUTES } from '../../../constants/routes'
 
 const RegisterNewButton = () => {
@@ -8,7 +8,7 @@ const RegisterNewButton = () => {
     <Link to={ROUTES.RegisterNew} style={{ textDecoration: 'none' }}>
       <Button.Contained size='large'>
         <Icon.PlusCircleFill />
-        &nbsp; &nbsp;<Typography variant={VariantType.H5}>Register New Relay</Typography>
+        &nbsp; &nbsp;<Typography variant={'body1'}>Register New Relay</Typography>
       </Button.Contained>
     </Link>
   )

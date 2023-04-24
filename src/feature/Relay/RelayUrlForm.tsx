@@ -4,7 +4,7 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 
 import { Flip, toast } from 'react-toastify'
 
-import { Box, Typography, VariantType, TextField, Button, ButtonType } from '../../components/atoms'
+import { Box, Typography, TextField, Button, ButtonType } from '../../components/atoms'
 
 import { isIP } from 'is-ip'
 
@@ -97,10 +97,10 @@ export default function RelayUrlForm() {
     return (
       <Box pt={{ xs: '30px', md: '130px' }} textAlign='center' mx='auto' width={{ md: '900px', xs: '95%' }}>
         <Box mb={{ md: '70px', xs: '20px' }}>
-          <Typography variant={isDesktop ? VariantType.H1 : VariantType.H3}>Relay URL</Typography>
+          <Typography variant={'h4'}>Relay URL</Typography>
         </Box>
         <Box mb='20px' textAlign='start'>
-          <Typography variant={isDesktop ? VariantType.H5 : VariantType.XSMALL}>{texts.relayUrl.description}</Typography>
+          <Typography variant={'body2'}>{texts.relayUrl.description}</Typography>
         </Box>
         <Box component='form' onSubmit={getRelayForm.handleSubmit}>
           <Box mb={{ xs: '10px', md: '40px' }}>

@@ -1,10 +1,9 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import React, { useState, createContext } from 'react'
-import { Typography, VariantType } from '../../../../../components/atoms'
+import { Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
-import { colors } from '../../../../../theme'
 import CopyHash from '../../../../../components/atoms/CopyHash'
 
 export interface FunderContextInterface {
@@ -45,7 +44,7 @@ export default function Funder({ success }: IProps) {
   if (success ?? false) {
     return (
       <>
-        <Typography variant={VariantType.XSMALL} color={colors.grey}>
+        <Typography variant='body2' color={'grey.600'}>
           Relay funded with {funds} ETH
         </Typography>
         <CopyHash copyValue={hash} />

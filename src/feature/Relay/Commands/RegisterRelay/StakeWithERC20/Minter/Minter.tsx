@@ -10,8 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
-import { Typography, VariantType } from '../../../../../../components/atoms'
-import { colors } from '../../../../../../theme'
+import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 
 export interface MinterContextInterface {
@@ -99,7 +98,7 @@ export default function Minter({ success }: IProps) {
   if (success) {
     return (
       <>
-        <Typography variant={VariantType.XSMALL} color={colors.grey}>
+        <Typography variant='body2' color={'grey.600'}>
           Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
         </Typography>
         <CopyHash copyValue={hash} />

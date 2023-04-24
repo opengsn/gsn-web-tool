@@ -1,5 +1,5 @@
 export { Box, TableBody, Grid, Divider, CircularProgress } from '@mui/material'
-export { default as Typography, VariantType } from './Typography'
+export { default as Typography } from './Typography'
 export { default as Button, ButtonType } from './Button'
 export { default as Icon } from './Icon'
 export { default as Card, CardContent, CardHeader } from './Card'

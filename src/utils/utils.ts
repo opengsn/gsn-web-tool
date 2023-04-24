@@ -25,6 +25,10 @@ export const truncateFromMiddle = (fullStr: string = '', strLen: number, middleS
   return fullStr.substr(0, frontChars) + middleStr + fullStr.substr(fullStr.length - backChars)
 }
 
-export const copyToClipboard = (text: string) => {
-  void navigator.clipboard.writeText(text)
+export async function copyTextToClipboard(text: string) {
+  if ('clipboard' in navigator) {
+    return await navigator.clipboard.writeText(text)
+  } else {
+    return document.execCommand('copy', true, text)
+  }
 }
