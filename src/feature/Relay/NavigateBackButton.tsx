@@ -1,20 +1,15 @@
-import Button from 'react-bootstrap/Button'
 import { useNavigate } from 'react-router-dom'
-import { ArrowReturnLeft } from 'react-bootstrap-icons'
+import { Box, Button } from '../../components/atoms'
 
-export default function NavigateBackButton ({ autoFocus, abortFetch }: { autoFocus?: boolean, abortFetch?: unknown }) {
+export default function NavigateBackButton({ autoFocus, abortFetch }: { autoFocus?: boolean; abortFetch?: unknown }) {
   const navigate = useNavigate()
   const handleDeleteRelayData = () => {
     navigate(-1)
   }
 
-  return (<div className="p-3 col-1">
-    <div className="row"><Button variant="secondary"
-      className="rounded-pill"
-      onClick={handleDeleteRelayData}
-      autoFocus={autoFocus !== undefined ? autoFocus : false}>
-      <ArrowReturnLeft />
-    </Button>
-    </div>
-  </div>)
+  return (
+    <Box p={1}>
+      <Button.Contained onClick={handleDeleteRelayData}>Back</Button.Contained>
+    </Box>
+  )
 }

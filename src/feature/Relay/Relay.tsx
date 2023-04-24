@@ -10,6 +10,7 @@ import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
+import ChainIdHandler from './components/ChainIdHandler'
 
 export default function Relay() {
   const dispatch = useAppDispatch()
@@ -75,7 +76,7 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {connectedToWrongChainId ? <>Wrong chain</> : <RelayCommands />}
+        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
       </Box>
     )
   }

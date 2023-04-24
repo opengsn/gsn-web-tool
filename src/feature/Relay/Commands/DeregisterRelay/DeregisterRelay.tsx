@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Collapse from 'react-bootstrap/Collapse'
-import Button from 'react-bootstrap/Button'
+import { Button } from '../../../../components/atoms'
+import Collapse from '../../../../components/atoms/Collapse'
 
-export default function DeregisterRelay () {
+export default function DeregisterRelay() {
   const [showDeregisterRelay, setShowDeregisterRelay] = useState(false)
 
   const handleShowDeregisterRelay = () => {
@@ -11,17 +11,11 @@ export default function DeregisterRelay () {
 
   return (
     <>
-      <Button
-        onClick={handleShowDeregisterRelay}
-        aria-controls="register-relay-form"
-        aria-expanded={showDeregisterRelay}
-        variant="danger"
-        className="mt-2"
-      >
+      <Button.Contained onClick={handleShowDeregisterRelay} aria-controls='register-relay-form' aria-expanded={showDeregisterRelay}>
         Deregister
-      </Button>
+      </Button.Contained>
       <Collapse in={showDeregisterRelay}>
-        <div className="border p-3" id="register-relay-form">
+        <div className='border p-3' id='register-relay-form'>
           <div>WIP</div>
         </div>
       </Collapse>

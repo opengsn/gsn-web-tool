@@ -6,7 +6,7 @@ import { BigNumber, Contract, ethers, utils } from 'ethers'
 
 import BlockExplorerUrl from '../components/BlockExplorerUrl'
 import { TokenValueInfo } from './TokenValueInfo'
-import { List, ListItem, CardContent } from '../../../components/atoms'
+import { Box, Typography } from '../../../components/atoms'
 
 interface RelayHubInfoProps {
   relayHubAddress: string
@@ -85,20 +85,27 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
   }
 
   return (
-    <CardContent>
-      <List>
-        <ListItem>
-          RelayHub: <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />{' '}
-          <b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
-        </ListItem>
-        {hubStateData !== undefined ? (
-          <>
-            <ListItem>
-              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-              Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.{' '}
-              {stakingTokens.length > 0 ? (
-                <span>
-                  token{stakingTokens.length > 1 ? 's' : null}:{' '}
+    <Box mt={4}>
+      <Box>
+        <Typography variant='body2' fontWeight={600}>
+          Relay Hub:{' '}
+        </Typography>
+        <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />
+      </Box>
+      {hubStateData !== undefined ? (
+        <>
+          <Box>
+            {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+            <Typography variant='body2' fontWeight={600}>
+              Stake:
+            </Typography>{' '}
+            <Typography variant='body2'>lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.</Typography>
+            {stakingTokens.length > 0 ? (
+              <>
+                <Typography variant='body2' fontWeight={600}>
+                  token{stakingTokens.length > 1 ? 's' : null}:
+                </Typography>{' '}
+                <Typography variant='body2'>
                   {stakingTokens.map((foundToken: IFoundToken) => {
                     return (
                       <TokenValueInfo
@@ -109,18 +116,23 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
                       />
                     )
                   })}
-                </span>
-              ) : null}
-            </ListItem>
-            <ListItem>
-              <>
-                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-                Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+                </Typography>
               </>
-            </ListItem>
-          </>
-        ) : null}
-      </List>
-    </CardContent>
+            ) : null}
+          </Box>
+          <Box>
+            <Typography variant='body2' fontWeight={600}>
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+              Relay Fee:
+            </Typography>{' '}
+            <Typography variant='body2'>
+              <>
+                {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+              </>
+            </Typography>
+          </Box>
+        </>
+      ) : null}
+    </Box>
   )
 }

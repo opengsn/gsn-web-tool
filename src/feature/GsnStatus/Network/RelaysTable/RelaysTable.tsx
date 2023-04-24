@@ -4,8 +4,16 @@ import { GsnNetworkRelay } from '../../networkListSlice'
 import Balance from './Balance'
 import RelayLine from './RelayLine'
 import RelayUrl from './RelayUrl'
-import { Box } from '../../../../components/atoms'
-import Table, { TableRow } from '../../../../components/atoms/Table'
+import {
+  Box,
+  TableHead as MuiTableHead,
+  Typography,
+  TableBody as MuiTableBody,
+  Table,
+  TableCell,
+  TableContainer,
+  TableRow
+} from '../../../../components/atoms'
 import { colors } from '../../../../theme'
 
 interface RelaysTableProps {
@@ -15,17 +23,35 @@ interface RelaysTableProps {
 
 export default function RelaysTable({ relays, chain }: RelaysTableProps) {
   const TableHead = () => (
-    <thead>
-      <tr>
-        <th>url</th>
-        <th>status</th>
-        <th>version</th>
-        <th>
-          <abbr title='manager/worker'>address</abbr>
-        </th>
-        <th>balance</th>
-      </tr>
-    </thead>
+    <MuiTableHead>
+      <TableRow>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Url
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Status
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Version
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Address
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Balance
+          </Typography>
+        </TableCell>
+      </TableRow>
+    </MuiTableHead>
   )
 
   const TableBody = () => {
@@ -35,35 +61,37 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
       } else {
         return (
           <TableRow key={x.manager}>
-            <td>
+            <TableCell>
               <RelayUrl url={x.url} />
-            </td>
-            <td colSpan={2}>
+            </TableCell>
+            <TableCell>
               <Box component='span' color={colors.red}>
                 {x.errorMsg}
               </Box>
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
               <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
-            </td>
-            <td>
+            </TableCell>
+            <TableCell>
               <Balance address={x.manager} chainId={chain.id} />
-            </td>
-            <td></td>
+            </TableCell>
+            <TableCell>{''}</TableCell>
           </TableRow>
         )
       }
     })
 
-    return <tbody>{content}</tbody>
+    return <MuiTableBody>{content}</MuiTableBody>
   }
 
   return (
-    <Box mx='15px'>
-      <Table>
-        <TableHead />
-        <TableBody />
-      </Table>
+    <Box mt={4}>
+      <TableContainer>
+        <Table>
+          <TableHead />
+          <TableBody />
+        </Table>
+      </TableContainer>
     </Box>
   )
 }

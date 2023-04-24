@@ -17,14 +17,16 @@ export default function NetworkCard({ network }: NetworkCardProps) {
   return (
     <Box mt='20px'>
       <Card>
-        <NetworkHeader networkAnchor={chain.network} group={chain.gsn.group} name={chain.name} />
-        <RelayHubInfo
-          blockExplorerUrl={chain.blockExplorers?.default.url}
-          relayHubAddress={relayHubAddress}
-          RelayHubAbi={RelayHubAbi}
-          chainId={chain.id}
-        />
-        <RelaysTable relays={relays} chain={chain} />
+        <Box p={4}>
+          <NetworkHeader networkAnchor={chain.network} group={chain.gsn.group} name={chain.name} />
+          <RelayHubInfo
+            blockExplorerUrl={chain.blockExplorers?.default.url}
+            relayHubAddress={relayHubAddress}
+            RelayHubAbi={RelayHubAbi}
+            chainId={chain.id}
+          />
+          <RelaysTable relays={relays} chain={chain} />
+        </Box>
       </Card>
     </Box>
   )

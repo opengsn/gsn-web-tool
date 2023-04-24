@@ -12,7 +12,6 @@ export default function ChainsList() {
   return (
     <>
       <Header />
-      {/* mx-0 prevents horizontal scrollbar from appearing within container-fluid  */}
       <Grid container px='12px'>
         <Grid item xs={12} md={3}>
           <NetworkLinksNew />

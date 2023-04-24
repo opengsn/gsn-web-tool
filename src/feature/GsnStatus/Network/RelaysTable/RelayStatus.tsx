@@ -1,5 +1,5 @@
 import { colors } from '../../../../theme'
-import { Box } from '../../../../components/atoms'
+import { Box, Typography } from '../../../../components/atoms'
 
 export interface RelayStatusProps {
   ready: boolean
@@ -7,8 +7,8 @@ export interface RelayStatusProps {
 
 export default function RelayStatus({ ready }: RelayStatusProps) {
   return (
-    <Box component='span' sx={{ color: ready ? colors.success : colors.warning }}>
-      {ready ? 'Ready' : 'pending'}
+    <Box component='span' sx={{ color: ready ? 'success.main' : 'warning.main' }}>
+      <Typography variant='body2'> {ready ? 'Ready' : 'Pending'}</Typography>
     </Box>
   )
 }

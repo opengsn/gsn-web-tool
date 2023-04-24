@@ -5,7 +5,7 @@ import RelayStatus from './RelayStatus'
 import RelayUrl from './RelayUrl'
 import { RelayVersion } from './RelayVersion'
 import { ViewDetailsButton } from './ViewDetailsButton'
-import { TableRow } from '../../../../components/atoms'
+import { Box, TableCell, TableRow } from '../../../../components/atoms'
 
 export interface RelayLineProps {
   url: string
@@ -26,30 +26,30 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
 
   return (
     <TableRow key={relayManagerAddress}>
-      <td>
+      <TableCell>
         <RelayUrl url={url} />
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         <RelayStatus ready={ready} />
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
         <RelayVersion version={version} />
-      </td>
-      <td>
-        <div>
-          <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
-        </div>
-        <div>
-          <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
-        </div>
-      </td>
-      <td>
-        <Balance address={relayManagerAddress} chainId={parseInt(chainId)} />
-        <Balance address={relayWorkerAddress} chainId={parseInt(chainId)} />
-      </td>
-      <td>
+      </TableCell>
+      <TableCell>
+        <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
+        <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
+      </TableCell>
+      <TableCell>
+        <Box>
+          <Balance address={relayManagerAddress} chainId={parseInt(chainId)} />
+        </Box>
+        <Box>
+          <Balance address={relayWorkerAddress} chainId={parseInt(chainId)} />
+        </Box>
+      </TableCell>
+      <TableCell>
         <ViewDetailsButton url={url} />
-      </td>
+      </TableCell>
     </TableRow>
   )
 }

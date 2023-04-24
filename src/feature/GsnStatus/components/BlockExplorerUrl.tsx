@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Icon } from '../../../components/atoms'
+import { Box, Button, Icon, Typography } from '../../../components/atoms'
 
 interface IProps {
   address: string
@@ -17,6 +17,7 @@ export default function BlockExplorerUrl({ address, url }: IProps) {
       setCopied(false)
     }
   }
+
   const copyButton = (
     <Button.Icon
       onClick={() => {
@@ -43,9 +44,9 @@ export default function BlockExplorerUrl({ address, url }: IProps) {
   }
 
   return (
-    <>
+    <Typography variant='body2'>
       {addressElem}
-      {copyButton}
-    </>
+      <Box component='span'>{copyButton}</Box>
+    </Typography>
   )
 }
