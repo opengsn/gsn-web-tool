@@ -3,11 +3,12 @@ import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
 import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
-import { isLocalHost, truncateFromMiddle } from '../../../../../../utils'
+import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
 import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
+import chains from '../../../../../../assets/chains.json'
 import { useToken } from 'wagmi'
 
 interface IProps {
@@ -47,33 +48,39 @@ const TokenSelection: FC<IProps> = ({ success }) => {
     getTokenAddress.setFieldValue('token', address)
   }
 
-  // const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
+  const supportedTokens = chains.find((c) => c.id === chainId)
 
-  const elements = [
-    {
-      label: 'Suggested Tokens from server',
-      children: (
-        <SuggestedTokenFromServer chainId={chainId} handleChangeToken={handleChangeToken} chain={chain} getTokenAddress={getTokenAddress} />
-      ),
-      disabled: radioValue !== 0,
-      show: chain.stakingTokens?.length !== undefined && chain.stakingTokens?.length > 0
-    },
-    {
-      label: 'Insert ERC20 token address',
-      children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} />,
-      disabled: radioValue !== 1,
-      show: true
-    },
-    {
-      label: 'Fetch first available token',
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      children: <></>,
-      disabled: radioValue !== 2,
-      show: true
-    }
-  ]
-
-  const suggestedTokens = elements[0]
+  const elements =
+    supportedTokens != null
+      ? [
+          {
+            label: 'Suggested Tokens from server',
+            children: (
+              <SuggestedTokenFromServer
+                chainId={chainId}
+                handleChangeToken={handleChangeToken}
+                chain={chain}
+                getTokenAddress={getTokenAddress}
+              />
+            ),
+            disabled: radioValue !== 0,
+            key: 0
+          }
+        ]
+      : [
+          {
+            label: 'Insert ERC20 token address',
+            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} />,
+            disabled: radioValue !== 1,
+            key: 1
+          },
+          {
+            label: 'Fetch first available token',
+            children: <></>,
+            disabled: radioValue !== 2,
+            key: 2
+          }
+        ]
 
   if (success) {
     return (
@@ -106,52 +113,35 @@ const TokenSelection: FC<IProps> = ({ success }) => {
 
   return (
     <Box component='form' onSubmit={getTokenAddress.handleSubmit}>
-      {isLocalHost
-        ? (
-        <Box>
-          {elements.map((element, index) => {
-            if (element.show) {
-              return (
-                <Paper elevation={radioValue === index ? 5 : 2} key={index}>
-                  <Box my={4} p={4}>
-                    <Box display='flex'>
-                      <Box>
-                        <Button.Radio
-                          checked={radioValue === index}
-                          onChange={() => {
-                            setRadioValue(index)
-                          }}
-                        />
-                      </Box>
-                      <Box>
-                        <Typography>{element.label}</Typography>
-                        {element.children}
-                        <Box mt={2} width='200px'>
-                          <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
-                            Fetch Token
-                          </Button.Contained>
-                        </Box>
-                      </Box>
+      <Box>
+        {elements.map((element) => {
+          return (
+            <Paper elevation={radioValue === element.key ? 5 : 2} key={element.key}>
+              <Box my={4} p={4}>
+                <Box display='flex'>
+                  <Box>
+                    <Button.Radio
+                      checked={!element.disabled}
+                      onChange={() => {
+                        setRadioValue(element.key)
+                      }}
+                    />
+                  </Box>
+                  <Box>
+                    <Typography>{element.label}</Typography>
+                    {element.children}
+                    <Box mt={2} width='200px'>
+                      <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
+                        Fetch Token
+                      </Button.Contained>
                     </Box>
                   </Box>
-                </Paper>
-              )
-            }
-            return <></>
-          })}
-        </Box>
+                </Box>
+              </Box>
+            </Paper>
           )
-        : (
-        <Box>
-          <Box>
-            <Typography>{suggestedTokens.label}</Typography>
-            {suggestedTokens.children}
-          </Box>
-          <Box>
-            <Button.Contained type={ButtonType.SUBMIT}>Fetch Token</Button.Contained>
-          </Box>
-        </Box>
-          )}
+        })}
+      </Box>
     </Box>
   )
 }
