@@ -50,6 +50,7 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
             Balance
           </Typography>
         </TableCell>
+        <TableCell>{''}</TableCell>
       </TableRow>
     </MuiTableHead>
   )
