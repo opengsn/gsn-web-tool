@@ -1,9 +1,6 @@
 import { useContext, useState } from 'react'
-import { toast } from 'react-toastify'
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { TokenContext } from './TokenContextWrapper'
-
-import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 import StakeManager from '../../../../../contracts/StakeManager.json'
