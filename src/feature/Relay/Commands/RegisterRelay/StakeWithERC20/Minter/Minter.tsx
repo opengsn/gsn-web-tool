@@ -80,6 +80,7 @@ export default function Minter({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
+      console.log(data)
       !isError && dispatch(jumpToStep(3))
     }
   })

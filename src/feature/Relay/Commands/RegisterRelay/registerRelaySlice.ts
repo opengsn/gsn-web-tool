@@ -173,11 +173,11 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
     } catch (error: any) {
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(3, null)
+          return fulfillWithValue(4, null)
         case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(4, null)
         case error.message.includes('stake amount is too small'):
-          return fulfillWithValue(3, null)
+          return fulfillWithValue(4, null)
         default:
           return rejectWithValue(null)
       }
