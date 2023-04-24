@@ -1,15 +1,16 @@
 import { useRef, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
-import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
+import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Box, Divider, Typography, VariantType } from '../../components/atoms'
+import { Accordion, AccordionSummary, Box, Divider, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
+import ChainIdHandler from './components/ChainIdHandler'
 
 export default function Relay() {
   const dispatch = useAppDispatch()
@@ -19,9 +20,8 @@ export default function Relay() {
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
   const abortFetch = useRef<unknown>()
-  const isDesktop = useIsDesktop()
   const [expanded, setExpanded] = useState<boolean>(false)
-  const variant = isDesktop ? VariantType.H4 : VariantType.H5
+  const variant = 'body1'
 
   const [searchParams] = useSearchParams()
 
@@ -41,7 +41,9 @@ export default function Relay() {
     return (
       <Box width='95%' mx='auto' py='25px'>
         <Box mb='25px' textAlign='center'>
-          <Typography variant={VariantType.H2}>Relay server info</Typography>
+          <Typography variant='h4' fontWeight={600}>
+            Relay server info
+          </Typography>
         </Box>
         <Accordion
           expanded={expanded}
@@ -74,7 +76,7 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {connectedToWrongChainId ? <>Wrong chain</> : <RelayCommands />}
+        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
       </Box>
     )
   }

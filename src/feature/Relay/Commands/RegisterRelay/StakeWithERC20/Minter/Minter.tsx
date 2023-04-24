@@ -10,8 +10,8 @@ import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
-import { Typography, VariantType } from '../../../../../../components/atoms'
-import { colors } from '../../../../../../theme'
+import { Typography } from '../../../../../../components/atoms'
+import CopyHash from '../../../../../../components/atoms/CopyHash'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -35,6 +35,7 @@ export default function Minter({ success }: IProps) {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
+  const [hash, setHash] = useState<string>()
 
   useEffect(() => {
     if (currentStep === 2) {
@@ -43,7 +44,7 @@ export default function Minter({ success }: IProps) {
     return () => {
       setMintAmount(minimumStakeForToken)
     }
-  }, [minimumStakeForToken, setMintAmount])
+  }, [minimumStakeForToken, setMintAmount, currentStep])
 
   const {
     data: tokenBalanceData,
@@ -78,7 +79,8 @@ export default function Minter({ success }: IProps) {
     mode: 'recklesslyUnprepared',
     ...defaultStateSwitchers,
     onSuccess(data) {
-      console.log('mintToken', data) // take hash from here
+      setHash(data.hash)
+      console.log(data)
       !isError && dispatch(jumpToStep(3))
     }
   })
@@ -96,9 +98,12 @@ export default function Minter({ success }: IProps) {
 
   if (success) {
     return (
-      <Typography variant={VariantType.XSMALL} color={colors.grey}>
-        Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
-      </Typography>
+      <>
+        <Typography variant='body2' color={'grey.600'}>
+          Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
+        </Typography>
+        <CopyHash copyValue={hash} />
+      </>
     )
   }
 

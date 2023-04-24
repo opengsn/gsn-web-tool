@@ -1,6 +1,5 @@
 import { getDefaultProvider, providers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { Spinner } from 'react-bootstrap'
 import { Route, Routes } from 'react-router-dom'
 
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
@@ -26,6 +25,7 @@ export default function GlobalWagmiWarpper() {
     const fetchNets = async () => {
       try {
         if (gsnNetworks.length === 0) {
+          console.log(gsnNetworks)
           const networksForWagmi: ChainWithGsn[] = await getNetworks()
           dispatch(fetchNetworks({ networks: networksForWagmi })).catch(console.error)
           setGsnNetworks(networksForWagmi)
@@ -34,18 +34,12 @@ export default function GlobalWagmiWarpper() {
         console.error(e)
       }
     }
-    fetchNets().catch(console.error)
+    fetchNets().catch((e) => {
+      console.error(e)
+    })
   }, [dispatch, gsnNetworks.length])
 
-  const LoadingCentered = (
-    <div className='d-flex align-items-center justify-content-center vh-100 bg-white'>
-      <div>
-        <Spinner variant='success' animation='grow'></Spinner>
-      </div>
-    </div>
-  )
-
-  if (gsnNetworks.length === 0) return LoadingCentered
+  if (gsnNetworks.length === 0) return <>loading...</>
   const { chains, provider: wagmiProvider } = configureChains(gsnNetworks, [
     infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
     jsonRpcProvider({

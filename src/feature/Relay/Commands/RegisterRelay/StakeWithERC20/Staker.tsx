@@ -1,9 +1,6 @@
-import { useContext } from 'react'
-import { toast } from 'react-toastify'
+import { useContext, useState } from 'react'
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { TokenContext } from './TokenContextWrapper'
-
-import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 import StakeManager from '../../../../../contracts/StakeManager.json'
@@ -11,6 +8,7 @@ import { useAppSelector } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
 import { Alert } from '../../../../../components/atoms'
+import CopyHash from '../../../../../components/atoms/CopyHash'
 
 interface IProps {
   success: boolean
@@ -19,6 +17,7 @@ interface IProps {
 export default function Staker({ success }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { address } = useAccount()
+  const [hash, setHash] = useState<string>()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress } = relay
@@ -59,16 +58,17 @@ export default function Staker({ success }: IProps) {
     ...config,
     ...defaultStateSwitchers,
     onSuccess(data) {
-      const text = 'Staked relay'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+      setHash(data.hash)
       setListen(true)
     }
   })
 
-  if (success) <>success</>
+  if (success) <CopyHash copyValue={hash} />
 
   if (prepareStakeTxError !== null) {
-    return <Alert severity='error'>Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}</Alert>
+    return (
+      <Alert severity='error'>Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}</Alert>
+    )
   }
 
   return (

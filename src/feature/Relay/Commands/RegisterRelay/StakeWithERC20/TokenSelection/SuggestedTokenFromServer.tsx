@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
-import { Button, Icon, Typography, VariantType, Box, ButtonType } from '../../../../../../components/atoms'
-import { colors } from '../../../../../../theme'
+import { Button, Icon, Typography, Box, ButtonType } from '../../../../../../components/atoms'
 import TokenSelectOption from '../TokenSelectOption'
 import { ChainWithGsn } from '../../../../../../types'
 
@@ -16,10 +15,10 @@ const SuggestedTokenFromServer: FC<IProps> = ({ chainId, chain, getTokenAddress,
     <Box>
       <Typography>Suggested Tokens from server</Typography> &nbsp;
       <Button.Icon onClick={() => {}}>
-        <Icon.Info fill={colors.black} width='16px' height='16px' />
+        <Icon.Info fill={'black'} width='16px' height='16px' />
       </Button.Icon>
       <Box>
-        <Typography variant={VariantType.XSMALL}>Select token from list:</Typography>
+        <Typography variant='body2'>Select token from list:</Typography>
       </Box>
       {chain.stakingTokens?.map((stakingToken) => {
         return (
@@ -34,7 +33,7 @@ const SuggestedTokenFromServer: FC<IProps> = ({ chainId, chain, getTokenAddress,
       })}
       <Box width='180px' height='60px' mt='20px'>
         <Button.Contained type={ButtonType.SUBMIT}>
-          <Typography variant={VariantType.H6}>Fetch token</Typography>
+          <Typography variant={'subtitle2'}>Fetch token</Typography>
         </Button.Contained>
       </Box>
     </Box>

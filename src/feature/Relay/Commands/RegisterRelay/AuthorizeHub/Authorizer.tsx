@@ -10,7 +10,7 @@ export default function Authorizer() {
 
   return (
     <Modal open={true}>
-      <Typography>Waiting for server</Typography>
+      <Typography variant={'h5'}>Waiting for server</Typography>
       <AuthorizeHub setListen={setListen} listen={listen} />
       <HubAuthorizedListener listen={listen} setListen={setListen} />
     </Modal>

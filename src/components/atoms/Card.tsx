@@ -1,13 +1,12 @@
 import React, { FC, ReactNode } from 'react'
 import { Card as MuiCard, CardHeader as MuiCardHeader, CardContent as MuiCardContent, styled } from '@mui/material'
-import { colors } from '../../theme'
 
 interface IProps {
   children: ReactNode
 }
 
 const Card: FC<IProps> = ({ children }) => {
-  return <MuiCard>{children}</MuiCard>
+  return <MuiCard variant='outlined'>{children}</MuiCard>
 }
 
 interface ICardHeaderProps {
@@ -15,7 +14,7 @@ interface ICardHeaderProps {
 }
 
 export const CardHeaderBase = styled(MuiCardHeader)<ICardHeaderProps>(({ theme }) => ({
-  backgroundColor: colors.cardBackground
+  backgroundColor: theme.palette.grey[100]
 }))
 
 export const CardHeader: FC<ICardHeaderProps> = ({ title }) => {

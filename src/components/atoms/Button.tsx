@@ -28,7 +28,16 @@ const Contained: FC<IProps> = ({ children, onClick, disabled, color, type, size 
 
 const Icon: FC<IProps> = ({ children, onClick, disabled }) => {
   return (
-    <MuiIconButton onClick={onClick} disabled={disabled} disableRipple>
+    <MuiIconButton
+      onClick={onClick}
+      disabled={disabled}
+      disableRipple
+      sx={{
+        '&.MuiButtonBase-root': {
+          padding: '0px 8px'
+        }
+      }}
+    >
       {children}
     </MuiIconButton>
   )

@@ -1,5 +1,5 @@
 import { useAccount, useBalance } from 'wagmi'
-import { TableCell, TableRow, Typography, VariantType } from '../../../../components/atoms'
+import { TableCell, TableRow, Typography } from '../../../../components/atoms'
 
 interface stakingTokenProps {
   stakingToken: string
@@ -29,13 +29,13 @@ export default function StakingToken({ stakingToken, chainId }: stakingTokenProp
   return (
     <TableRow>
       <TableCell>
-        <Typography variant={VariantType.H6}>Staking Token</Typography>
+        <Typography variant={'subtitle2'}>Staking Token</Typography>
       </TableCell>
       <TableCell>
-        <Typography variant={VariantType.H6}>{stakingToken}</Typography>
+        <Typography variant={'subtitle2'}>{stakingToken}</Typography>
       </TableCell>
       <TableCell>
-        <Typography variant={VariantType.H6}>
+        <Typography variant={'subtitle2'}>
           <BalanceData />
         </Typography>
       </TableCell>

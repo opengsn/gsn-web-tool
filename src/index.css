@@ -1,8 +1,0 @@
-@font-face {
-  font-family: 'Inter';
-  src: url('assets/fonts/Inter-Regular.ttf') format('truetype');
-}
-
-* {
-  font-family: 'Inter', sans-serif;
-}

@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
 import { isSameAddress } from '../../../utils'
-import { TableCell, TableRow, Typography, VariantType } from '../../../components/atoms'
+import { TableCell, TableRow, Typography } from '../../../components/atoms'
 
 const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
 
@@ -38,13 +38,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>
+                <Typography variant={'subtitle2'}>
                   <span>
                     Balance: <b>{relayManagerBalanceData?.formatted}</b>
                   </span>{' '}
@@ -57,13 +57,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>
+                <Typography variant={'subtitle2'}>
                   <span>
                     Balance: <b>{relayWorkerBalanceData?.formatted}</b>
                   </span>{' '}
@@ -77,13 +77,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>
+                <Typography variant={'subtitle2'}>
                   <b>{accountIsOwner ? 'currently connected' : 'switch to owner to enable actions'}</b>
                 </Typography>
               </TableCell>
@@ -93,13 +93,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</Typography>
+                <Typography variant={'subtitle2'}>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>
+                <Typography variant={'subtitle2'}>
                   <b>Native currency, value in ethers</b>
                 </Typography>
               </TableCell>
@@ -109,10 +109,10 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>
+                <Typography variant={'subtitle2'}>
                   {relayData[x as keyof PingResponse] === true ? <span>ready</span> : <span>not ready</span>}
                 </Typography>
               </TableCell>
@@ -123,10 +123,10 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           data = (
             <>
               <TableCell>
-                <Typography variant={VariantType.H6}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={VariantType.H6}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
             </>

@@ -7,7 +7,7 @@ import { validateConfigOwnerInLineWithStakeManager } from '../relaySlice'
 
 import StakeManager from '../../../contracts/StakeManager.json'
 import StakingToken from './StakeManagerInfo/StakingToken'
-import { TableCell, TableRow, Typography, VariantType } from '../../../components/atoms'
+import { TableCell, TableRow, Typography } from '../../../components/atoms'
 
 interface stakeInfoProps {
   stakeManagerAddress: string
@@ -51,7 +51,7 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
   const LoadingRow = (
     <TableRow>
       <TableCell>
-        <Typography variant={VariantType.H6}>Loading info from stakemanager... If , refreshing the page might help</Typography>
+        <Typography variant={'subtitle2'}>Loading info from stakemanager... If , refreshing the page might help</Typography>
       </TableCell>
     </TableRow>
   )

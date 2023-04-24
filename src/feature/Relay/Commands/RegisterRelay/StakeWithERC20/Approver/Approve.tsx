@@ -2,12 +2,8 @@ import { ethers } from 'ethers'
 import { useContext, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
-import { toast } from 'react-toastify'
-
 import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
-
-import TransactionSuccessToast from '../../../../components/TransactionSuccessToast'
 
 import { TokenContext } from '../TokenContextWrapper'
 
@@ -15,6 +11,7 @@ import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
+import CopyHash from '../../../../../../components/atoms/CopyHash'
 
 interface IProps {
   success: boolean
@@ -24,6 +21,7 @@ export default function Approver({ success }: IProps) {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const dispatch = useAppDispatch()
+  const [hash, setHash] = useState<string>('')
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
@@ -72,8 +70,7 @@ export default function Approver({ success }: IProps) {
     ...config,
     ...defaultStateSwitchers,
     onSuccess(data) {
-      const text = 'Approved Stake Manager for spend'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+      setHash(data.hash)
       !prepareApproveTxIsError && approveTxError == null && !currentAllowanceIsError && dispatch(jumpToStep(4))
     }
   })
@@ -98,7 +95,7 @@ export default function Approver({ success }: IProps) {
     )
   }
 
-  if (success) return <></>
+  if (success) return <CopyHash copyValue={hash} />
 
   return createApproveButton()
 }

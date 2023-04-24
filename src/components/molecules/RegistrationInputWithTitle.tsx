@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Alert, Box, Button, TextField, Typography, VariantType } from '../atoms'
+import { Alert, Box, Button, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 
 interface IProps {
@@ -32,11 +32,11 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   return (
     <Box my='10px'>
       <Box mb='5px'>
-        <Typography variant={VariantType.H6}>{title}</Typography>
+        <Typography variant={'subtitle2'}>{title}</Typography>
       </Box>
       {label != null && (
         <Box>
-          <Typography variant={VariantType.XSMALL}>{label}</Typography>
+          <Typography variant='body2'>{label}</Typography>
         </Box>
       )}
       {onChange != null && (
@@ -53,7 +53,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       )}
       <Box width='150px' mb='10px'>
         <Button.Contained disabled={isLoading || isSuccess} onClick={onClick}>
-          <Typography variant={VariantType.H5}>{isLoading || isSuccess ? <>loading...</> : <>{buttonText}</>}</Typography>
+          <Typography variant={'body2'}>{isLoading || isSuccess ? <>loading...</> : <>{buttonText}</>}</Typography>
         </Button.Contained>
       </Box>
       {!(error == null) && <Alert severity='error'>Error: {error}</Alert>}

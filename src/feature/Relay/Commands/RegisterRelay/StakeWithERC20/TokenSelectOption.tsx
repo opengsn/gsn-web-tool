@@ -3,7 +3,6 @@ import { useToken } from 'wagmi'
 import { Box, Button, Icon, Typography } from '../../../../../components/atoms'
 import { useCopyToClipboard } from '../../../../../hooks'
 import { truncateFromMiddle } from '../../../../../utils'
-import { colors } from '../../../../../theme'
 // import { useNavigate } from 'react-router-dom'
 
 interface IProps {
@@ -15,7 +14,7 @@ interface IProps {
 
 const sx = {
   display: 'flex',
-  border: `1px solid ${colors.black}`,
+  border: '1px solid black',
   alignItems: 'center',
   width: 'fit-content',
   paddingX: '10px',

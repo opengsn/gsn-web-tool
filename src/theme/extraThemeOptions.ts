@@ -3,7 +3,6 @@ type ThemeFontWeightsKeys = 'normal' | 'medium' | 'bold' | 'xBold'
 type ThemeFontSizesKeys = 'xSmall' | 'small' | 'normal' | 'medium' | 'large' | 'xLarge' | 'xxLarge'
 type ThemeBorderRadius = Record<ThemeBorderRadiusKeys, `${number}px` | `${number}%`>
 type ThemeFontWeights = Record<ThemeFontWeightsKeys, number>
-type ThemeFontSizes = Record<ThemeFontSizesKeys, `${number}px`>
 
 declare module '@mui/material/styles' {
   interface Theme extends ExtraThemeOptions {}
@@ -12,7 +11,6 @@ declare module '@mui/material/styles' {
 export interface ExtraThemeOptions {
   borderRadius: ThemeBorderRadius
   fontWeights: ThemeFontWeights
-  fontSizes: ThemeFontSizes
 }
 
 export const extraThemeOptions: ExtraThemeOptions = {
@@ -28,14 +26,5 @@ export const extraThemeOptions: ExtraThemeOptions = {
     medium: 500,
     bold: 700,
     xBold: 900
-  },
-  fontSizes: {
-    xSmall: '14px',
-    small: '16px',
-    normal: '18px',
-    medium: '20px',
-    large: '24px',
-    xLarge: '32px',
-    xxLarge: '40px'
   }
 }

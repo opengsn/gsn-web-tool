@@ -1,16 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { Button, Typography, Icon, VariantType } from '../../../components/atoms'
+import { useNavigate } from 'react-router-dom'
+import { Button, Typography, Icon, Box } from '../../../components/atoms'
 import { ROUTES } from '../../../constants/routes'
 
 const RegisterNewButton = () => {
+  const navigate = useNavigate()
   return (
-    <Link to={ROUTES.RegisterNew} style={{ textDecoration: 'none' }}>
-      <Button.Contained size='large'>
+    <Button.Contained size='large' onClick={() => navigate(ROUTES.RegisterNew)}>
+      <Box height='80px' display='flex' alignItems='center'>
         <Icon.PlusCircleFill />
-        &nbsp; &nbsp;<Typography variant={VariantType.H5}>Register New Relay</Typography>
-      </Button.Contained>
-    </Link>
+        &nbsp; &nbsp;<Typography variant={'body1'}>Register New Relay</Typography>
+      </Box>
+    </Button.Contained>
   )
 }
 

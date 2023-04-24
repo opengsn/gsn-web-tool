@@ -1,6 +1,4 @@
 import React, { FC, Fragment } from 'react'
-import AccordionStep from './AccordionStep'
-import AccordionSuccess from './AccordionSuccess'
 import Funder from './FundRelay/Funder'
 import TokenSelection from './StakeWithERC20/TokenSelection/TokenSelection'
 import TokenContextWrapper from './StakeWithERC20/TokenContextWrapper'
@@ -11,6 +9,8 @@ import StakeAddedListener from './StakeWithERC20/StakeAddedListener'
 import Authorizer from './AuthorizeHub/Authorizer'
 import SuccessModal from '../../../../components/molecules/SuccessModal'
 import ErrorModal from '../../../../components/molecules/ErrorModal'
+import Step from './Step'
+import { Box } from '../../../../components/atoms'
 
 export enum RegisterSteps {
   'Funding relay',
@@ -64,17 +64,11 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
   return (
     <TokenContextWrapper>
       {steps.map((step, index) => (
-        <Fragment key={index}>
-          {currentStep <= step.step
-            ? (
-            <AccordionStep {...step} expanded={currentStep === step.step}>
-              {step.children}
-            </AccordionStep>
-              )
-            : (
-            <AccordionSuccess {...step}>{step.children}</AccordionSuccess>
-              )}
-        </Fragment>
+        <Box key={index} my={3}>
+          <Step {...step} expanded={currentStep === step.step} success={currentStep > step.step}>
+            {step.children}
+          </Step>
+        </Box>
       ))}
       {currentStep === 5 && <Authorizer />}
       {currentStep === 6 && <SuccessModal />}

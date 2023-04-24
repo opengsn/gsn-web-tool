@@ -3,7 +3,7 @@ import { PingResponse } from '../../../types/PingResponse'
 
 import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography, VariantType } from '../../../components/atoms'
+import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '../../../components/atoms'
 
 interface IProps {
   showAllInfo?: boolean
@@ -20,17 +20,17 @@ function RelayInfo({ showAllInfo }: IProps) {
     <TableHead>
       <TableRow>
         <TableCell>
-          <Typography fontWeight={600} variant={VariantType.H6}>
+          <Typography fontWeight={600} variant={'subtitle2'}>
             Name
           </Typography>
         </TableCell>
         <TableCell>
-          <Typography fontWeight={600} variant={VariantType.H6}>
+          <Typography fontWeight={600} variant={'subtitle2'}>
             Value
           </Typography>
         </TableCell>
         <TableCell>
-          <Typography fontWeight={600} variant={VariantType.H6}>
+          <Typography fontWeight={600} variant={'subtitle2'}>
             Extra
           </Typography>
         </TableCell>
@@ -42,20 +42,20 @@ function RelayInfo({ showAllInfo }: IProps) {
     <>
       <TableRow>
         <TableCell>
-          <Typography variant={VariantType.H6}>Current Owner</Typography>
+          <Typography variant={'subtitle2'}>Current Owner</Typography>
         </TableCell>
 
         <TableCell>
-          <Typography variant={VariantType.H6}>loading</Typography>
+          <Typography variant={'subtitle2'}>loading</Typography>
         </TableCell>
         <TableCell>{''}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell>
-          <Typography variant={VariantType.H6}>staking token</Typography>
+          <Typography variant={'subtitle2'}>staking token</Typography>
         </TableCell>
         <TableCell>
-          <Typography variant={VariantType.H6}>loading</Typography>
+          <Typography variant={'subtitle2'}>loading</Typography>
         </TableCell>
         <TableCell>{''}</TableCell>
       </TableRow>

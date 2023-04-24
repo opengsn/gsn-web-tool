@@ -4,12 +4,9 @@ import { useAccount, useProvider } from 'wagmi'
 
 import { useAppDispatch, useAppSelector } from '../../../../hooks'
 import { fetchRegisterStateData } from './registerRelaySlice'
-import Authorizer from './AuthorizeHub/Authorizer'
-import Funder from './FundRelay/Funder'
-import StakeWithERC20 from './StakeWithERC20/TokenContextWrapper'
 
 import { toast } from 'react-toastify'
-import { Box, Button, Icon, Typography, VariantType } from '../../../../components/atoms'
+import { Box, Button, Icon, Typography } from '../../../../components/atoms'
 import Collapse from '../../../../components/atoms/Collapse'
 import RegisterFlowSteps from './RegisterFlowSteps'
 
@@ -103,7 +100,7 @@ export default function RegisterRelay() {
     <Box my='25px'>
       {!showRegisterRelay && (
         <>
-          <Typography variant={VariantType.H6}>
+          <Typography variant={'subtitle2'}>
             Please note before registration:
             <br />
             <Icon.Info /> You are connected to your cryptocurrency wallet.
@@ -114,7 +111,9 @@ export default function RegisterRelay() {
       )}
       <Collapse in={!!showRegisterRelay}>
         <Box textAlign='center' mb='25px'>
-          <Typography variant={VariantType.H2}>Registration</Typography>
+          <Typography variant={'h4'} fontWeight={600}>
+            Registration
+          </Typography>
         </Box>
         <Box>
           <RegisterFlowSteps currentStep={currentStep} />

@@ -7,11 +7,11 @@ const SuccessModal: FC = () => {
   const navigate = useNavigate()
   return (
     <Modal open={true}>
-      <Box>
+      <Box mb={4}>
         <Icon.Success width='40px' height='40px' />
       </Box>
       <Box mb={8}>
-        <Typography>Relay was set successfully</Typography>
+        <Typography variant={'h5'}>Relay was set successfully</Typography>
       </Box>
       <Box display='flex' gap={4} justifyContent='center'>
         <Box width='200px'>

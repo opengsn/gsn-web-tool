@@ -1,10 +1,10 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import React, { useState, createContext } from 'react'
-import { Typography, VariantType } from '../../../../../components/atoms'
+import { Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
-import { colors } from '../../../../../theme'
+import CopyHash from '../../../../../components/atoms/CopyHash'
 
 export interface FunderContextInterface {
   funds: number
@@ -25,6 +25,7 @@ interface IProps {
 export default function Funder({ success }: IProps) {
   const [listen, setListen] = useState(false)
   const [funds, setFunds] = useState<number>(0.5)
+  const [hash, setHash] = useState<string>('')
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress, relayHubAddress } = relay
   const chainId = Number(relay.chainId)
@@ -42,9 +43,12 @@ export default function Funder({ success }: IProps) {
 
   if (success ?? false) {
     return (
-      <Typography variant={VariantType.XSMALL} color={colors.grey}>
-        Relay funded with {funds} ETH
-      </Typography>
+      <>
+        <Typography variant='body2' color={'grey.600'}>
+          Relay funded with {funds} ETH
+        </Typography>
+        <CopyHash copyValue={hash} />
+      </>
     )
   }
 
@@ -60,7 +64,7 @@ export default function Funder({ success }: IProps) {
         handleChangeFunds
       }}
     >
-      <FundButton />
+      <FundButton setHash={setHash} />
       <SetOwnerListener />
     </FunderContext.Provider>
   )
