@@ -130,8 +130,8 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                   <Box>
                     <Typography>{element.label}</Typography>
                     {element.children}
-                    <Box mt={2} width='200px'>
-                      <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
+                    <Box mt={2} width='150px'>
+                      <Button.Contained disabled={element.disabled} size='small' type={ButtonType.SUBMIT}>
                         Fetch Token
                       </Button.Contained>
                     </Box>

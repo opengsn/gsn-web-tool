@@ -3,7 +3,6 @@ type ThemeFontWeightsKeys = 'normal' | 'medium' | 'bold' | 'xBold'
 type ThemeFontSizesKeys = 'xSmall' | 'small' | 'normal' | 'medium' | 'large' | 'xLarge' | 'xxLarge'
 type ThemeBorderRadius = Record<ThemeBorderRadiusKeys, `${number}px` | `${number}%`>
 type ThemeFontWeights = Record<ThemeFontWeightsKeys, number>
-type ThemeFontSizes = Record<ThemeFontSizesKeys, `${number}px`>
 
 declare module '@mui/material/styles' {
   interface Theme extends ExtraThemeOptions {}

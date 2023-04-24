@@ -22,7 +22,6 @@ export default function RelayUrlForm() {
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const isDesktop = useIsDesktop()
 
   useEffect(() => {
     // clean up upon coming back from 'details' page
