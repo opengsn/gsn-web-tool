@@ -65,20 +65,19 @@ export default function Staker({ success }: IProps) {
 
   if (success) <CopyHash copyValue={hash} />
 
-  if (prepareStakeTxError !== null) {
-    return (
-      <Alert severity='error'>Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}</Alert>
-    )
-  }
-
   return (
-    <RegistrationInputWithTitle
-      title='This is a short explanatory text about staking, and the process now happening, and what should be confirmed on the wallet extension.'
-      buttonText='Stake'
-      isLoading={isLoading || isPrepareStakeTxLoading || contractReadLoading}
-      isSuccess={isSuccess}
-      error={stakeTxError?.message}
-      onClick={() => stakeRelayer?.()}
-    />
+    <>
+      <RegistrationInputWithTitle
+        title='This is a short explanatory text about staking, and the process now happening, and what should be confirmed on the wallet extension.'
+        buttonText='Stake'
+        isLoading={isLoading || isPrepareStakeTxLoading || contractReadLoading}
+        isSuccess={isSuccess}
+        error={stakeTxError?.message}
+        onClick={() => stakeRelayer?.()}
+      />
+      {prepareStakeTxError !== null && (
+        <Alert severity='error'>Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}</Alert>
+      )}
+    </>
   )
 }
