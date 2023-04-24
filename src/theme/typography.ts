@@ -2,7 +2,6 @@ import { CSSProperties } from 'react'
 import { Palette } from '@mui/material/styles/createPalette'
 import { TypographyOptions } from '@mui/material/styles/createTypography'
 import { extraThemeOptions } from './extraThemeOptions'
-import { Inter } from './font'
 
 declare module '@mui/material/styles' {
   interface TypographyVariantsOptions {
@@ -20,7 +19,6 @@ declare module '@mui/material/styles' {
 declare module '@mui/material/Typography' {}
 
 export const typography: TypographyOptions | ((palette: Palette) => TypographyOptions) = {
-  fontFamily: Inter,
   h1: {
     fontSize: extraThemeOptions.fontSizes.xxLarge
   },

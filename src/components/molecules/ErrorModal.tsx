@@ -1,15 +1,15 @@
 import React, { FC } from 'react'
 import Modal from '../atoms/Modal'
-import { Box, Button, Icon, Typography } from '../atoms'
+import { Box, Button, Icon, Typography, VariantType } from '../atoms'
 
 const ErrorModal: FC = () => {
   return (
     <Modal open={true}>
-      <Box>
+      <Box mb={4}>
         <Icon.Info width='40px' height='40px' fill='black' />
       </Box>
       <Box>
-        <Typography>Request failed</Typography>
+        <Typography variant={VariantType.H3}>Request failed</Typography>
       </Box>
       <Box width='600px' textAlign='start' mx='auto' mt={4}>
         1. Please make sure that your machine is connected to the electricity <br />

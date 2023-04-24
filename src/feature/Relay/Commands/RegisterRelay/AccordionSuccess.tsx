@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import { AccordionBase, AccordionSummaryBase } from '../../../../components/atoms/Accordion'
-import { Box, Button, Icon, Typography, VariantType } from '../../../../components/atoms'
+import { Box, Icon, Typography, VariantType } from '../../../../components/atoms'
 import { colors } from '../../../../theme'
 import { RegisterSteps } from './RegisterFlowSteps'
 
@@ -13,12 +13,11 @@ const sx = {
 interface IAccordionSuccessProps {
   children?: ReactNode
   title?: string
-  onEdit?: () => void
-  onCopyHash?: () => void
+
   step: RegisterSteps
 }
 
-const AccordionSuccess: FC<IAccordionSuccessProps> = ({ children, onEdit, title, onCopyHash, step }) => {
+const AccordionSuccess: FC<IAccordionSuccessProps> = ({ children, title, step }) => {
   return (
     <AccordionBase expanded={false} sx={sx.root}>
       <AccordionSummaryBase
@@ -35,20 +34,6 @@ const AccordionSuccess: FC<IAccordionSuccessProps> = ({ children, onEdit, title,
             {title}
           </Typography>
           {children}
-          <Box display='flex' ml='auto' alignItems='center'>
-            {onEdit != null && (
-              <Button.Icon onClick={onEdit}>
-                <Icon.Edit />
-              </Button.Icon>
-            )}
-            {onCopyHash != null && (
-              <Button.Text onClick={onCopyHash}>
-                <Typography variant={VariantType.H5} color={colors.success} fontWeight={600}>
-                  Copy hash
-                </Typography>
-              </Button.Text>
-            )}
-          </Box>
         </Box>
       </AccordionSummaryBase>
     </AccordionBase>

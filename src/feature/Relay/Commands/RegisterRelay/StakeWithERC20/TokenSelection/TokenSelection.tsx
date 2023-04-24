@@ -1,5 +1,3 @@
-/* eslint-disable multiline-ternary */
-import { ethers } from 'ethers'
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
@@ -9,7 +7,7 @@ import { isLocalHost, truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
-import { useAppDispatch } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import { useToken } from 'wagmi'
 
 interface IProps {
@@ -18,13 +16,14 @@ interface IProps {
 
 const TokenSelection: FC<IProps> = ({ success }) => {
   const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
+  const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any })
 
   useEffect(() => {
-    if (token != null) {
+    if (token != null && currentStep === 1) {
       refetch().catch(console.error)
     }
-  }, [token])
+  }, [token, currentStep])
 
   const dispatch = useAppDispatch()
   const [radioValue, setRadioValue] = useState(0)
@@ -33,7 +32,6 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       token: ''
     },
     onSubmit: async (values) => {
-      console.log('values', values)
       if (radioValue === 2) {
         const token = await handleFindFirstTokenButton()
         setToken(token)
@@ -49,7 +47,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
     getTokenAddress.setFieldValue('token', address)
   }
 
-  const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
+  // const isAddress = ethers.utils.isAddress(getTokenAddress.values.token)
 
   const elements = [
     {
@@ -79,22 +77,37 @@ const TokenSelection: FC<IProps> = ({ success }) => {
 
   if (success) {
     return (
-      <Box display='flex' gap={2} alignItems='center'>
-        <Icon.Token />
-        <Typography>
-          <b>{tokenData?.name}</b>
-        </Typography>
-        <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-        <Button.Icon onClick={() => {}}>
-          <Icon.Redirect width='14px' height='14px' />
-        </Button.Icon>
-      </Box>
+      <>
+        <Box display='flex' gap={2} alignItems='center'>
+          <Icon.Token />
+          <Typography>
+            <b>{tokenData?.name}</b>
+          </Typography>
+          <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+          <Button.Icon onClick={() => {}}>
+            <Icon.Redirect width='14px' height='14px' />
+          </Button.Icon>
+        </Box>
+        {currentStep === 2 && (
+          <Box ml='auto'>
+            <Button.Icon
+              onClick={() => {
+                setToken(null)
+                dispatch(jumpToStep(RegisterSteps['Token selection']))
+              }}
+            >
+              <Icon.Edit />
+            </Button.Icon>
+          </Box>
+        )}
+      </>
     )
   }
 
   return (
     <Box component='form' onSubmit={getTokenAddress.handleSubmit}>
-      {isLocalHost ? (
+      {isLocalHost
+        ? (
         <Box>
           {elements.map((element, index) => {
             if (element.show) {
@@ -127,7 +140,8 @@ const TokenSelection: FC<IProps> = ({ success }) => {
             return <></>
           })}
         </Box>
-      ) : (
+          )
+        : (
         <Box>
           <Box>
             <Typography>{suggestedTokens.label}</Typography>
@@ -137,19 +151,9 @@ const TokenSelection: FC<IProps> = ({ success }) => {
             <Button.Contained type={ButtonType.SUBMIT}>Fetch Token</Button.Contained>
           </Box>
         </Box>
-      )}
+          )}
     </Box>
   )
 }
 
 export default TokenSelection
-
-// const SwitchTokenButton = () => {
-//   const handleSwitchToken = () => setToken(null)
-
-//   return (
-//     <Box width='200px'>
-//       <Button.Contained onClick={handleSwitchToken}>Switch Token</Button.Contained>
-//     </Box>
-//   )
-// }

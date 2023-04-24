@@ -4,25 +4,20 @@ import { constants } from 'ethers'
 
 import { fetchRegisterStateData } from '../registerRelaySlice'
 
-import { useAppDispatch } from '../../../../../hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../hooks'
 import { FunderContext } from './Funder'
 
 import StakeManager from '../../../../../contracts/StakeManager.json'
 import { isSameAddress, sleep } from '../../../../../utils/utils'
 import { toast } from 'react-toastify'
 
-export default function SetOwnerListener () {
+export default function SetOwnerListener() {
   const dispatch = useAppDispatch()
+  const currentStep = useAppSelector((state) => state.register.step)
   const { address: account } = useAccount()
   const funderData = useContext(FunderContext)
 
-  const {
-    listen,
-    setListen,
-    stakeManagerAddress,
-    relayManagerAddress,
-    chainId
-  } = funderData
+  const { listen, setListen, stakeManagerAddress, relayManagerAddress, chainId } = funderData
   const provider = useProvider({ chainId })
 
   useContractEvent({
@@ -31,9 +26,8 @@ export default function SetOwnerListener () {
     chainId,
     eventName: 'OwnerSet',
     listener: () => {
-      if (!listen && account !== undefined) {
-        dispatch(fetchRegisterStateData({ provider, account }))
-          .catch(console.error)
+      if (!listen && account !== undefined && currentStep === 0) {
+        dispatch(fetchRegisterStateData({ provider, account })).catch(console.error)
       }
     }
   })
@@ -48,7 +42,7 @@ export default function SetOwnerListener () {
   })
 
   useEffect(() => {
-    if (listen && account !== undefined && stakeInfo !== undefined) {
+    if (listen && account !== undefined && stakeInfo !== undefined && currentStep === 0) {
       const { owner } = (stakeInfo as any)[0]
 
       const askIfOwnerIsSet = async () => {
@@ -59,15 +53,12 @@ export default function SetOwnerListener () {
           while (true) {
             console.debug(`Waiting ${sleepMs}ms ${i}/${sleepCount} for relayer to set (us) as owner`)
             await sleep(sleepMs)
-            const newStakeInfo = (await refetch())
+            const newStakeInfo = await refetch()
             if (newStakeInfo.data === undefined) {
               throw new Error('Failed to refetch StakeManager data')
             }
             const newOwner = (newStakeInfo.data as any)[0].owner
-            if (
-              newOwner !== constants.AddressZero &&
-              isSameAddress(newOwner, account)
-            ) {
+            if (newOwner !== constants.AddressZero && isSameAddress(newOwner, account)) {
               dispatch(fetchRegisterStateData({ provider, account })).catch(console.error)
               break
             }
@@ -81,7 +72,7 @@ export default function SetOwnerListener () {
       askIfOwnerIsSet().catch(toast.error)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listen, account, dispatch, provider, refetch, stakeInfo])
+  }, [listen, account, dispatch, provider, refetch, stakeInfo, currentStep])
 
   return <></>
 }

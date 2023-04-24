@@ -68,7 +68,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
           {currentStep <= step.step
             ? (
             <AccordionStep {...step} expanded={currentStep === step.step}>
-              {step.children}
+              {currentStep === step.step ? step.children : null}
             </AccordionStep>
               )
             : (
