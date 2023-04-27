@@ -4,10 +4,11 @@ import { Alert as MuiAlert } from '@mui/material'
 interface IProps {
   severity: 'error' | 'warning' | 'info' | 'success'
   children: ReactNode
+  icon?: boolean
 }
 
-const Alert: FC<IProps> = ({ severity, children }) => {
-  return <MuiAlert severity={severity}>{children}</MuiAlert>
+const Alert: FC<IProps> = ({ severity, children, icon }) => {
+  return <MuiAlert severity={severity} icon={icon}>{children}</MuiAlert>
 }
 
 export default Alert
