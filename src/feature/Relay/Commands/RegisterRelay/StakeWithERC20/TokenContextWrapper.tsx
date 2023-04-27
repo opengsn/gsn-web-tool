@@ -65,7 +65,6 @@ export default function TokenContextWrapper({ children }: IProps) {
   })
 
   const { data: curBlockData } = useBlockNumber({
-    watch: false,
     chainId
   })
 
@@ -103,7 +102,6 @@ export default function TokenContextWrapper({ children }: IProps) {
       const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
       setMinimumStakeForToken(minimumStake[0])
     }
-    console.log('token changed', token)
     if (token !== null) {
       fetchMinimumStakeForToken().catch((e) => {
         console.error(e.message)

@@ -54,7 +54,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       children: (
         <>
           <Staker success={currentStep > RegisterSteps['Stake token']} />
-          <StakeAddedListener />
+          {currentStep === RegisterSteps['Stake token'] && <StakeAddedListener />}
         </>
       ),
       step: RegisterSteps['Stake token']

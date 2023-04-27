@@ -80,6 +80,7 @@ const relaySlice = createSlice({
       state.loading = true
     })
     builder.addCase(fetchRelayData.rejected, (state, action) => {
+      console.log('fetchRelayData.rejected')
       state.relay = {} as PingResponse
       if (action.error.message === 'Aborted') {
         state.errorMsg = ''

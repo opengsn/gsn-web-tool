@@ -26,7 +26,6 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
     chainId,
-    watch: false,
     onSuccess(data) {
       dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
     },

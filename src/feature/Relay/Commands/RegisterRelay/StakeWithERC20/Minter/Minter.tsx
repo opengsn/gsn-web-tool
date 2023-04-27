@@ -44,7 +44,7 @@ export default function Minter({ success }: IProps) {
     return () => {
       setMintAmount(minimumStakeForToken)
     }
-  }, [minimumStakeForToken, setMintAmount, currentStep])
+  }, [])
 
   const {
     data: tokenBalanceData,
@@ -53,9 +53,9 @@ export default function Minter({ success }: IProps) {
   } = useBalance({
     address: account as any,
     token: token as any,
-    watch: true,
     enabled: false,
     onSuccess: (data) => {
+      console.log('in minter!')
       if (account != null && token != null && minimumStakeForToken != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
         const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
@@ -80,7 +80,6 @@ export default function Minter({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      console.log(data)
       !isError && dispatch(jumpToStep(3))
     }
   })
@@ -112,26 +111,18 @@ export default function Minter({ success }: IProps) {
   if (isSuccess) return <>Success</>
 
   return (
-    <MinterContext.Provider
-      value={{
-        mintAmount,
-        outstandingMintAmount,
-        setMintAmount
+    <RegistrationInputWithTitle
+      title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
+      label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
+      onClick={() => {
+        mintToken?.()
       }}
-    >
-      <RegistrationInputWithTitle
-        title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-        label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
-        onClick={() => {
-          mintToken?.()
-        }}
-        onChange={(value) => handleSetMintAmount(value)}
-        error={mintTokenError?.message}
-        isLoading={isLoading}
-        isSuccess={isSuccess}
-        type={TextFieldType.Text}
-        buttonText='Mint token'
-      />
-    </MinterContext.Provider>
+      onChange={(value) => handleSetMintAmount(value)}
+      error={mintTokenError?.message}
+      isLoading={isLoading}
+      isSuccess={isSuccess}
+      type={TextFieldType.Text}
+      buttonText='Mint token'
+    />
   )
 }

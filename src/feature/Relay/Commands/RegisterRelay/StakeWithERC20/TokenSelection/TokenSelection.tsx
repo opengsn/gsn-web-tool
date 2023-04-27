@@ -18,13 +18,13 @@ interface IProps {
 const TokenSelection: FC<IProps> = ({ success }) => {
   const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
-  const { data: tokenData, refetch } = useToken({ address: token as any })
+  const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
 
   useEffect(() => {
     if (token != null && currentStep === 1) {
       refetch().catch(console.error)
     }
-  }, [token, currentStep])
+  }, [token])
 
   const dispatch = useAppDispatch()
   const [radioValue, setRadioValue] = useState(0)
@@ -39,7 +39,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       } else {
         setToken(values.token)
       }
-      dispatch(jumpToStep(RegisterSteps['Mint Selection']))
+      currentStep === 1 && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
   })
 
@@ -48,7 +48,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
     getTokenAddress.setFieldValue('token', address)
   }
 
-  const supportedTokens = chains.find((c) => c.id === chainId)
+  const supportedTokens = chains.find((chain) => chain.id === chainId)
 
   const elements =
     supportedTokens != null

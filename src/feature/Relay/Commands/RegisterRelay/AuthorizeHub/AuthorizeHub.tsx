@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePrepareContractWrite, useContractWrite } from 'wagmi'
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
@@ -16,14 +16,21 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const chainId = Number(relay.chainId)
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
+  useEffect(() => {
+    refetch().catch(console.error)
+  }, [])
+
+  const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId, () => {
+    refetchPrepareContractWrite().catch(console.error)
+  })
 
   const stakeManagerAddress = stakeManagerAddressData as any
 
   const {
     config,
     error: authorizeTxError,
-    isError
+    isError,
+    refetch: refetchPrepareContractWrite
   } = usePrepareContractWrite({
     address: stakeManagerAddress,
     abi: StakeManager.abi,
@@ -42,7 +49,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
     }
   })
 
-  const text = listen ? 'Authorizing Hub' : 'Setting relay...'
+  const text = !listen ? 'Authorizing Hub' : 'Setting relay...'
 
   return (
     <Box>

@@ -1,5 +1,5 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useEffect } from 'react'
 import { Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
@@ -27,14 +27,20 @@ export default function Funder({ success }: IProps) {
   const [funds, setFunds] = useState<number>(0.5)
   const [hash, setHash] = useState<string>('')
   const relay = useAppSelector((state) => state.relay.relay)
+  const currentStep = useAppSelector((state) => state.register.step)
   const { relayManagerAddress, relayHubAddress } = relay
   const chainId = Number(relay.chainId)
+  const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId)
+
+  useEffect(() => {
+    console.log('in Funder')
+    refetch().catch(console.error)
+  }, [])
 
   const handleChangeFunds = (value: number) => {
     setFunds(value)
   }
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
   if (stakeManagerAddress === undefined) {
@@ -65,7 +71,7 @@ export default function Funder({ success }: IProps) {
       }}
     >
       <FundButton setHash={setHash} />
-      <SetOwnerListener />
+      {currentStep === 0 && <SetOwnerListener />}
     </FunderContext.Provider>
   )
 }

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { TokenContext } from './TokenContextWrapper'
 
@@ -25,6 +25,10 @@ export default function Staker({ success }: IProps) {
 
   const unstakeDelay = '15000'
 
+  useEffect(() => {
+    void refetchContractRead().catch(console.error)
+  }, [])
+
   const {
     config,
     error: prepareStakeTxError,
@@ -34,15 +38,16 @@ export default function Staker({ success }: IProps) {
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'stakeForRelayManager',
+    enabled: false,
     args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken]
   })
 
-  const { isLoading: contractReadLoading } = useContractRead({
+  const { isLoading: contractReadLoading, refetch: refetchContractRead } = useContractRead({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'allowance',
     args: [address, stakeManagerAddress],
-    watch: true,
+    enabled: false,
     chainId,
     onSuccess() {
       refetch().catch(console.error)

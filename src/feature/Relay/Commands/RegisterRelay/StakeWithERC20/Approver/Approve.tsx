@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
@@ -29,18 +29,30 @@ export default function Approver({ success }: IProps) {
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
+  const { data: stakeManagerAddressData, refetch: refetchStakeManagerAddress } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
+
+  const fetchAll = async () => {
+    await refetchStakeManagerAddress().catch(console.error)
+    await refetchCurrentAllowance().catch(console.error)
+    await refetchPrepareApprove().catch(console.error)
+  }
+
+  useEffect(() => {
+    void fetchAll()
+  }, [])
 
   const {
     data: currentAllowanceData,
     isError: currentAllowanceIsError,
-    isLoading: currentAllowanceIsLoading
+    isLoading: currentAllowanceIsLoading,
+    refetch: refetchCurrentAllowance
   } = useContractRead({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'allowance',
     chainId,
+    enabled: false,
     args: [account, stakeManagerAddress],
     onSuccess(data) {
       if (minimumStakeForToken != null) {
@@ -53,11 +65,13 @@ export default function Approver({ success }: IProps) {
     config,
     error: prepareApproveTxError,
     isError: prepareApproveTxIsError,
-    isLoading: prepareApproveTxIsLoading
+    isLoading: prepareApproveTxIsLoading,
+    refetch: refetchPrepareApprove
   } = usePrepareContractWrite({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'approve',
+    enabled: false,
     args: [stakeManagerAddress, approveAmount]
   })
 
@@ -71,7 +85,7 @@ export default function Approver({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      !prepareApproveTxIsError && approveTxError == null && !currentAllowanceIsError && dispatch(jumpToStep(4))
+      dispatch(jumpToStep(4))
     }
   })
 
@@ -85,7 +99,10 @@ export default function Approver({ success }: IProps) {
             isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading}
             isSuccess={isSuccess}
             error={approveTxError?.message}
-            onClick={() => approve?.()}
+            onClick={() => {
+              console.log(approve)
+              approve?.()
+            }}
           />
         )}
         {currentAllowanceIsError && <Alert severity='error'>Error fetching token allowance</Alert>}

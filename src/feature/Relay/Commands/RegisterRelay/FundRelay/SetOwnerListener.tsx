@@ -38,7 +38,7 @@ export default function SetOwnerListener() {
     args: [relayManagerAddress],
     functionName: 'getStakeInfo',
     chainId,
-    watch: false
+    enabled: false
   })
 
   useEffect(() => {

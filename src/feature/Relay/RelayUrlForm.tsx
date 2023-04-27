@@ -9,7 +9,7 @@ import { Box, Typography, TextField, Button, ButtonType } from '../../components
 import { isIP } from 'is-ip'
 
 import { ROUTES } from '../../constants/routes'
-import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
+import { useAppDispatch, useAppSelector } from '../../hooks'
 import { PingResponse } from '../../types'
 import { deleteRelayData, fetchRelayData } from './relaySlice'
 import { texts } from '../../texts'

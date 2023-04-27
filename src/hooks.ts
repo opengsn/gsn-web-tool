@@ -8,12 +8,14 @@ import RelayHub from './contracts/RelayHub.json'
 import { Theme, useMediaQuery } from '@mui/material'
 import { useState } from 'react'
 
-export const useStakeManagerAddress = (relayHubAddress: string, chainId: number) =>
+export const useStakeManagerAddress = (relayHubAddress: string, chainId: number, onSuccess?: () => void) =>
   useContractRead({
     address: relayHubAddress as any,
     abi: RelayHub.abi,
     functionName: 'getStakeManager',
     chainId,
+    enabled: false,
+    onSuccess,
     onError(err) {
       console.warn(err, chainId)
     }

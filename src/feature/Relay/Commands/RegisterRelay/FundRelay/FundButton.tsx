@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
 
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
@@ -18,12 +18,20 @@ export default function FundButton({ setHash }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { relayManagerAddress, funds, handleChangeFunds, setListen } = useContext(FunderContext)
 
-  const { config, error: prepareFundTxError } = usePrepareSendTransaction({
+  const {
+    config,
+    error: prepareFundTxError,
+    refetch
+  } = usePrepareSendTransaction({
     request: {
       to: relayManagerAddress,
       value: BigNumber.from(ethers.utils.parseEther(funds.toString()))
     }
   })
+
+  useEffect(() => {
+    refetch().catch(console.error)
+  }, [])
 
   const {
     sendTransaction: fundRelay,
