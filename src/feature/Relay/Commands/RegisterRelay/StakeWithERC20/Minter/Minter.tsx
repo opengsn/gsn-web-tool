@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useBalance, useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 import { ethers } from 'ethers'
 
@@ -14,14 +14,6 @@ import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../../types/Hash'
 
-export interface MinterContextInterface {
-  mintAmount: ethers.BigNumber
-  outstandingMintAmount: ethers.BigNumber | null
-  setMintAmount: React.Dispatch<React.SetStateAction<ethers.BigNumber | null>>
-}
-
-export const MinterContext = createContext<MinterContextInterface>({} as MinterContextInterface)
-
 interface IProps {
   success: boolean
 }
@@ -31,7 +23,6 @@ export default function Minter({ success }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [outstandingMintAmount, setOutstandingMintAmount] = useState<ethers.BigNumber | null>(null)
   const [localMintAmount, setLocalMintAmount] = useState<ethers.BigNumber>(ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
@@ -55,8 +46,6 @@ export default function Minter({ success }: IProps) {
       if (account != null && token != null && minimumStakeForToken != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
         const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-        if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
-        setOutstandingMintAmount(outstandingTokenAmountCalculated)
         setMintAmount(outstandingTokenAmountCalculated)
       }
     }

@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
-import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
+import { Button, Box, Paper, Typography, ButtonType, Icon, Alert } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
 import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
@@ -13,6 +13,16 @@ import { useToken } from 'wagmi'
 
 interface IProps {
   success: boolean
+}
+
+const sx = {
+  '&:hover': {
+    color: 'common.black'
+  },
+  textDecoration: 'none',
+  color: 'common.black',
+  display: 'flex',
+  alignItems: 'center'
 }
 
 const TokenSelection: FC<IProps> = ({ success }) => {
@@ -39,7 +49,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       } else {
         setToken(values.token)
       }
-      currentStep === 1 && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
+      currentStep === 1 && token && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
   })
 
@@ -90,10 +100,12 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           <Typography>
             <b>{tokenData?.name}</b>
           </Typography>
-          <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-          <Button.Icon onClick={() => {}}>
-            <Icon.Redirect width='14px' height='14px' />
-          </Button.Icon>
+          <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+            <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+            <Button.Icon>
+              <Icon.Redirect width='14px' height='14px' />
+            </Button.Icon>
+          </Box>
         </Box>
         {currentStep === 2 && (
           <Box ml='auto'>
@@ -138,6 +150,11 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                   </Box>
                 </Box>
               </Box>
+              {getTokenAddress.isSubmitting && (
+                <Alert severity='error'>
+                  <Typography>Something went wrong, please try again</Typography>
+                </Alert>
+              )}
             </Paper>
           )
         })}
