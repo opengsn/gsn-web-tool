@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 import { TokenContext } from './TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
@@ -9,6 +9,7 @@ import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
 import { Alert } from '../../../../../components/atoms'
 import CopyHash from '../../../../../components/atoms/CopyHash'
+import { HashType } from '../../../../../types/Hash'
 
 interface IProps {
   success: boolean
@@ -17,7 +18,7 @@ interface IProps {
 export default function Staker({ success }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { address } = useAccount()
-  const [hash, setHash] = useState<string>()
+  const [hash, setHash] = useState<HashType>()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress } = relay
@@ -64,6 +65,13 @@ export default function Staker({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !(hash == null),
+    onSuccess: () => {
       setListen(true)
     }
   })
@@ -79,6 +87,7 @@ export default function Staker({ success }: IProps) {
         isSuccess={isSuccess}
         error={stakeTxError?.message}
         onClick={() => stakeRelayer?.()}
+        isLoadingForTransaction={isLoadingForTransaction}
       />
       {prepareStakeTxError !== null && (
         <Alert severity='error'>Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}</Alert>

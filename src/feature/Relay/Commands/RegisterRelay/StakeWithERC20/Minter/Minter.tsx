@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
-import { useBalance, useContractWrite, useProvider } from 'wagmi'
+import { useBalance, useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 import { ethers } from 'ethers'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
@@ -12,6 +12,7 @@ import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
+import { HashType } from '../../../../../../types/Hash'
 
 export interface MinterContextInterface {
   mintAmount: ethers.BigNumber
@@ -35,7 +36,7 @@ export default function Minter({ success }: IProps) {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
-  const [hash, setHash] = useState<string>()
+  const [hash, setHash] = useState<HashType>()
 
   useEffect(() => {
     if (currentStep === 2) {
@@ -46,16 +47,11 @@ export default function Minter({ success }: IProps) {
     }
   }, [])
 
-  const {
-    data: tokenBalanceData,
-    refetch,
-    isError
-  } = useBalance({
+  const { data: tokenBalanceData, refetch } = useBalance({
     address: account as any,
     token: token as any,
     enabled: false,
     onSuccess: (data) => {
-      console.log('in minter!')
       if (account != null && token != null && minimumStakeForToken != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
         const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
@@ -80,7 +76,14 @@ export default function Minter({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      !isError && dispatch(jumpToStep(3))
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !(hash == null),
+    onSuccess: () => {
+      dispatch(jumpToStep(3))
     }
   })
 
@@ -117,6 +120,7 @@ export default function Minter({ success }: IProps) {
       onClick={() => {
         mintToken?.()
       }}
+      isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
       error={mintTokenError?.message}
       isLoading={isLoading}

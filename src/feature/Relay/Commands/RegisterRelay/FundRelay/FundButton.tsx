@@ -1,22 +1,29 @@
-import { useContext, useEffect } from 'react'
-import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import { useEffect } from 'react'
+import { usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
-import { FunderContext } from './Funder'
 
 import { Box } from '../../../../../components/atoms'
 import { TextFieldType } from '../../../../../components/atoms/TextField'
 import { BigNumber, ethers } from 'ethers'
-import Alert from '../../../../../components/atoms/Alert'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
+import { HashType } from '../../../../../types/Hash'
 
 interface IProps {
-  setHash: (hash: string) => void
+  hash?: HashType
+  setHash: (hash: HashType) => void
+  funds: number
+  setListen: React.Dispatch<React.SetStateAction<boolean>>
+  relayManagerAddress: string
+  handleChangeFunds: (value: number) => void
 }
 
-export default function FundButton({ setHash }: IProps) {
+export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { relayManagerAddress, funds, handleChangeFunds, setListen } = useContext(FunderContext)
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !(hash == null)
+  })
 
   const {
     config,
@@ -37,7 +44,6 @@ export default function FundButton({ setHash }: IProps) {
     sendTransaction: fundRelay,
     isLoading,
     isSuccess,
-    isError,
     error
   } = useSendTransaction({
     ...config,
@@ -48,8 +54,6 @@ export default function FundButton({ setHash }: IProps) {
     }
   })
 
-  if (isError) return <Alert severity='error'>Error : {error?.message}</Alert>
-
   return (
     <Box my='10px'>
       <RegistrationInputWithTitle
@@ -57,8 +61,9 @@ export default function FundButton({ setHash }: IProps) {
         label='Funding amount (Recommended amount 0.5 ETH)'
         buttonText='Fund relay'
         isLoading={isLoading}
+        isLoadingForTransaction={isLoadingForTransaction}
         isSuccess={isSuccess}
-        error={prepareFundTxError?.message}
+        error={prepareFundTxError?.message ?? error?.message}
         onClick={() => fundRelay?.()}
         value={funds.toString()}
         onChange={(value) => {

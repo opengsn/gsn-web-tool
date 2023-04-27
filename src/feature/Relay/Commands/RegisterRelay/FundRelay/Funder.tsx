@@ -1,22 +1,11 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
-import React, { useState, createContext, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
 import CopyHash from '../../../../../components/atoms/CopyHash'
-
-export interface FunderContextInterface {
-  funds: number
-  listen: boolean
-  setListen: React.Dispatch<React.SetStateAction<boolean>>
-  relayManagerAddress: string
-  stakeManagerAddress: string
-  chainId: number
-  handleChangeFunds: (value: number) => void
-}
-
-export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)
+import { HashType } from '../../../../../types/Hash'
 
 interface IProps {
   success?: boolean
@@ -25,7 +14,7 @@ interface IProps {
 export default function Funder({ success }: IProps) {
   const [listen, setListen] = useState(false)
   const [funds, setFunds] = useState<number>(0.5)
-  const [hash, setHash] = useState<string>('')
+  const [hash, setHash] = useState<HashType>()
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const { relayManagerAddress, relayHubAddress } = relay
@@ -33,7 +22,6 @@ export default function Funder({ success }: IProps) {
   const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId)
 
   useEffect(() => {
-    console.log('in Funder')
     refetch().catch(console.error)
   }, [])
 
@@ -59,19 +47,24 @@ export default function Funder({ success }: IProps) {
   }
 
   return (
-    <FunderContext.Provider
-      value={{
-        funds,
-        listen,
-        setListen,
-        relayManagerAddress,
-        stakeManagerAddress,
-        chainId,
-        handleChangeFunds
-      }}
-    >
-      <FundButton setHash={setHash} />
-      {currentStep === 0 && <SetOwnerListener />}
-    </FunderContext.Provider>
+    <>
+      <FundButton
+        setHash={setHash}
+        hash={hash}
+        funds={funds}
+        handleChangeFunds={handleChangeFunds}
+        relayManagerAddress={relayManagerAddress}
+        setListen={setListen}
+      />
+      {currentStep === 0 && (
+        <SetOwnerListener
+          chainId={chainId}
+          listen={listen}
+          setListen={setListen}
+          stakeManagerAddress={stakeManagerAddress}
+          relayManagerAddress={relayManagerAddress}
+        />
+      )}
+    </>
   )
 }

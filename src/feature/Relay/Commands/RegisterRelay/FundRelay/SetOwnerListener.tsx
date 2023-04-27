@@ -1,23 +1,28 @@
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAccount, useContractEvent, useContractRead, useProvider } from 'wagmi'
 import { constants } from 'ethers'
 
 import { fetchRegisterStateData } from '../registerRelaySlice'
 
 import { useAppDispatch, useAppSelector } from '../../../../../hooks'
-import { FunderContext } from './Funder'
 
 import StakeManager from '../../../../../contracts/StakeManager.json'
 import { isSameAddress, sleep } from '../../../../../utils/utils'
 import { toast } from 'react-toastify'
 
-export default function SetOwnerListener() {
+interface IProps {
+  listen: boolean
+  setListen: React.Dispatch<React.SetStateAction<boolean>>
+  stakeManagerAddress: string
+  relayManagerAddress: string
+  chainId: number
+}
+
+export default function SetOwnerListener({ listen, setListen, stakeManagerAddress, relayManagerAddress, chainId }: IProps) {
   const dispatch = useAppDispatch()
   const currentStep = useAppSelector((state) => state.register.step)
   const { address: account } = useAccount()
-  const funderData = useContext(FunderContext)
 
-  const { listen, setListen, stakeManagerAddress, relayManagerAddress, chainId } = funderData
   const provider = useProvider({ chainId })
 
   useContractEvent({

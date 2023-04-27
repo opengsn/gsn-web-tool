@@ -1,6 +1,7 @@
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { Alert, Box, Button, Typography } from '../../../components/atoms'
+import { waitingForApproveText } from '../../../components/molecules/RegistrationInputWithTitle'
 
 interface chainIdHandlerProps {
   relayChainId: number
@@ -27,14 +28,12 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
       <Box width='200px'>
         <Box>
           <Button.Contained disabled={isLoading} onClick={() => switchNetwork?.(relayChainId)}>
-            Switch network
+            {!isLoading ? <>Switch network</> : <>Processing...</>}
           </Button.Contained>
         </Box>
         {isLoading && (
           <Alert severity='info' icon={false}>
-            <Typography variant='body1'>
-              Please approve the action in your wallet and wait for action processing by the blockchain
-            </Typography>
+            <Typography variant='body1'>{waitingForApproveText} </Typography>
           </Alert>
         )}
       </Box>

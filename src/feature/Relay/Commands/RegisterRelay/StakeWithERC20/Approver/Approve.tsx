@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
-import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
@@ -12,6 +12,7 @@ import RegistrationInputWithTitle from '../../../../../../components/molecules/R
 import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
+import { HashType } from '../../../../../../types/Hash'
 
 interface IProps {
   success: boolean
@@ -21,7 +22,7 @@ export default function Approver({ success }: IProps) {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const dispatch = useAppDispatch()
-  const [hash, setHash] = useState<string>('')
+  const [hash, setHash] = useState<HashType>()
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
@@ -85,6 +86,13 @@ export default function Approver({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !(hash == null),
+    onSuccess: () => {
       dispatch(jumpToStep(4))
     }
   })
@@ -99,6 +107,7 @@ export default function Approver({ success }: IProps) {
             isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading}
             isSuccess={isSuccess}
             error={approveTxError?.message}
+            isLoadingForTransaction={isLoadingForTransaction}
             onClick={() => {
               console.log(approve)
               approve?.()
