@@ -2,6 +2,7 @@
 import React, { FC } from 'react'
 import { Alert, Box, Button, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
+import { formatMetaMaskError } from '../../utils'
 
 export const waitingForApproveText = 'Please approve the action in your wallet and wait for action processing by the blockchain'
 
@@ -76,7 +77,11 @@ const RegistrationInputWithTitle: FC<IProps> = ({
           </Alert>
         )}
       </Box>
-      {!(error == null) && <Alert severity='error'>Error: {error}</Alert>}
+      {!(error == null) && (
+        <Alert severity='error'>
+          <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
+        </Alert>
+      )}
     </Box>
   )
 }

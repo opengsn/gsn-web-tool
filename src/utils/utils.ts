@@ -32,3 +32,16 @@ export async function copyTextToClipboard(text: string) {
     return document.execCommand('copy', true, text)
   }
 }
+
+export const formatMetaMaskError = (error: string) => {
+  if (error.includes('[ethjs-query] while formatting outputs from RPC')) {
+    const parsed = JSON.parse(error.substring(error.indexOf('{'), error.lastIndexOf('}') + 1))
+    const errorMessage = error.substring(0, error.indexOf('{') - 1)
+    const { code: dataCode, message: dataMessage } = parsed.value.data
+    const output = `Error: ${errorMessage}\n Code: ${dataCode as string}\nMessage: ${dataMessage as string}`
+    return output
+  } else {
+    console.log(error)
+    return `Error: ${error}`
+  }
+}
