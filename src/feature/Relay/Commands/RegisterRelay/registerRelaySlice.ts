@@ -175,7 +175,7 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
         case error.message.includes('relay manager not staked'):
           return fulfillWithValue(4, null)
         case error.message.includes('this hub is not authorized by SM'):
-          return fulfillWithValue(4, null)
+          return fulfillWithValue(3, null)
         case error.message.includes('stake amount is too small'):
           return fulfillWithValue(4, null)
         default:
@@ -194,11 +194,10 @@ export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStat
   'register/fetchRegisterStateData',
   async ({ provider, account }, { getState, dispatch, fulfillWithValue, rejectWithValue }) => {
     const state = getState() as RootState
-    console.log('register/fetchRegisterStateData')
     try {
       const relay = state.relay.relay
       if (relay.ready) {
-        return fulfillWithValue(7, null) // relay is ready
+        return fulfillWithValue(RegisterSteps.Success, null) // relay is ready
       }
       // start the chain of checks
       dispatch(validateIsRelayFunded({ account, relay, provider })).catch(rejectWithValue)
@@ -230,9 +229,9 @@ const registerSlice = createSlice({
   extraReducers: (builder) => {
     // main
     builder.addCase(fetchRegisterStateData.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 6) {
         state.status = 'success'
-        state.step = 4
+        state.step = 6
       } else {
         state.step = 0
         state.status = 'idle'

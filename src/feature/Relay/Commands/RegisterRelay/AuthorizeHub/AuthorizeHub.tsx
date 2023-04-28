@@ -17,12 +17,10 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
   const chainId = Number(relay.chainId)
 
   useEffect(() => {
-    refetch().catch(console.error)
-  }, [])
-
-  const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId, () => {
     refetchPrepareContractWrite().catch(console.error)
-  })
+  }, [])
+  // removed refetch
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as any
 
@@ -35,6 +33,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
     address: stakeManagerAddress,
     abi: StakeManager.abi,
     functionName: 'authorizeHubByOwner',
+    enabled: false,
     args: [relayManagerAddress, relayHubAddress],
     onSuccess: () => {
       authorizeHub?.()
@@ -43,7 +42,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
 
   const { write: authorizeHub } = useContractWrite({
     ...config,
-    ...defaultStateSwitchers,
+    // ...defaultStateSwitchers,
     onSuccess: (data) => {
       setListen(true)
     }

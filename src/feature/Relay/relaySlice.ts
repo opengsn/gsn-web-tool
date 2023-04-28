@@ -20,46 +20,38 @@ const initialState = {
   errorMsg: ''
 } as RelayState
 
-export const fetchRelayData = createAsyncThunk(
-  'relay/getaddrRequest',
-  async (relayUrl: string, thunkAPI) => {
-    try {
-      const response = await axios.get(relayUrl, {
-        signal: thunkAPI.signal
-      })
+export const fetchRelayData = createAsyncThunk('relay/getaddrRequest', async (relayUrl: string, thunkAPI) => {
+  try {
+    const response = await axios.get(relayUrl, {
+      signal: thunkAPI.signal
+    })
 
-      const relay = response.data
+    const relay = response.data
 
-      return { relay }
-    } catch (error: any) {
-      if (error instanceof AxiosError) {
-        const message = (error.response?.data?.message !== '')
-          ? error.response?.data?.message
-          : error.message
-        return thunkAPI.rejectWithValue(message)
-      }
-      throw new Error(error)
+    return { relay }
+  } catch (error: any) {
+    if (error instanceof AxiosError) {
+      const message = error.response?.data?.message !== '' ? error.response?.data?.message : error.message
+      return thunkAPI.rejectWithValue(message)
     }
+    throw new Error(error)
   }
-)
+})
 
 const relaySlice = createSlice({
   name: 'relay',
   initialState,
   reducers: {
     // dispatched in RelayInfo/StakeInfo
-    validateConfigOwnerInLineWithStakeManager (state: RelayState, action: PayloadAction<string>) {
-      if (
-        !isSameAddress(state.relay.ownerAddress, action.payload) &&
-        !isSameAddress(action.payload, constants.AddressZero)
-      ) {
+    validateConfigOwnerInLineWithStakeManager(state: RelayState, action: PayloadAction<string>) {
+      if (!isSameAddress(state.relay.ownerAddress, action.payload) && !isSameAddress(action.payload, constants.AddressZero)) {
         toast.error('Please report the occurred error.')
         state.errorMsg = `ERROR: The relay is misconfigured.
         ownerAddress: ${state.relay.ownerAddress},
         owner in StakeManager: ${action.payload}`
       }
     },
-    deleteRelayData (state: RelayState) {
+    deleteRelayData(state: RelayState) {
       state.errorMsg = ''
       state.relay = {} as PingResponse
       state.relayUrl = initialState.relayUrl

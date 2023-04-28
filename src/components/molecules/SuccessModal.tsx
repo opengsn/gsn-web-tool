@@ -1,9 +1,16 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Typography, Box, Button, Icon } from '../atoms'
 import Modal from '../atoms/Modal'
 import { useNavigate } from 'react-router-dom'
+import { useLocalStorage } from '../../hooks'
 
 const SuccessModal: FC = () => {
+  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+
+  useEffect(() => {
+    setSelectedToken('')
+  }, [])
+
   const navigate = useNavigate()
   return (
     <Modal open={true}>

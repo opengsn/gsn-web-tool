@@ -7,7 +7,7 @@ import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
-import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
 import chains from '../../../../../../assets/chains.json'
 import { useToken } from 'wagmi'
 
@@ -29,14 +29,22 @@ const TokenSelection: FC<IProps> = ({ success }) => {
   const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
+  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (token != null && currentStep === 1) {
+    if (selectedToken !== '' && currentStep === RegisterSteps['Token selection']) {
+      setToken(selectedToken)
+      dispatch(jumpToStep(RegisterSteps['Mint Selection']))
+    }
+  }, [selectedToken, currentStep])
+
+  useEffect(() => {
+    if (token != null && currentStep === RegisterSteps['Token selection']) {
       refetch().catch(console.error)
     }
   }, [token])
 
-  const dispatch = useAppDispatch()
   const [radioValue, setRadioValue] = useState(0)
   const getTokenAddress = useFormik({
     initialValues: {
@@ -46,8 +54,10 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       if (radioValue === 2) {
         const token = await handleFindFirstTokenButton()
         setToken(token)
+        setSelectedToken(token)
       } else {
         setToken(values.token)
+        setSelectedToken(values.token)
       }
       currentStep === 1 && token && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
@@ -112,6 +122,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
             <Button.Icon
               onClick={() => {
                 setToken(null)
+                setSelectedToken('')
                 dispatch(jumpToStep(RegisterSteps['Token selection']))
               }}
             >

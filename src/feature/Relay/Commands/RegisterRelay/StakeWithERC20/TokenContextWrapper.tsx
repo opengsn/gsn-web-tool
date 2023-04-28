@@ -38,6 +38,11 @@ export default function TokenContextWrapper({ children }: IProps) {
   const [listen, setListen] = useState(false)
   const relay = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relay.chainId)
+  const currentStep = useAppSelector((state) => state.register.step)
+
+  useEffect(() => {
+    console.log('currentStep', currentStep)
+  }, [currentStep])
 
   const { address } = useAccount()
   const { chain: chainData } = useNetwork()

@@ -13,6 +13,7 @@ import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../../types/Hash'
+import { RegisterSteps } from '../../RegisterFlowSteps'
 
 interface IProps {
   success: boolean
@@ -23,6 +24,7 @@ export default function Approver({ success }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const dispatch = useAppDispatch()
   const [hash, setHash] = useState<HashType>()
+  const currentStep = useAppSelector((state) => state.register.step)
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
@@ -40,8 +42,10 @@ export default function Approver({ success }: IProps) {
   }
 
   useEffect(() => {
-    void fetchAll()
-  }, [])
+    if (currentStep === RegisterSteps['Approve allowance']) {
+      fetchAll().catch(console.error)
+    }
+  }, [currentStep])
 
   const {
     data: currentAllowanceData,
@@ -83,7 +87,7 @@ export default function Approver({ success }: IProps) {
     write: approve
   } = useContractWrite({
     ...config,
-    ...defaultStateSwitchers,
+    // ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
     }
