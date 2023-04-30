@@ -1,13 +1,13 @@
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
-import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
+import { Button, Box, Paper, Typography, ButtonType, Icon, Alert } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
 import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
-import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
 import chains from '../../../../../../assets/chains.json'
 import { useToken } from 'wagmi'
 
@@ -15,18 +15,36 @@ interface IProps {
   success: boolean
 }
 
+const sx = {
+  '&:hover': {
+    color: 'common.black'
+  },
+  textDecoration: 'none',
+  color: 'common.black',
+  display: 'flex',
+  alignItems: 'center'
+}
+
 const TokenSelection: FC<IProps> = ({ success }) => {
   const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
-  const { data: tokenData, refetch } = useToken({ address: token as any })
+  const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
+  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (token != null && currentStep === 1) {
+    if (selectedToken !== '' && currentStep === RegisterSteps['Token selection']) {
+      setToken(selectedToken)
+      dispatch(jumpToStep(RegisterSteps['Mint Selection']))
+    }
+  }, [selectedToken, currentStep])
+
+  useEffect(() => {
+    if (token != null && currentStep === RegisterSteps['Token selection']) {
       refetch().catch(console.error)
     }
-  }, [token, currentStep])
+  }, [token])
 
-  const dispatch = useAppDispatch()
   const [radioValue, setRadioValue] = useState(0)
   const getTokenAddress = useFormik({
     initialValues: {
@@ -36,10 +54,12 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       if (radioValue === 2) {
         const token = await handleFindFirstTokenButton()
         setToken(token)
+        setSelectedToken(token)
       } else {
         setToken(values.token)
+        setSelectedToken(values.token)
       }
-      dispatch(jumpToStep(RegisterSteps['Mint Selection']))
+      currentStep === 1 && token && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
   })
 
@@ -48,7 +68,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
     getTokenAddress.setFieldValue('token', address)
   }
 
-  const supportedTokens = chains.find((c) => c.id === chainId)
+  const supportedTokens = chains.find((chain) => chain.id === chainId)
 
   const elements =
     supportedTokens != null
@@ -70,7 +90,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       : [
           {
             label: 'Insert ERC20 token address',
-            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} />,
+            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1}/>,
             disabled: radioValue !== 1,
             key: 1
           },
@@ -90,16 +110,19 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           <Typography>
             <b>{tokenData?.name}</b>
           </Typography>
-          <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-          <Button.Icon onClick={() => {}}>
-            <Icon.Redirect width='14px' height='14px' />
-          </Button.Icon>
+          <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+            <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+            <Button.Icon>
+              <Icon.Redirect width='14px' height='14px' />
+            </Button.Icon>
+          </Box>
         </Box>
         {currentStep === 2 && (
           <Box ml='auto'>
             <Button.Icon
               onClick={() => {
                 setToken(null)
+                setSelectedToken('')
                 dispatch(jumpToStep(RegisterSteps['Token selection']))
               }}
             >
@@ -130,14 +153,19 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                   <Box>
                     <Typography>{element.label}</Typography>
                     {element.children}
-                    <Box mt={2} width='150px'>
-                      <Button.Contained disabled={element.disabled} size='small' type={ButtonType.SUBMIT}>
+                    <Box mt={2} width='220px'>
+                      <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
                         Fetch Token
                       </Button.Contained>
                     </Box>
                   </Box>
                 </Box>
               </Box>
+              {getTokenAddress.isSubmitting && (
+                <Alert severity='error'>
+                  <Typography>Something went wrong, please try again</Typography>
+                </Alert>
+              )}
             </Paper>
           )
         })}

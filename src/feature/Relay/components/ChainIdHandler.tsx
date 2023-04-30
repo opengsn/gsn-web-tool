@@ -1,7 +1,7 @@
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import LoadingButton from './LoadingButton'
-import { Alert, Box, Button } from '../../../components/atoms'
+import { Alert, Box, Button, Typography } from '../../../components/atoms'
+import { waitingForApproveText } from '../../../components/molecules/RegistrationInputWithTitle'
 
 interface chainIdHandlerProps {
   relayChainId: number
@@ -13,19 +13,30 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
 
   return (
     <Alert severity='error'>
-      Wrong chain
-      <p>
-        Wallet is connected to ID #{chain?.id} while the relay is on #{relayChainId}
-      </p>
-      {isLoading ? <LoadingButton /> : null}
-      {error !== null ? <Alert severity='error'>Chain ID check failed: {error?.message}</Alert> : null}
-      {switchNetwork !== undefined && !isLoading
+      <Box mb='10px'>
+        <Typography variant='body2'>
+          Wrong chain : Wallet is connected to ID #{chain?.id} while the relay is on #{relayChainId}
+        </Typography>
+      </Box>
+      {error !== null
         ? (
-        <Box width='200px'>
-          <Button.Contained onClick={() => switchNetwork(relayChainId)}>Switch network</Button.Contained>
+        <Box mb='10px'>
+          <Typography variant='body2'>Chain ID check failed: {error?.message}</Typography>
         </Box>
           )
         : null}
+      <Box width='200px'>
+        <Box>
+          <Button.Contained disabled={isLoading} onClick={() => switchNetwork?.(relayChainId)}>
+            {!isLoading ? <>Switch network</> : <>Processing...</>}
+          </Button.Contained>
+        </Box>
+        {isLoading && (
+          <Alert severity='info' icon={false}>
+            <Typography variant='body1'>{waitingForApproveText} </Typography>
+          </Alert>
+        )}
+      </Box>
     </Alert>
   )
 }

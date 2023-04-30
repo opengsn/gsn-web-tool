@@ -1,15 +1,13 @@
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { Flip, toast } from 'react-toastify'
-
-import { Box, Typography, TextField, Button, ButtonType } from '../../components/atoms'
+import { Box, Typography, TextField, Button, ButtonType, Alert } from '../../components/atoms'
 
 import { isIP } from 'is-ip'
 
 import { ROUTES } from '../../constants/routes'
-import { useAppDispatch, useAppSelector, useIsDesktop } from '../../hooks'
+import { useAppDispatch, useAppSelector } from '../../hooks'
 import { PingResponse } from '../../types'
 import { deleteRelayData, fetchRelayData } from './relaySlice'
 import { texts } from '../../texts'
@@ -18,6 +16,7 @@ export default function RelayUrlForm() {
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
   const relayDataFetched = Object.keys(relayData).length > 0
+  const [error, setError] = useState<string | null>(null)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useAppDispatch()
@@ -41,6 +40,7 @@ export default function RelayUrlForm() {
     },
     enableReinitialize: true,
     onSubmit: (values) => {
+      setError(null)
       // eslint-disable-next-line no-useless-escape
       const regexpURL = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&/=]*)/i
 
@@ -62,14 +62,7 @@ export default function RelayUrlForm() {
           URL = formatLocalhost(values.url)
         }
       } else {
-        toast.dismiss()
-        toast.error('Please enter a valid URL', {
-          position: 'top-center',
-          hideProgressBar: true,
-          autoClose: 1300,
-          closeOnClick: true,
-          transition: Flip
-        })
+        setError('Please enter a valid URL')
         return
       }
 
@@ -81,12 +74,12 @@ export default function RelayUrlForm() {
           } else if (res.type.includes('rejected')) {
             const urlFormatMessage = 'endpoint must return relay config as JSON and include HTTP or HTTPS'
             if (URL.includes('localhost')) {
-              toast.info(urlFormatMessage, { autoClose: 2000, closeButton: true })
+              setError(urlFormatMessage)
             }
           }
         })
         .catch((err) => {
-          toast.error('error while fetching relay data. try refreshing the page')
+          setError('error while fetching relay data. try refreshing the page')
           console.error(err)
         })
     }
@@ -104,6 +97,7 @@ export default function RelayUrlForm() {
         <Box component='form' onSubmit={getRelayForm.handleSubmit}>
           <Box mb={8}>
             <TextField onChange={getRelayForm.handleChange} value={getRelayForm.values.url} name='url' />
+            <Box my={1}>{error !== null && <Alert severity='error'>{error}</Alert>}</Box>
           </Box>
           <Box width='380px' mx='auto' height='70px'>
             <Button.Contained size='large' type={ButtonType.SUBMIT}>
@@ -115,5 +109,5 @@ export default function RelayUrlForm() {
     )
   }
 
-  return <div>Relay data is already fetched. Refresh the page.</div>
+  return <Alert severity='error'>Relay data is already fetched. Refresh the page.</Alert>
 }

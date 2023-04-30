@@ -1,22 +1,11 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
-import React, { useState, createContext } from 'react'
-import { Typography } from '../../../../../components/atoms'
+import React, { useState, useEffect } from 'react'
+import { Alert, Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
 import CopyHash from '../../../../../components/atoms/CopyHash'
-
-export interface FunderContextInterface {
-  funds: number
-  listen: boolean
-  setListen: React.Dispatch<React.SetStateAction<boolean>>
-  relayManagerAddress: string
-  stakeManagerAddress: string
-  chainId: number
-  handleChangeFunds: (value: number) => void
-}
-
-export const FunderContext = createContext<FunderContextInterface>({} as FunderContextInterface)
+import { HashType } from '../../../../../types/Hash'
 
 interface IProps {
   success?: boolean
@@ -25,20 +14,25 @@ interface IProps {
 export default function Funder({ success }: IProps) {
   const [listen, setListen] = useState(false)
   const [funds, setFunds] = useState<number>(0.5)
-  const [hash, setHash] = useState<string>('')
+  const [hash, setHash] = useState<HashType>()
   const relay = useAppSelector((state) => state.relay.relay)
+  const currentStep = useAppSelector((state) => state.register.step)
   const { relayManagerAddress, relayHubAddress } = relay
   const chainId = Number(relay.chainId)
+  const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId)
+
+  useEffect(() => {
+    refetch().catch(console.error)
+  }, [])
 
   const handleChangeFunds = (value: number) => {
     setFunds(value)
   }
 
-  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
   if (stakeManagerAddress === undefined) {
-    return <div>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</div>
+    return <Alert severity='error'>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</Alert>
   }
 
   if (success ?? false) {
@@ -53,19 +47,24 @@ export default function Funder({ success }: IProps) {
   }
 
   return (
-    <FunderContext.Provider
-      value={{
-        funds,
-        listen,
-        setListen,
-        relayManagerAddress,
-        stakeManagerAddress,
-        chainId,
-        handleChangeFunds
-      }}
-    >
-      <FundButton setHash={setHash} />
-      <SetOwnerListener />
-    </FunderContext.Provider>
+    <>
+      <FundButton
+        setHash={setHash}
+        hash={hash}
+        funds={funds}
+        handleChangeFunds={handleChangeFunds}
+        relayManagerAddress={relayManagerAddress}
+        setListen={setListen}
+      />
+      {currentStep === 0 && (
+        <SetOwnerListener
+          chainId={chainId}
+          listen={listen}
+          setListen={setListen}
+          stakeManagerAddress={stakeManagerAddress}
+          relayManagerAddress={relayManagerAddress}
+        />
+      )}
+    </>
   )
 }

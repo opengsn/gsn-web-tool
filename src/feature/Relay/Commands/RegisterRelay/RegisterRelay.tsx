@@ -44,43 +44,6 @@ export default function RegisterRelay() {
       </Box>
     )
   }
-  // const RegisterFlowSteps = () => {
-  //   const steps = Object.keys({})
-  //   const listElems = steps
-  //     .filter((i) => isNaN(parseInt(i, 10)))
-  //     .map((step, index) => {
-  //       let variant = currentStep >= index ? 'success' : ''
-
-  //       const isActionableStep = currentStep === index && currentStep !== 4
-  //       if (isActionableStep) {
-  //         if (currentStep === index && status !== 'error') {
-  //           variant = 'primary'
-  //         } else if (currentStep === index && status === 'error') {
-  //           variant = 'danger'
-  //         } else {
-  //           variant = ''
-  //         }
-  //       } else if (index === 4 && status === 'idle') {
-  //         variant = ''
-  //       }
-
-  //       const passedStep = !isActionableStep && variant === 'success'
-  //       return (
-  //         <ListGroup.Item action key={step} variant={variant} onClick={() => dispatch(jumpToStep(index))}>
-  //           {step} {passedStep ? <Check color='green'></Check> : null}
-  //         </ListGroup.Item>
-  //       )
-  //     })
-
-  //   const showDivider = currentStep <= 3
-
-  //   return (
-  //     <>
-  //       <ListGroup>{listElems}</ListGroup>
-  //       {showDivider ? <hr /> : null}
-  //     </>
-  //   )
-  // }
 
   useEffect(() => {
     if (address !== undefined) {
@@ -117,10 +80,6 @@ export default function RegisterRelay() {
         </Box>
         <Box>
           <RegisterFlowSteps currentStep={currentStep} />
-          {/* {currentStep === 0 ? <Funder /> : null}
-          {currentStep === 1 || currentStep === 2 ? <StakeWithERC20 /> : null}
-          {currentStep === 3 ? <Authorizer /> : null} */}
-          {/* <Steps /> */}
         </Box>
       </Collapse>
     </Box>

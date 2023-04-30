@@ -5,6 +5,7 @@ import { Box } from '../atoms'
 interface IProps {
   children: ReactNode
   open: boolean
+  onClose?: () => void
 }
 
 const style = {
@@ -25,9 +26,9 @@ const style = {
   p: 4
 }
 
-const Modal: FC<IProps> = ({ children, open }) => {
+const Modal: FC<IProps> = ({ children, open, onClose }) => {
   return (
-    <MuiModal open={open}>
+    <MuiModal open={open} onClose={onClose}>
       <Box sx={style}>{children}</Box>
     </MuiModal>
   )

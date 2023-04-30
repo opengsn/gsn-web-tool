@@ -1,32 +1,36 @@
 # Getting Started with Create React App
 
 ## local environment setup
+
 Note: use yarn
 
 ### Overview
+
 #### NPM scripts
 
 For working locally you'll need to run a local blockchain, run a local GSN network and a local relay-server
 Lucky - this project include npm scripts which makes it easy. they should be run in the following order:
-    "local-hardhat-node": "npx hardhat node",
-    "local-gsn": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic",
-    "local-relay-server
+"local-hardhat-node": "npx hardhat node",
+"local-gsn": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic",
+"local-relay-server
 
 1. `local-hardhat-node` - run [Hardhat](https://www.npmjs.com/package/hardhat) locally. Hardhat is an Ethereum development environment for professionals.
 2. `local-gsn`: run a local GSN
+4. on windows - `local-remove-cache` - remove local cache
 3. `local-relay-server`: run a local relay server
-4. `start` - react dev server
+5. `start` - react dev server
 
 #### Install meta mask
+
 Meta mask is a digital crypto wallet with support for local blockchain development environment
 
 Steps:
+
 1. install from https://metamask.io/download/
-2. click on select network dropdown 
+2. click on select network dropdown
 3. enable "show test network"
 4. select local network (localhost:8545), change chain id from 1337 to 31337
 5. add test ether - take private key from `local-hardhat-node` terminal
-
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -96,4 +100,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
 # gsn-web-tool

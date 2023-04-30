@@ -54,7 +54,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       children: (
         <>
           <Staker success={currentStep > RegisterSteps['Stake token']} />
-          <StakeAddedListener />
+          {currentStep === RegisterSteps['Stake token'] && <StakeAddedListener />}
         </>
       ),
       step: RegisterSteps['Stake token']
@@ -66,12 +66,11 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       {steps.map((step, index) => (
         <Box key={index} my={3}>
           <Step {...step} expanded={currentStep === step.step} success={currentStep > step.step}>
-            {step.children}
+            {currentStep >= step.step && step.children}
           </Step>
         </Box>
       ))}
       {currentStep === 5 && <Authorizer />}
-      {currentStep === 6 && <SuccessModal />}
       {currentStep === 7 && <ErrorModal />}
     </TokenContextWrapper>
   )

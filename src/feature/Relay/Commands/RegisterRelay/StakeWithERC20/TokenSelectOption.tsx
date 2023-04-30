@@ -3,7 +3,7 @@ import { useToken } from 'wagmi'
 import { Box, Button, Icon, Typography } from '../../../../../components/atoms'
 import { useCopyToClipboard } from '../../../../../hooks'
 import { truncateFromMiddle } from '../../../../../utils'
-// import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 interface IProps {
   address: string
@@ -23,7 +23,7 @@ const sx = {
 
 const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, checked }) => {
   const [_, copyToClipboard] = useCopyToClipboard()
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const { data: tokenData } = useToken({
     address: address as any,
     chainId
@@ -57,7 +57,7 @@ const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, ch
         </Button.Text>
         <Button.Icon
           onClick={() => {
-            // navigate(link)
+            navigate(`https://etherscan.io/address/${address}`)
           }}
         >
           <Icon.Redirect />

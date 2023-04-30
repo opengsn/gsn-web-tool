@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import React, { FC } from 'react'
 import { Alert, Box, Button, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
+import { formatMetaMaskError } from '../../utils'
+
+export const waitingForApproveText = 'Please approve the action in your wallet and wait for action processing by the blockchain'
 
 interface IProps {
   title: string
@@ -14,6 +18,7 @@ interface IProps {
   label?: string
   value?: string
   placeholder?: string
+  isLoadingForTransaction?: boolean
 }
 
 const RegistrationInputWithTitle: FC<IProps> = ({
@@ -27,8 +32,19 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   onClick,
   title,
   label,
-  placeholder
+  placeholder,
+  isLoadingForTransaction
 }) => {
+  const renderButtonText = () => {
+    if ((isLoadingForTransaction ?? false) || isSuccess) {
+      return 'Processing...'
+    } else if (isLoading) {
+      return 'Waiting for approval'
+    } else {
+      return buttonText
+    }
+  }
+
   return (
     <Box my='10px'>
       <Box mb='5px'>
@@ -51,12 +67,21 @@ const RegistrationInputWithTitle: FC<IProps> = ({
           />
         </Box>
       )}
-      <Box width='150px' mb='10px'>
-        <Button.Contained disabled={isLoading || isSuccess} onClick={onClick}>
-          <Typography variant={'body2'}>{isLoading || isSuccess ? <>loading...</> : <>{buttonText}</>}</Typography>
+      <Box width='220px' mb='10px'>
+        <Button.Contained disabled={isLoading || isLoadingForTransaction || isSuccess} onClick={onClick} size='large'>
+          <Typography variant={'body2'}>{renderButtonText()}</Typography>
         </Button.Contained>
+        {isLoading && (
+          <Alert severity='info' icon={false}>
+            {waitingForApproveText}
+          </Alert>
+        )}
       </Box>
-      {!(error == null) && <Alert severity='error'>Error: {error}</Alert>}
+      {!(error == null) && (
+        <Alert severity='error'>
+          <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
+        </Alert>
+      )}
     </Box>
   )
 }

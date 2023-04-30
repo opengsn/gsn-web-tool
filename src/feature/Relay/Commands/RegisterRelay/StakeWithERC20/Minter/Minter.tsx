@@ -1,25 +1,18 @@
-import React, { createContext, useState, useContext, useEffect } from 'react'
-import { useBalance, useContractWrite, useProvider } from 'wagmi'
+import React, { useState, useContext, useEffect } from 'react'
+import { useBalance, useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 import { ethers } from 'ethers'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 
 import { TokenContext } from '../TokenContextWrapper'
 import { checkIsMintingRequired, jumpToStep } from '../../registerRelaySlice'
-import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
-
-export interface MinterContextInterface {
-  mintAmount: ethers.BigNumber
-  outstandingMintAmount: ethers.BigNumber | null
-  setMintAmount: React.Dispatch<React.SetStateAction<ethers.BigNumber | null>>
-}
-
-export const MinterContext = createContext<MinterContextInterface>({} as MinterContextInterface)
+import { HashType } from '../../../../../../types/Hash'
 
 interface IProps {
   success: boolean
@@ -30,12 +23,11 @@ export default function Minter({ success }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [outstandingMintAmount, setOutstandingMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useState<ethers.BigNumber>(ethers.constants.Zero)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
-  const [hash, setHash] = useState<string>()
+  const [hash, setHash] = useState<HashType>()
 
   useEffect(() => {
     if (currentStep === 2) {
@@ -44,23 +36,16 @@ export default function Minter({ success }: IProps) {
     return () => {
       setMintAmount(minimumStakeForToken)
     }
-  }, [minimumStakeForToken, setMintAmount, currentStep])
+  }, [])
 
-  const {
-    data: tokenBalanceData,
-    refetch,
-    isError
-  } = useBalance({
+  const { refetch } = useBalance({
     address: account as any,
     token: token as any,
-    watch: true,
     enabled: false,
     onSuccess: (data) => {
       if (account != null && token != null && minimumStakeForToken != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
         const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-        if (mintAmount === ethers.constants.Zero) setMintAmount(outstandingTokenAmountCalculated)
-        setOutstandingMintAmount(outstandingTokenAmountCalculated)
         setMintAmount(outstandingTokenAmountCalculated)
       }
     }
@@ -75,13 +60,19 @@ export default function Minter({ success }: IProps) {
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'deposit',
-    overrides: { value: localMintAmount as any },
+    overrides: { value: localMintAmount },
     mode: 'recklesslyUnprepared',
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      console.log(data)
-      !isError && dispatch(jumpToStep(3))
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !(hash == null),
+    onSuccess: () => {
+      dispatch(jumpToStep(3))
     }
   })
 
@@ -100,7 +91,7 @@ export default function Minter({ success }: IProps) {
     return (
       <>
         <Typography variant='body2' color={'grey.600'}>
-          Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
+          {localMintAmount != null && <>Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH</>}
         </Typography>
         <CopyHash copyValue={hash} />
       </>
@@ -112,26 +103,19 @@ export default function Minter({ success }: IProps) {
   if (isSuccess) return <>Success</>
 
   return (
-    <MinterContext.Provider
-      value={{
-        mintAmount,
-        outstandingMintAmount,
-        setMintAmount
+    <RegistrationInputWithTitle
+      title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
+      label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
+      onClick={() => {
+        mintToken?.()
       }}
-    >
-      <RegistrationInputWithTitle
-        title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-        label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
-        onClick={() => {
-          mintToken?.()
-        }}
-        onChange={(value) => handleSetMintAmount(value)}
-        error={mintTokenError?.message}
-        isLoading={isLoading}
-        isSuccess={isSuccess}
-        type={TextFieldType.Text}
-        buttonText='Mint token'
-      />
-    </MinterContext.Provider>
+      isLoadingForTransaction={isLoadingForTransaction}
+      onChange={(value) => handleSetMintAmount(value)}
+      error={mintTokenError?.message}
+      isLoading={isLoading}
+      isSuccess={isSuccess}
+      type={TextFieldType.Number}
+      buttonText='Mint token'
+    />
   )
 }

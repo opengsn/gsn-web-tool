@@ -52,8 +52,8 @@ interface checkIsMintingRequiredParams {
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState // check why checkIsMintingRequired is run
-    if (state.register.step > 3) return fulfillWithValue(true, null)
+    // const state = getState() as RootState // check why checkIsMintingRequired is run
+    // if (state.register.step > 3) return fulfillWithValue(true, null)
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
@@ -171,15 +171,16 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
       return fulfillWithValue(5, null)
     } catch (error: any) {
+      console.log(error.message)
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(7, null)
+          return fulfillWithValue(4, null)
         case error.message.includes('this hub is not authorized by SM'):
-          return fulfillWithValue(7, null)
+          return fulfillWithValue(4, null)
         case error.message.includes('stake amount is too small'):
-          return fulfillWithValue(7, null)
+          return fulfillWithValue(4, null)
         default:
-          return rejectWithValue(null)
+          return rejectWithValue(3)
       }
     }
   }
@@ -197,7 +198,7 @@ export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStat
     try {
       const relay = state.relay.relay
       if (relay.ready) {
-        return fulfillWithValue(7, null) // relay is ready
+        return fulfillWithValue(RegisterSteps.Success, null) // relay is ready
       }
       // start the chain of checks
       dispatch(validateIsRelayFunded({ account, relay, provider })).catch(rejectWithValue)
@@ -229,9 +230,9 @@ const registerSlice = createSlice({
   extraReducers: (builder) => {
     // main
     builder.addCase(fetchRegisterStateData.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 6) {
         state.status = 'success'
-        state.step = 4
+        state.step = 6
       } else {
         state.step = 0
         state.status = 'idle'

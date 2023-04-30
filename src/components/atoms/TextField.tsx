@@ -17,9 +17,10 @@ interface IProps {
   error?: boolean
   name?: string
   ref?: RefObject<HTMLInputElement>
+  disabled?: boolean
 }
 
-const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldType.Text, helperText, error, name, ref }) => {
+const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldType.Text, helperText, error, name, ref, disabled }) => {
   return (
     <MuiTextField
       value={value}
@@ -31,6 +32,7 @@ const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldT
       error={error}
       name={name}
       ref={ref}
+      disabled={disabled}
       fullWidth
     />
   )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePrepareContractWrite, useContractWrite } from 'wagmi'
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
@@ -8,13 +8,19 @@ import { Alert, Box, CircularProgress, Typography } from '../../../../../compone
 interface AuthorizeHubProps {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   listen: boolean
+  setIsAuthorizeHub: React.Dispatch<React.SetStateAction<boolean>>
+  isAuthorizeHub: boolean
 }
 
-export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
+export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isAuthorizeHub }: AuthorizeHubProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress, relayManagerAddress } = relay
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const chainId = Number(relay.chainId)
+
+  useEffect(() => {
+    refetchPrepareContractWrite().catch(console.error)
+  }, [])
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
 
@@ -23,11 +29,13 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
   const {
     config,
     error: authorizeTxError,
-    isError
+    isError,
+    refetch: refetchPrepareContractWrite
   } = usePrepareContractWrite({
     address: stakeManagerAddress,
     abi: StakeManager.abi,
     functionName: 'authorizeHubByOwner',
+    enabled: false,
     args: [relayManagerAddress, relayHubAddress],
     onSuccess: () => {
       authorizeHub?.()
@@ -39,10 +47,11 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
     ...defaultStateSwitchers,
     onSuccess: (data) => {
       setListen(true)
+      setIsAuthorizeHub(false)
     }
   })
 
-  const text = listen ? 'Authorizing Hub' : 'Setting relay...'
+  const text = isAuthorizeHub ? 'Authorizing Hub' : 'Setting relay...'
 
   return (
     <Box>
@@ -54,7 +63,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
         </Alert>
           )
         : (
-        <Box>
+        <Box mt='10px'>
           <CircularProgress />
         </Box>
           )}

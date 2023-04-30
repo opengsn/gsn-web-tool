@@ -1,12 +1,28 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Typography, Box, Button, Icon } from '../atoms'
 import Modal from '../atoms/Modal'
 import { useNavigate } from 'react-router-dom'
+import { useAppDispatch, useLocalStorage } from '../../hooks'
+import { jumpToStep } from '../../feature/Relay/Commands/RegisterRelay/registerRelaySlice'
 
 const SuccessModal: FC = () => {
+  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+  const [open, setOpen] = useState<boolean>(true)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    setSelectedToken('')
+  }, [])
+
   const navigate = useNavigate()
   return (
-    <Modal open={true}>
+    <Modal
+      open={open}
+      onClose={() => {
+        setOpen(false)
+        dispatch(jumpToStep(-1))
+      }}
+    >
       <Box mb={4}>
         <Icon.Success width='40px' height='40px' />
       </Box>
@@ -25,7 +41,13 @@ const SuccessModal: FC = () => {
           </Button.Contained>
         </Box>
         <Box width='200px'>
-          <Button.Contained>Close</Button.Contained>
+          <Button.Contained
+            onClick={() => {
+              setOpen(false)
+            }}
+          >
+            Close
+          </Button.Contained>
         </Box>
       </Box>
     </Modal>

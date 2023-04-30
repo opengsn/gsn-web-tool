@@ -11,11 +11,13 @@ import RelayCommands from './Commands/Commands'
 
 import { PingResponse } from '../../types/PingResponse'
 import ChainIdHandler from './components/ChainIdHandler'
+import SuccessModal from '../../components/molecules/SuccessModal'
 
 export default function Relay() {
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
+  const currentStep = useAppSelector((state) => state.register.step)
   const relayDataFetched = Object.keys(relayData).length > 0
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
@@ -76,7 +78,8 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
+        {relayData.ready ? <></> : <>{connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}</>}
+        {currentStep === 6 && <SuccessModal />}
       </Box>
     )
   }
