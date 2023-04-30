@@ -7,7 +7,6 @@ import store from './store'
 
 import { ErrorBoundary } from './components/ErrorBoundary'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import './index.css'
