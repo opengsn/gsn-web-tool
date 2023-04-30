@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../../hooks'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 
 import { TokenContext } from '../TokenContextWrapper'
@@ -21,10 +21,9 @@ interface IProps {
 
 export default function Approver({ success }: IProps) {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
-  const defaultStateSwitchers = useDefaultStateSwitchers()
   const dispatch = useAppDispatch()
   const [hash, setHash] = useState<HashType>()
-  const currentStep = useAppSelector((state) => state.register.step)
+  const [approved, setApproved] = useLocalStorage<boolean>('approved', false)
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
@@ -85,6 +84,7 @@ export default function Approver({ success }: IProps) {
     // ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
+      setApproved(true)
     }
   })
 
@@ -115,7 +115,6 @@ export default function Approver({ success }: IProps) {
         )}
         {currentAllowanceIsError && <Alert severity='error'>Error fetching token allowance</Alert>}
         {prepareApproveTxIsError && <Alert severity='error'>Error preparing approve transaction. - {prepareApproveTxError?.message}</Alert>}
-        {isSuccess || (approveAmount.eq(ethers.constants.Zero) && <>success</>)}
       </>
     )
   }

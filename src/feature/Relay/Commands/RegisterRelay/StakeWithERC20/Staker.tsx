@@ -27,7 +27,7 @@ export default function Staker({ success }: IProps) {
   const unstakeDelay = '15000'
 
   useEffect(() => {
-    void refetchContractRead().catch(console.error)
+    refetchContractRead().catch(console.error)
   }, [])
 
   const {

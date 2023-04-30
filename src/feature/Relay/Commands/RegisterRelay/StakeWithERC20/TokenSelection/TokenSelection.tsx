@@ -90,7 +90,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       : [
           {
             label: 'Insert ERC20 token address',
-            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} />,
+            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1}/>,
             disabled: radioValue !== 1,
             key: 1
           },

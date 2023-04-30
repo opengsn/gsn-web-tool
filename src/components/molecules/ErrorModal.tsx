@@ -1,10 +1,16 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import Modal from '../atoms/Modal'
 import { Box, Button, Icon, Typography } from '../atoms'
 
 const ErrorModal: FC = () => {
+  const [open, setOpen] = useState<boolean>(true)
   return (
-    <Modal open={true}>
+    <Modal
+      open={open}
+      onClose={() => {
+        setOpen(false)
+      }}
+    >
       <Box mb={4}>
         <Icon.Info width='40px' height='40px' fill='black' />
       </Box>

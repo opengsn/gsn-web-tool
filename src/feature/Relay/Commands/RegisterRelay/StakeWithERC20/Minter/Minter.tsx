@@ -6,7 +6,7 @@ import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 
 import { TokenContext } from '../TokenContextWrapper'
 import { checkIsMintingRequired, jumpToStep } from '../../registerRelaySlice'
-import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
@@ -23,7 +23,7 @@ export default function Minter({ success }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useState<ethers.BigNumber>(ethers.constants.Zero)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.Zero)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
@@ -38,7 +38,7 @@ export default function Minter({ success }: IProps) {
     }
   }, [])
 
-  const { data: tokenBalanceData, refetch } = useBalance({
+  const { refetch } = useBalance({
     address: account as any,
     token: token as any,
     enabled: false,
@@ -65,7 +65,6 @@ export default function Minter({ success }: IProps) {
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      // dispatch(jumpToStep(3))
     }
   })
 
@@ -115,7 +114,7 @@ export default function Minter({ success }: IProps) {
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}
-      type={TextFieldType.Text}
+      type={TextFieldType.Number}
       buttonText='Mint token'
     />
   )

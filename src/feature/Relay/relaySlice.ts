@@ -60,7 +60,7 @@ const relaySlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchRelayData.fulfilled, (state, action) => {
       if (state.relay.ready !== undefined && !state.relay.ready && action.payload.relay.ready === true) {
-        toast.success('Relay is ready')
+        console.log('Relay is ready')
       }
       state.errorMsg = ''
       state.relayUrl = action.meta.arg
