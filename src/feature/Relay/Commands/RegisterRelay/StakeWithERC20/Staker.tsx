@@ -76,7 +76,9 @@ export default function Staker({ success }: IProps) {
     }
   })
 
-  if (success) <CopyHash copyValue={hash} />
+  if (success) {
+    return <CopyHash copyValue={hash} />
+  }
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
 import React, { useState, useEffect } from 'react'
-import { Typography } from '../../../../../components/atoms'
+import { Alert, Typography } from '../../../../../components/atoms'
 
 import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
@@ -32,7 +32,7 @@ export default function Funder({ success }: IProps) {
   const stakeManagerAddress = stakeManagerAddressData as any
 
   if (stakeManagerAddress === undefined) {
-    return <div>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</div>
+    return <Alert severity='error'>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</Alert>
   }
 
   if (success ?? false) {

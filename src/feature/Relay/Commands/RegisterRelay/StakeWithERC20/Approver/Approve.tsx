@@ -32,20 +32,17 @@ export default function Approver({ success }: IProps) {
   // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
-  const { data: stakeManagerAddressData, refetch: refetchStakeManagerAddress } = useStakeManagerAddress(relayHubAddress, chainId)
+  const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
   const fetchAll = async () => {
-    await refetchStakeManagerAddress().catch(console.error)
     await refetchCurrentAllowance().catch(console.error)
     await refetchPrepareApprove().catch(console.error)
   }
 
   useEffect(() => {
-    if (currentStep === RegisterSteps['Approve allowance']) {
-      fetchAll().catch(console.error)
-    }
-  }, [currentStep])
+    fetchAll().catch(console.error)
+  }, [])
 
   const {
     data: currentAllowanceData,
@@ -60,9 +57,7 @@ export default function Approver({ success }: IProps) {
     enabled: false,
     args: [account, stakeManagerAddress],
     onSuccess(data) {
-      if (minimumStakeForToken != null) {
-        setApproveAmount(minimumStakeForToken.sub(data as any))
-      }
+      setApproveAmount(minimumStakeForToken?.sub(data as any) ?? ethers.constants.One)
     }
   })
 
@@ -108,7 +103,7 @@ export default function Approver({ success }: IProps) {
           <RegistrationInputWithTitle
             title='This is a short explanatory text about the allowance approval.'
             buttonText='Approve'
-            isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading}
+            isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading || approve == null}
             isSuccess={isSuccess}
             error={approveTxError?.message}
             isLoadingForTransaction={isLoadingForTransaction}

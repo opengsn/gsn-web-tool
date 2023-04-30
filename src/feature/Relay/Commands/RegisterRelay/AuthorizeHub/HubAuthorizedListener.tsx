@@ -45,7 +45,7 @@ export default function HubAuthorizedListener({ listen, setListen }: HubAuthoriz
     const waitForRelay = async (relayUrl: string, timeout = 60): Promise<void> => {
       console.error(`Will wait up to ${timeout}s for the relay to be ready`)
 
-      const endTime = Date.now() + timeout * 1000
+      const endTime = Date.now() + timeout * 10000
       while (Date.now() < endTime) {
         dispatch(fetchRelayData(relayUrl)).catch(toast.error)
         await sleep(3000)

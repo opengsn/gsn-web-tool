@@ -52,8 +52,8 @@ interface checkIsMintingRequiredParams {
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState // check why checkIsMintingRequired is run
-    if (state.register.step > 3) return fulfillWithValue(true, null)
+    // const state = getState() as RootState // check why checkIsMintingRequired is run
+    // if (state.register.step > 3) return fulfillWithValue(true, null)
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
@@ -173,13 +173,13 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
     } catch (error: any) {
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(4, null)
-        case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(3, null)
-        case error.message.includes('stake amount is too small'):
+        case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(4, null)
+        case error.message.includes('stake amount is too small'):
+          return fulfillWithValue(3, null)
         default:
-          return rejectWithValue(4)
+          return rejectWithValue(3)
       }
     }
   }

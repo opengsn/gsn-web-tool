@@ -60,11 +60,12 @@ export default function Minter({ success }: IProps) {
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'deposit',
-    overrides: { value: localMintAmount as any },
+    overrides: { value: localMintAmount },
     mode: 'recklesslyUnprepared',
     ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
+      // dispatch(jumpToStep(3))
     }
   })
 
@@ -91,7 +92,7 @@ export default function Minter({ success }: IProps) {
     return (
       <>
         <Typography variant='body2' color={'grey.600'}>
-          Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH
+          {localMintAmount != null && <>Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH</>}
         </Typography>
         <CopyHash copyValue={hash} />
       </>

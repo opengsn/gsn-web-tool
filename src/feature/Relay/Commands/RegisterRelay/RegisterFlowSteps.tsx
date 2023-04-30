@@ -66,7 +66,7 @@ const RegisterFlowSteps: FC<IProps> = ({ currentStep }) => {
       {steps.map((step, index) => (
         <Box key={index} my={3}>
           <Step {...step} expanded={currentStep === step.step} success={currentStep > step.step}>
-            {step.children}
+            {currentStep >= step.step && step.children}
           </Step>
         </Box>
       ))}

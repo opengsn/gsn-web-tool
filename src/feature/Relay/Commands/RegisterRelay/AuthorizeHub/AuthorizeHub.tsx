@@ -8,9 +8,11 @@ import { Alert, Box, CircularProgress, Typography } from '../../../../../compone
 interface AuthorizeHubProps {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   listen: boolean
+  setIsAuthorizeHub: React.Dispatch<React.SetStateAction<boolean>>
+  isAuthorizeHub: boolean
 }
 
-export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
+export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isAuthorizeHub }: AuthorizeHubProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress, relayManagerAddress } = relay
   const defaultStateSwitchers = useDefaultStateSwitchers()
@@ -19,7 +21,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
   useEffect(() => {
     refetchPrepareContractWrite().catch(console.error)
   }, [])
-  // removed refetch
+
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const stakeManagerAddress = stakeManagerAddressData as any
@@ -42,13 +44,14 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
 
   const { write: authorizeHub } = useContractWrite({
     ...config,
-    // ...defaultStateSwitchers,
+    ...defaultStateSwitchers,
     onSuccess: (data) => {
       setListen(true)
+      setIsAuthorizeHub(false)
     }
   })
 
-  const text = !listen ? 'Authorizing Hub' : 'Setting relay...'
+  const text = isAuthorizeHub ? 'Authorizing Hub' : 'Setting relay...'
 
   return (
     <Box>
@@ -60,7 +63,7 @@ export default function AuthorizeHub({ setListen, listen }: AuthorizeHubProps) {
         </Alert>
           )
         : (
-        <Box>
+        <Box mt='10px'>
           <CircularProgress />
         </Box>
           )}
