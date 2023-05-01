@@ -78,7 +78,7 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {relayData.ready ? <></> : <>{connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}</>}
+        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
         {currentStep === 6 && <SuccessModal />}
       </Box>
     )

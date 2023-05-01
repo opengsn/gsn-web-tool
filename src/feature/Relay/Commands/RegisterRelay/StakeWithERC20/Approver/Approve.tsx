@@ -106,6 +106,7 @@ export default function Approver({ success }: IProps) {
             isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading || approve == null}
             isSuccess={isSuccess}
             error={approveTxError?.message}
+            warningAlert='If using MetaMask, please do not change the approval amount. Choose "Use Default" to issue the approval'
             isLoadingForTransaction={isLoadingForTransaction}
             onClick={() => {
               console.log(approve)

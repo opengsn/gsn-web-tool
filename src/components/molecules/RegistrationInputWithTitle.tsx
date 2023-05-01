@@ -19,6 +19,7 @@ interface IProps {
   value?: string
   placeholder?: string
   isLoadingForTransaction?: boolean
+  warningAlert?: string
 }
 
 const RegistrationInputWithTitle: FC<IProps> = ({
@@ -33,7 +34,8 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   title,
   label,
   placeholder,
-  isLoadingForTransaction
+  isLoadingForTransaction,
+  warningAlert
 }) => {
   const renderButtonText = () => {
     if ((isLoadingForTransaction ?? false) || isSuccess) {
@@ -53,6 +55,13 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       {label != null && (
         <Box>
           <Typography variant='body2'>{label}</Typography>
+        </Box>
+      )}
+      {warningAlert != null && (
+        <Box mb={'10px'} width='400px'>
+          <Alert severity='warning'>
+            <Typography variant='body2'>{warningAlert}</Typography>
+          </Alert>
         </Box>
       )}
       {onChange != null && (
