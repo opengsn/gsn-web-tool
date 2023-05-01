@@ -54,7 +54,7 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
   const text = isAuthorizeHub ? 'Authorizing Hub' : 'Setting relay...'
 
   return (
-    <Box>
+    <Box mt={4}>
       <Typography>{text}</Typography>
       {isError
         ? (
@@ -63,7 +63,7 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
         </Alert>
           )
         : (
-        <Box mt='10px'>
+        <Box mt={4}>
           <CircularProgress />
         </Box>
           )}
