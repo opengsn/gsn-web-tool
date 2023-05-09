@@ -174,7 +174,7 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
       console.log(error.message)
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(4, null)
+          return fulfillWithValue(3, null)
         case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(4, null)
         case error.message.includes('stake amount is too small'):
@@ -223,7 +223,7 @@ const registerSlice = createSlice({
     highlightStepIdle(state: registerState) {
       state.status = 'idle'
     },
-    jumpToStep(state: registerState, action: { payload: number, type: string }) {
+    jumpToStep(state: registerState, action: { payload: number; type: string }) {
       state.step = action.payload
     }
   },

@@ -2,8 +2,7 @@ import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { useAppDispatch, useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../../hooks'
-import { useDefaultStateSwitchers } from '../../registerRelayHooks'
+import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
 
 import { TokenContext } from '../TokenContextWrapper'
 
@@ -13,7 +12,6 @@ import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../../types/Hash'
-import { RegisterSteps } from '../../RegisterFlowSteps'
 
 interface IProps {
   success: boolean
@@ -23,28 +21,25 @@ export default function Approver({ success }: IProps) {
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const dispatch = useAppDispatch()
   const [hash, setHash] = useState<HashType>()
-  const [approved, setApproved] = useLocalStorage<boolean>('approved', false)
 
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
   const chainId = Number(relay.chainId)
-  // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
-  const fetchAll = async () => {
+  const FetchCurrentAllowance = async () => {
     await refetchCurrentAllowance().catch(console.error)
-    await refetchPrepareApprove().catch(console.error)
   }
 
   useEffect(() => {
-    fetchAll().catch(console.error)
+    FetchCurrentAllowance().catch(console.error)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
-    data: currentAllowanceData,
     isError: currentAllowanceIsError,
     isLoading: currentAllowanceIsLoading,
     refetch: refetchCurrentAllowance
@@ -55,8 +50,10 @@ export default function Approver({ success }: IProps) {
     chainId,
     enabled: false,
     args: [account, stakeManagerAddress],
-    onSuccess(data) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    onSuccess: async (data) => {
       setApproveAmount(minimumStakeForToken?.sub(data as any) ?? ethers.constants.One)
+      await refetchPrepareApprove()
     }
   })
 
@@ -81,10 +78,8 @@ export default function Approver({ success }: IProps) {
     write: approve
   } = useContractWrite({
     ...config,
-    // ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      setApproved(true)
     }
   })
 
