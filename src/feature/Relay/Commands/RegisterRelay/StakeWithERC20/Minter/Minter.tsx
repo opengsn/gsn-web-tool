@@ -30,24 +30,24 @@ export default function Minter({ success }: IProps) {
   const [hash, setHash] = useState<HashType>()
 
   useEffect(() => {
-    if (currentStep === 2) {
+    if (currentStep === 2 && minimumStakeForToken !== null) {
       refetch().catch(console.error)
     }
     return () => {
       setMintAmount(minimumStakeForToken)
     }
-  }, [])
+  }, [token, minimumStakeForToken])
 
   const { refetch } = useBalance({
     address: account as any,
     token: token as any,
     enabled: false,
     onSuccess: (data) => {
-      if (account != null && token != null && minimumStakeForToken != null) {
+      if (account != null && token != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
-        const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-        setMintAmount(outstandingTokenAmountCalculated)
       }
+      const outstandingTokenAmountCalculated = minimumStakeForToken?.sub(data.value) ?? null
+      setMintAmount(outstandingTokenAmountCalculated)
     }
   })
 
@@ -98,14 +98,12 @@ export default function Minter({ success }: IProps) {
     )
   }
 
-  if (mintAmount === null) return <>mintAmount is null</>
-
   if (isSuccess) return <>Success</>
 
   return (
     <RegistrationInputWithTitle
       title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-      label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
+      label={`Minting amount (minimum amount ${mintAmount !== null ? ethers.utils.formatEther(mintAmount) : 'error - '} ETH)`}
       onClick={() => {
         mintToken?.()
       }}

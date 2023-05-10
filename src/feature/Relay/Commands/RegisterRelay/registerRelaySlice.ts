@@ -52,8 +52,6 @@ interface checkIsMintingRequiredParams {
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
-    // const state = getState() as RootState // check why checkIsMintingRequired is run
-    // if (state.register.step > 3) return fulfillWithValue(true, null)
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
@@ -223,7 +221,7 @@ const registerSlice = createSlice({
     highlightStepIdle(state: registerState) {
       state.status = 'idle'
     },
-    jumpToStep(state: registerState, action: { payload: number; type: string }) {
+    jumpToStep(state: registerState, action: { payload: number, type: string }) {
       state.step = action.payload
     }
   },

@@ -22,7 +22,9 @@ export default function Funder({ success }: IProps) {
   const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId)
 
   useEffect(() => {
-    refetch().catch(console.error)
+    if (currentStep === 0) {
+      refetch().catch(console.error)
+    }
   }, [])
 
   const handleChangeFunds = (value: number) => {

@@ -1,13 +1,13 @@
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
-import { Button, Box, Paper, Typography, ButtonType, Icon, Alert } from '../../../../../../components/atoms'
+import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
 import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
-import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import chains from '../../../../../../assets/chains.json'
 import { useToken } from 'wagmi'
 
@@ -29,18 +29,17 @@ const TokenSelection: FC<IProps> = ({ success }) => {
   const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
-  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (selectedToken !== '' && currentStep === RegisterSteps['Token selection']) {
-      setToken(selectedToken)
+    if (token !== '' && currentStep === RegisterSteps['Token selection']) {
+      setToken(token)
       dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
-  }, [selectedToken, currentStep])
+  }, [token, currentStep])
 
   useEffect(() => {
-    if (token != null && currentStep === RegisterSteps['Token selection']) {
+    if (token !== '' && currentStep === RegisterSteps['Token selection']) {
       refetch().catch(console.error)
     }
   }, [token])
@@ -54,10 +53,8 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       if (radioValue === 2) {
         const token = await handleFindFirstTokenButton()
         setToken(token)
-        setSelectedToken(token)
       } else {
         setToken(values.token)
-        setSelectedToken(values.token)
       }
       currentStep === 1 && token && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
@@ -90,7 +87,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       : [
           {
             label: 'Insert ERC20 token address',
-            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1}/>,
+            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1} />,
             disabled: radioValue !== 1,
             key: 1
           },
@@ -121,8 +118,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           <Box ml='auto'>
             <Button.Icon
               onClick={() => {
-                setToken(null)
-                setSelectedToken('')
+                setToken('')
                 dispatch(jumpToStep(RegisterSteps['Token selection']))
               }}
             >
@@ -161,11 +157,6 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                   </Box>
                 </Box>
               </Box>
-              {getTokenAddress.isSubmitting && (
-                <Alert severity='error'>
-                  <Typography>Something went wrong, please try again</Typography>
-                </Alert>
-              )}
             </Paper>
           )
         })}

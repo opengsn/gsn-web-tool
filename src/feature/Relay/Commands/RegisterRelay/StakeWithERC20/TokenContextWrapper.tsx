@@ -2,9 +2,7 @@ import { useEffect, useState, createContext, ReactNode } from 'react'
 import { ethers, constants } from 'ethers'
 import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
 
-import { toast } from 'react-toastify'
-
-import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
+import { useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../hooks'
 
 import { isSameAddress, toNumber } from '../../../../../utils'
 
@@ -15,7 +13,7 @@ import { ChainWithGsn } from '../../../../../types'
 
 export interface TokenContextInterface {
   chainId: number
-  token: string | null
+  token: string
   account?: string
   minimumStakeForToken: ethers.BigNumber | null
   stakeManagerAddress: string
@@ -23,7 +21,7 @@ export interface TokenContextInterface {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   handleFindFirstTokenButton: () => Promise<string>
   chain: ChainWithGsn
-  setToken: React.Dispatch<React.SetStateAction<string | null>>
+  setToken: (value: string) => void
 }
 
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
@@ -33,7 +31,7 @@ interface IProps {
 }
 
 export default function TokenContextWrapper({ children }: IProps) {
-  const [token, setToken] = useState<string | null>(null)
+  const [token, setToken] = useLocalStorage('token', '')
   const [minimumStakeForToken, setMinimumStakeForToken] = useState<ethers.BigNumber | null>(null)
   const [listen, setListen] = useState(false)
   const relay = useAppSelector((state) => state.relay.relay)
@@ -100,7 +98,7 @@ export default function TokenContextWrapper({ children }: IProps) {
         }
       }
     }
-  }, [newStakeInfoData, address])
+  }, [newStakeInfoData, address, setToken])
 
   useEffect(() => {
     const fetchMinimumStakeForToken = async () => {
@@ -108,15 +106,7 @@ export default function TokenContextWrapper({ children }: IProps) {
       setMinimumStakeForToken(minimumStake[0])
     }
     if (token !== null) {
-      fetchMinimumStakeForToken().catch((e) => {
-        console.error(e.message)
-        toast.error(
-          <>
-            <p>Error while fetching minimum stake for token</p>
-            <p>See console for error message</p>
-          </>
-        )
-      })
+      fetchMinimumStakeForToken()
     }
   }, [token, relayHub.functions])
 

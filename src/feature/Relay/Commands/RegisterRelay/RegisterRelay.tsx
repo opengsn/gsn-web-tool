@@ -78,9 +78,7 @@ export default function RegisterRelay() {
             Registration
           </Typography>
         </Box>
-        <Box>
-          <RegisterFlowSteps currentStep={currentStep} />
-        </Box>
+        <Box>{showRegisterRelay && <RegisterFlowSteps currentStep={currentStep} />}</Box>
       </Collapse>
     </Box>
   )

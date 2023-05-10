@@ -31,12 +31,12 @@ export default function Approver({ success }: IProps) {
   const stakeManagerAddress = stakeManagerAddressData as any
 
   const FetchCurrentAllowance = async () => {
-    await refetchCurrentAllowance().catch(console.error)
+    await refetchCurrentAllowance()
   }
 
   useEffect(() => {
-    FetchCurrentAllowance().catch(console.error)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    FetchCurrentAllowance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
