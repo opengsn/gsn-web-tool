@@ -169,7 +169,6 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
       return fulfillWithValue(5, null)
     } catch (error: any) {
-      console.log(error.message)
       switch (true) {
         case error.message.includes('relay manager not staked'):
           return fulfillWithValue(3, null)

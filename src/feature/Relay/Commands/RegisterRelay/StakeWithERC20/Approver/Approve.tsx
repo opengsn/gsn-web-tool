@@ -85,7 +85,7 @@ export default function Approver({ success }: IProps) {
 
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
-    enabled: !(hash == null),
+    enabled: !!hash,
     onSuccess: () => {
       dispatch(jumpToStep(4))
     }

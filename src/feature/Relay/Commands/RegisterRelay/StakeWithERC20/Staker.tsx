@@ -28,6 +28,7 @@ export default function Staker({ success }: IProps) {
 
   useEffect(() => {
     refetchContractRead().catch(console.error)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -70,7 +71,7 @@ export default function Staker({ success }: IProps) {
 
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
-    enabled: !(hash == null),
+    enabled: !!hash,
     onSuccess: () => {
       setListen(true)
     }
