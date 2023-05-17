@@ -4,6 +4,7 @@ import { PingResponse } from '../../../types/PingResponse'
 import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '../../../components/atoms'
+import { useEffect } from 'react'
 
 interface IProps {
   showAllInfo?: boolean
@@ -13,8 +14,17 @@ function RelayInfo({ showAllInfo }: IProps) {
   const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
-  const { data: stakeManagerAddressData, isFetching, isLoading } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
+  const {
+    data: stakeManagerAddressData,
+    refetch: refetchStakeManagerAddressData,
+    isFetching,
+    isLoading
+  } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
+
+  useEffect(() => {
+    refetchStakeManagerAddressData()
+  }, [])
 
   const THead = () => (
     <TableHead>
@@ -44,7 +54,6 @@ function RelayInfo({ showAllInfo }: IProps) {
         <TableCell>
           <Typography variant={'subtitle2'}>Current Owner</Typography>
         </TableCell>
-
         <TableCell>
           <Typography variant={'subtitle2'}>loading</Typography>
         </TableCell>

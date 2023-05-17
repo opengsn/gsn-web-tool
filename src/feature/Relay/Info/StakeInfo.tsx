@@ -15,19 +15,20 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
   const chainId = Number(relayData.chainId)
 
   const dispatch = useAppDispatch()
-  const { data: stakeInfo, isSuccess } = useContractRead({
+  const { data: stakeInfo } = useContractRead({
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
     enabled: relayManagerAddress !== '',
+    watch: true,
     chainId,
     onSuccess(data) {
       dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
     }
   })
 
-  if (stakeInfo !== undefined && isSuccess) {
+  if (stakeInfo !== undefined) {
     const { token } = (stakeInfo as any)[0]
     return <StakingToken stakingToken={token} chainId={chainId} />
   }
@@ -35,7 +36,7 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
   const LoadingRow = (
     <TableRow>
       <TableCell>
-        <Typography variant={'subtitle2'}>Loading info from stake manager, refreshing the page might help</Typography>
+        <Typography variant={'subtitle2'}>Loading...</Typography>
       </TableCell>
     </TableRow>
   )

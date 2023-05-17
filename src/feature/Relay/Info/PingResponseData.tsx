@@ -37,7 +37,7 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         if (x === 'relayManagerAddress') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
@@ -45,10 +45,8 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  <span>
-                    Balance: <b>{relayManagerBalanceData?.formatted}</b>
-                  </span>{' '}
-                  <span>{relayManagerBalanceData?.symbol}</span>
+                  Balance: <b>{relayManagerBalanceData?.formatted} </b>
+                  {relayManagerBalanceData?.symbol}
                 </Typography>
               </TableCell>
             </>
@@ -56,7 +54,7 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         } else if (x === 'relayWorkerAddress') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
@@ -64,10 +62,7 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  <span>
-                    Balance: <b>{relayWorkerBalanceData?.formatted}</b>
-                  </span>{' '}
-                  <span>{relayWorkerBalanceData?.symbol}</span>
+                  Balance: <b>{relayWorkerBalanceData?.formatted}</b> {relayWorkerBalanceData?.symbol}
                 </Typography>
               </TableCell>
             </>
@@ -76,7 +71,7 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           const accountIsOwner = isSameAddress(relayData[x], address)
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
@@ -92,23 +87,19 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         } else if (x === 'minMaxPriorityFeePerGas') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</Typography>
               </TableCell>
-              <TableCell>
-                <Typography variant={'subtitle2'}>
-                  <b>Native currency, value in ethers</b>
-                </Typography>
-              </TableCell>
+              <TableCell>{''}</TableCell>
             </>
           )
         } else if (x === 'ready') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
@@ -122,7 +113,7 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         } else {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>

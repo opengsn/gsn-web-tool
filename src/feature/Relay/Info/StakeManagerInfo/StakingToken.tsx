@@ -17,12 +17,16 @@ export default function StakingToken({ stakingToken, chainId }: stakingTokenProp
   const BalanceData = () => {
     if (address !== undefined) {
       return (
-        <span>
-          Balance <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}
-        </span>
+        <Typography variant='subtitle2'>
+          Balance: <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}
+        </Typography>
       )
     } else {
-      return <></>
+      return (
+        <Typography variant='subtitle2'>
+          Balance: <b>0.0</b>
+        </Typography>
+      )
     }
   }
 

@@ -3,8 +3,9 @@ import React, { FC } from 'react'
 import { Alert, Box, Button, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 import { formatMetaMaskError } from '../../utils'
+import placeHolderImage from '../../assets/images/placeholder-image.jpg'
 
-export const waitingForApproveText = 'Please approve the action in your wallet and wait for action processing by the blockchain'
+export const waitingForApproveText = 'Use your wallet'
 
 interface IProps {
   title: string
@@ -38,7 +39,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   warningAlert
 }) => {
   const renderButtonText = () => {
-    if ((isLoadingForTransaction ?? false) || isSuccess) {
+    if (isLoadingForTransaction || isSuccess) {
       return 'Processing...'
     } else if (isLoading) {
       return 'Waiting for approval'
@@ -46,6 +47,8 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       return buttonText
     }
   }
+
+  const isNonceError = error?.includes('Nonce too high')
 
   return (
     <Box my='10px'>
@@ -86,9 +89,11 @@ const RegistrationInputWithTitle: FC<IProps> = ({
           </Alert>
         )}
       </Box>
-      {!(error == null) && (
+      {error && (
         <Alert severity='error'>
           <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
+          <br />
+          {isNonceError && <Box mt={3} component='img' src={placeHolderImage} alt='Nonce Error' width='200px' />}
         </Alert>
       )}
     </Box>

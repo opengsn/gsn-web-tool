@@ -109,6 +109,7 @@ export default function Minter({ success }: IProps) {
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
+      value={ethers.utils.formatEther(mintAmount ?? ethers.constants.Zero)}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}
