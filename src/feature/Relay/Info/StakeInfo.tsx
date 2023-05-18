@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks'
 import { validateConfigOwnerInLineWithStakeManager } from '../relaySlice'
 import StakeManager from '../../../contracts/StakeManager.json'
 import StakingToken from './StakeManagerInfo/StakingToken'
-import { TableCell, TableRow, Typography } from '../../../components/atoms'
+import { useEffect } from 'react'
 
 interface stakeInfoProps {
   stakeManagerAddress: string
@@ -15,30 +15,25 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
   const chainId = Number(relayData.chainId)
 
   const dispatch = useAppDispatch()
-  const { data: stakeInfo } = useContractRead({
+  const { data: stakeInfo, refetch } = useContractRead({
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
     enabled: relayManagerAddress !== '',
-    watch: true,
     chainId,
     onSuccess(data) {
+      if (relayData.ready) return
       dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
     }
   })
 
-  if (stakeInfo !== undefined) {
-    const { token } = (stakeInfo as any)[0]
-    return <StakingToken stakingToken={token} chainId={chainId} />
-  }
+  useEffect(() => {
+    if (relayData.ready) {
+      refetch()
+    }
+  }, [refetch, relayData.ready])
 
-  const LoadingRow = (
-    <TableRow>
-      <TableCell>
-        <Typography variant={'subtitle2'}>Loading...</Typography>
-      </TableCell>
-    </TableRow>
-  )
-  return <>{LoadingRow}</>
+  const token = (stakeInfo as any)?.[0]?.token
+  return <StakingToken stakingToken={token} chainId={chainId} />
 }

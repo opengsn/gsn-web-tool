@@ -48,42 +48,12 @@ function RelayInfo({ showAllInfo }: IProps) {
     </TableHead>
   )
 
-  const StakeMananagerInfoPreparePlaceholder = () => (
-    <>
-      <TableRow>
-        <TableCell>
-          <Typography variant={'subtitle2'}>Current Owner</Typography>
-        </TableCell>
-        <TableCell>
-          <Typography variant={'subtitle2'}>loading</Typography>
-        </TableCell>
-        <TableCell>{''}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>
-          <Typography variant={'subtitle2'}>staking token</Typography>
-        </TableCell>
-        <TableCell>
-          <Typography variant={'subtitle2'}>loading</Typography>
-        </TableCell>
-        <TableCell>{''}</TableCell>
-      </TableRow>
-    </>
-  )
-
-  const stakeManagerIsReady = stakeManagerAddress !== undefined && !(isLoading || isFetching)
   return (
     <Table>
       <THead />
       <TableBody>
         <PingResponseData relayData={relayData} showAllInfo={showAllInfo} />
-        {stakeManagerIsReady
-          ? (
-          <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-            )
-          : (
-          <StakeMananagerInfoPreparePlaceholder />
-            )}
+        <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
       </TableBody>
     </Table>
   )

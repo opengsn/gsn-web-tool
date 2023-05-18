@@ -18,7 +18,7 @@ export default function StakingToken({ stakingToken, chainId }: stakingTokenProp
     if (address !== undefined) {
       return (
         <Typography variant='subtitle2'>
-          Balance: <b>{stakingTokenBalance?.formatted}</b> {stakingTokenBalance?.symbol}
+          Balance: <b>{stakingTokenBalance?.formatted ?? '0.0'}</b> {stakingTokenBalance?.symbol}
         </Typography>
       )
     } else {
@@ -36,7 +36,7 @@ export default function StakingToken({ stakingToken, chainId }: stakingTokenProp
         <Typography variant={'subtitle2'}>Staking Token</Typography>
       </TableCell>
       <TableCell>
-        <Typography variant={'subtitle2'}>{stakingToken}</Typography>
+        <Typography variant={'subtitle2'}>{stakingToken || 'Loading..'}</Typography>
       </TableCell>
       <TableCell>
         <Typography variant={'subtitle2'}>
