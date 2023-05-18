@@ -10,6 +10,7 @@ import RegistrationInputWithTitle from '../../../../../components/molecules/Regi
 import { Alert } from '../../../../../components/atoms'
 import CopyHash from '../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../types/Hash'
+import ExplorerLink from '../ExplorerLink'
 
 interface IProps {
   success: boolean
@@ -28,7 +29,7 @@ export default function Staker({ success }: IProps) {
 
   useEffect(() => {
     refetchContractRead().catch(console.error)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -78,7 +79,12 @@ export default function Staker({ success }: IProps) {
   })
 
   if (success) {
-    return <CopyHash copyValue={hash} />
+    return (
+      <>
+        <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
+      </>
+    )
   }
 
   return (

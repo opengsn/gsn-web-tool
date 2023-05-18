@@ -6,6 +6,7 @@ import FundButton from './FundButton'
 import SetOwnerListener from './SetOwnerListener'
 import CopyHash from '../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../types/Hash'
+import ExplorerLink from '../ExplorerLink'
 
 interface IProps {
   success?: boolean
@@ -44,6 +45,7 @@ export default function Funder({ success }: IProps) {
           Relay funded with {funds} ETH
         </Typography>
         <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
       </>
     )
   }

@@ -13,6 +13,7 @@ import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../../types/Hash'
+import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
   success: boolean
@@ -23,7 +24,7 @@ export default function Minter({ success }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.Zero)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.One)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
@@ -37,6 +38,12 @@ export default function Minter({ success }: IProps) {
       setMintAmount(minimumStakeForToken)
     }
   }, [token, minimumStakeForToken])
+
+  useEffect(() => {
+    if (mintAmount !== null) {
+      setLocalMintAmount(mintAmount)
+    }
+  }, [mintAmount])
 
   const { refetch } = useBalance({
     address: account as any,
@@ -94,11 +101,10 @@ export default function Minter({ success }: IProps) {
           {localMintAmount != null && <>Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH</>}
         </Typography>
         <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
       </>
     )
   }
-
-  if (isSuccess) return <>Success</>
 
   return (
     <RegistrationInputWithTitle
@@ -109,7 +115,7 @@ export default function Minter({ success }: IProps) {
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
-      value={ethers.utils.formatEther(mintAmount ?? ethers.constants.Zero)}
+      value={ethers.utils.formatEther(localMintAmount)}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}

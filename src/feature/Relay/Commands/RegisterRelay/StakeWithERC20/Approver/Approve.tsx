@@ -12,6 +12,7 @@ import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType } from '../../../../../../types/Hash'
+import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
   success: boolean
@@ -53,7 +54,6 @@ export default function Approver({ success }: IProps) {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     onSuccess: async (data) => {
       setApproveAmount(minimumStakeForToken?.sub(data as any) ?? ethers.constants.One)
-      await refetchPrepareApprove()
     }
   })
 
@@ -61,13 +61,12 @@ export default function Approver({ success }: IProps) {
     config,
     error: prepareApproveTxError,
     isError: prepareApproveTxIsError,
-    isLoading: prepareApproveTxIsLoading,
-    refetch: refetchPrepareApprove
+    isLoading: prepareApproveTxIsLoading
   } = usePrepareContractWrite({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'approve',
-    enabled: false,
+    enabled: !!approveAmount,
     args: [stakeManagerAddress, approveAmount]
   })
 
@@ -115,7 +114,14 @@ export default function Approver({ success }: IProps) {
     )
   }
 
-  if (success) return <CopyHash copyValue={hash} />
+  if (success) {
+    return (
+      <>
+        <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
+      </>
+    )
+  }
 
   return createApproveButton()
 }

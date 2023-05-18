@@ -8,9 +8,10 @@ import { useEffect } from 'react'
 interface stakeInfoProps {
   stakeManagerAddress: string
   relayManagerAddress: string
+  explorerLink: string | null
 }
 
-export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
+export default function StakeInfo({ stakeManagerAddress, relayManagerAddress, explorerLink }: stakeInfoProps) {
   const relayData = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
@@ -35,5 +36,5 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: 
   }, [refetch, relayData.ready])
 
   const token = (stakeInfo as any)?.[0]?.token
-  return <StakingToken stakingToken={token} chainId={chainId} />
+  return <StakingToken stakingToken={token} chainId={chainId} explorerLink={explorerLink}/>
 }

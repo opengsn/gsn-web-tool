@@ -3,15 +3,17 @@ import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
 import { isSameAddress } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
+import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
 
 const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
 
 interface IProps {
   relayData: PingResponse
   showAllInfo?: boolean
+  explorerLink: string | null
 }
 
-function PingResponseData({ relayData, showAllInfo }: IProps) {
+function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
 
@@ -42,6 +44,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
@@ -59,6 +68,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
@@ -76,6 +92,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
@@ -104,7 +127,15 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  {relayData[x as keyof PingResponse] === true ? <span>ready</span> : <span>not ready</span>}
+                  {relayData[x as keyof PingResponse] === true
+                    ? (
+                    <Typography variant='subtitle2' color='success.main'>
+                      Ready
+                    </Typography>
+                      )
+                    : (
+                    <Typography variant='subtitle2'>Not ready</Typography>
+                      )}
                 </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
@@ -118,6 +149,13 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {x.includes('Address') && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>{''}</TableCell>
             </>

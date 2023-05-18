@@ -1,6 +1,7 @@
 import { useEffect, useState, createContext, ReactNode } from 'react'
 import { ethers, constants } from 'ethers'
 import { useAccount, useContract, useContractRead, useBlockNumber, useProvider, useNetwork } from 'wagmi'
+import gsnNetworks from '../../../../blockchain/gsn-networks.json'
 
 import { useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../hooks'
 
@@ -22,6 +23,7 @@ export interface TokenContextInterface {
   handleFindFirstTokenButton: () => Promise<string>
   chain: ChainWithGsn
   setToken: (value: string) => void
+  explorerLink: string | null
 }
 
 export const TokenContext = createContext<TokenContextInterface>({} as TokenContextInterface)
@@ -37,6 +39,7 @@ export default function TokenContextWrapper({ children }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relay.chainId)
   const currentStep = useAppSelector((state) => state.register.step)
+  const explorerLink = chainId ? (gsnNetworks as any)?.[chainId]?.[0].explorer : null
 
   useEffect(() => {
     console.log('currentStep', currentStep)
@@ -122,7 +125,8 @@ export default function TokenContextWrapper({ children }: IProps) {
         setListen,
         handleFindFirstTokenButton,
         chain,
-        setToken
+        setToken,
+        explorerLink
       }}
     >
       {children}

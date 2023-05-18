@@ -6,12 +6,12 @@ import { useAppDispatch, useLocalStorage } from '../../hooks'
 import { jumpToStep } from '../../feature/Relay/Commands/RegisterRelay/registerRelaySlice'
 
 const SuccessModal: FC = () => {
-  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+  const [, setToken] = useLocalStorage('token', '')
   const [open, setOpen] = useState<boolean>(true)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setSelectedToken('')
+    setToken('')
   }, [])
 
   const navigate = useNavigate()

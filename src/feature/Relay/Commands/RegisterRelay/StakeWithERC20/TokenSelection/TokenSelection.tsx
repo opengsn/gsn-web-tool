@@ -26,7 +26,7 @@ const sx = {
 }
 
 const TokenSelection: FC<IProps> = ({ success }) => {
-  const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
+  const { chain, chainId, handleFindFirstTokenButton, setToken, token, explorerLink } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
   const dispatch = useAppDispatch()
@@ -107,12 +107,18 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           <Typography>
             <b>{tokenData?.name}</b>
           </Typography>
-          <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+          {explorerLink
+            ? (
+            <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+              <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+              <Button.Icon>
+                <Icon.Redirect width='14px' height='14px' />
+              </Button.Icon>
+            </Box>
+              )
+            : (
             <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-            <Button.Icon>
-              <Icon.Redirect width='14px' height='14px' />
-            </Button.Icon>
-          </Box>
+              )}
         </Box>
         {currentStep === 2 && (
           <Box ml='auto'>

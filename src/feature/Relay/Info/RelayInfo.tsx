@@ -1,5 +1,6 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../hooks'
 import { PingResponse } from '../../../types/PingResponse'
+import gsnNetworks from '../../blockchain/gsn-networks.json'
 
 import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
@@ -13,13 +14,12 @@ interface IProps {
 function RelayInfo({ showAllInfo }: IProps) {
   const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
+  const explorerLink = chainId ? (gsnNetworks as any)?.[chainId]?.[0].explorer : null
 
-  const {
-    data: stakeManagerAddressData,
-    refetch: refetchStakeManagerAddressData,
-    isFetching,
-    isLoading
-  } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
+  const { data: stakeManagerAddressData, refetch: refetchStakeManagerAddressData } = useStakeManagerAddress(
+    relayData.relayHubAddress,
+    chainId
+  )
   const stakeManagerAddress = stakeManagerAddressData as any
 
   useEffect(() => {
@@ -52,8 +52,12 @@ function RelayInfo({ showAllInfo }: IProps) {
     <Table>
       <THead />
       <TableBody>
-        <PingResponseData relayData={relayData} showAllInfo={showAllInfo} />
-        <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
+        <PingResponseData relayData={relayData} showAllInfo={showAllInfo} explorerLink={explorerLink} />
+        <StakeInfo
+          stakeManagerAddress={stakeManagerAddress}
+          relayManagerAddress={relayData.relayManagerAddress}
+          explorerLink={explorerLink}
+        />
       </TableBody>
     </Table>
   )
