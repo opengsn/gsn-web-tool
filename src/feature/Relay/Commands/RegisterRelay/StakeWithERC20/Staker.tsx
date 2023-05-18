@@ -1,15 +1,15 @@
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 import { TokenContext } from './TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 import StakeManager from '../../../../../contracts/StakeManager.json'
-import { useAppSelector } from '../../../../../hooks'
+import { useAppSelector, useLocalStorage } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
 import { Alert } from '../../../../../components/atoms'
 import CopyHash from '../../../../../components/atoms/CopyHash'
-import { HashType } from '../../../../../types/Hash'
+import { HashType, Hashes } from '../../../../../types/Hash'
 import ExplorerLink from '../ExplorerLink'
 
 interface IProps {
@@ -17,15 +17,21 @@ interface IProps {
 }
 
 export default function Staker({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.staker as HashType
+
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { address } = useAccount()
-  const [hash, setHash] = useState<HashType>()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayManagerAddress } = relay
   const chainId = Number(relay.chainId)
 
   const unstakeDelay = '15000'
+
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, staker: hash }))
+  }
 
   useEffect(() => {
     refetchContractRead().catch(console.error)

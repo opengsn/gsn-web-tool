@@ -12,7 +12,7 @@ import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
-import { HashType } from '../../../../../../types/Hash'
+import { HashType, Hashes } from '../../../../../../types/Hash'
 import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
@@ -20,27 +20,29 @@ interface IProps {
 }
 
 export default function Minter({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.minter as HashType
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.One)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber | undefined>('localMintAmount', undefined)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
-  const [hash, setHash] = useState<HashType>()
+
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, minter: hash }))
+  }
 
   useEffect(() => {
     if (currentStep === 2 && minimumStakeForToken !== null) {
       refetch().catch(console.error)
     }
-    return () => {
-      setMintAmount(minimumStakeForToken)
-    }
   }, [token, minimumStakeForToken])
 
   useEffect(() => {
-    if (mintAmount !== null) {
+    if (mintAmount !== null && localMintAmount !== null) {
       setLocalMintAmount(mintAmount)
     }
   }, [mintAmount])
@@ -115,7 +117,7 @@ export default function Minter({ success }: IProps) {
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
-      value={ethers.utils.formatEther(localMintAmount)}
+      value={localMintAmount ? ethers.utils.formatEther(localMintAmount) : ''}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}

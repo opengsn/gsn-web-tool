@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { useAppDispatch, useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../../hooks'
 
 import { TokenContext } from '../TokenContextWrapper'
 
@@ -11,7 +11,7 @@ import RegistrationInputWithTitle from '../../../../../../components/molecules/R
 import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
-import { HashType } from '../../../../../../types/Hash'
+import { HashType, Hashes } from '../../../../../../types/Hash'
 import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
@@ -19,10 +19,10 @@ interface IProps {
 }
 
 export default function Approver({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.approver as HashType
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const dispatch = useAppDispatch()
-  const [hash, setHash] = useState<HashType>()
-
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
   const chainId = Number(relay.chainId)
@@ -30,6 +30,10 @@ export default function Approver({ success }: IProps) {
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
+
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, approver: hash }))
+  }
 
   const FetchCurrentAllowance = async () => {
     await refetchCurrentAllowance()

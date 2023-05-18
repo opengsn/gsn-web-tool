@@ -21,7 +21,7 @@ export default function StakeInfo({ stakeManagerAddress, relayManagerAddress, ex
     abi: StakeManager.abi,
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
-    enabled: relayManagerAddress !== '',
+    enabled: !!relayManagerAddress,
     chainId,
     onSuccess(data) {
       if (relayData.ready) return
