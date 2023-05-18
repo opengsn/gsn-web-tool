@@ -7,12 +7,16 @@ import { jumpToStep } from '../../feature/Relay/Commands/RegisterRelay/registerR
 
 const SuccessModal: FC = () => {
   const [, setToken] = useLocalStorage('token', '')
+  const [, setHashes] = useLocalStorage('hashes', {})
+  const [, setLocalMintAmount] = useLocalStorage('localMintAmount', '')
   const [open, setOpen] = useState<boolean>(true)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     setToken('')
-  }, [])
+    setHashes({})
+    setLocalMintAmount('')
+  }, [setHashes, setLocalMintAmount, setToken])
 
   const navigate = useNavigate()
   return (
