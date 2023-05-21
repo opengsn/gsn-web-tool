@@ -307,10 +307,13 @@ const registerSlice = createSlice({
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 6) {
+        state.step = 6
+        state.status = 'success'
+      } else if (action.payload === 5) {
         // check this line
         state.step = 5
-        state.status = 'success'
+        state.status = 'idle'
       } else if (action.payload === 4) {
         state.step = 4
         state.status = 'idle'
