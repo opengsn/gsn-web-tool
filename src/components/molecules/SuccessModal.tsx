@@ -16,7 +16,7 @@ const SuccessModal: FC = () => {
     setToken('')
     setHashes({})
     setLocalMintAmount('')
-  }, [setHashes, setLocalMintAmount, setToken])
+  }, [])
 
   const navigate = useNavigate()
   return (

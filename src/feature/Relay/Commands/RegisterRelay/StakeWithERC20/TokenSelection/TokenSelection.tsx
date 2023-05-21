@@ -109,7 +109,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           </Typography>
           {explorerLink
             ? (
-            <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+            <Box component='a' href={`${explorerLink}/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
               <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
               <Button.Icon>
                 <Icon.Redirect width='14px' height='14px' />
@@ -141,19 +141,24 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       <Box>
         {elements.map((element) => {
           return (
-            <Paper elevation={radioValue === element.key ? 5 : 2} key={element.key}>
-              <Box my={4} p={4}>
-                <Box display='flex'>
+            <Paper elevation={0} key={element.key}>
+              <Box
+                component='button'
+                type='button'
+                sx={{
+                  all: 'unset',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setRadioValue(element.key)
+                }}
+              >
+                <Box display='flex' my={4} p={4}>
                   <Box>
-                    <Button.Radio
-                      checked={!element.disabled}
-                      onChange={() => {
-                        setRadioValue(element.key)
-                      }}
-                    />
+                    <Button.Radio checked={!element.disabled} onChange={() => {}} />
                   </Box>
                   <Box>
-                    <Typography>{element.label}</Typography>
+                    <Typography color={!element.disabled ? 'common.main' : 'grey'}>{element.label}</Typography>
                     {element.children}
                     <Box mt={2} width='220px'>
                       <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
