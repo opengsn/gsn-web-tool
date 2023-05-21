@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
 import { formatNumber, isSameAddress } from '../../../utils'

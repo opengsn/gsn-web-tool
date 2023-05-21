@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useContext, useEffect } from 'react'
 import { useBalance, useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 import { ethers } from 'ethers'

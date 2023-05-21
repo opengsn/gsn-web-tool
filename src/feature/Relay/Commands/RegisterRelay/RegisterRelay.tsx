@@ -12,7 +12,6 @@ import RegisterFlowSteps from './RegisterFlowSteps'
 export default function RegisterRelay({ isOwner }: { isOwner: boolean }) {
   const relayData = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
-  const status = useAppSelector((state) => state.register.status)
   const dispatch = useAppDispatch()
   const provider = useProvider({ chainId: Number(relayData.chainId) })
   const { address } = useAccount()

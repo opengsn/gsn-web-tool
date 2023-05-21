@@ -16,6 +16,7 @@ const SuccessModal: FC = () => {
     setToken('')
     setHashes({})
     setLocalMintAmount('')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const navigate = useNavigate()

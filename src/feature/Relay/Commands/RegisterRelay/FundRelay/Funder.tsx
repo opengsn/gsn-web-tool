@@ -31,7 +31,7 @@ export default function Funder({ success }: IProps) {
     if (currentStep === 0) {
       refetch().catch(console.error)
     }
-  }, [])
+  }, [currentStep, refetch])
 
   const handleChangeFunds = (value: number) => {
     setFunds(value)

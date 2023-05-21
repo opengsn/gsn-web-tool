@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'

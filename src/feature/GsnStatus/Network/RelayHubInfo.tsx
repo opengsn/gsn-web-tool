@@ -21,7 +21,6 @@ export interface IFoundToken {
 }
 
 export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplorerUrl, chainId }: RelayHubInfoProps) {
-  const ver = (version: string) => version.replace(/\+opengsn.*/, '')
   const { data: curBlockNumberData } = useBlockNumber({ chainId })
   const provider = useProvider({ chainId })
   const [stakingTokens, setStakingTokens] = useState<IFoundToken[]>([])
@@ -63,7 +62,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
     chainId
   })
 
-  const { data: versionData } = useContractRead({
+  useContractRead({
     address: relayHubAddress as any,
     abi: RelayHubAbi,
     functionName: 'versionHub',
