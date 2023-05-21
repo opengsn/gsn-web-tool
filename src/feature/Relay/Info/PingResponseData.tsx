@@ -1,17 +1,18 @@
-import { ethers } from 'ethers'
 import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
-import { isSameAddress } from '../../../utils'
+import { formatNumber, isSameAddress, weiToGwei } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
+import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
 
 const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
 
 interface IProps {
   relayData: PingResponse
   showAllInfo?: boolean
+  explorerLink: string | null
 }
 
-function PingResponseData({ relayData, showAllInfo }: IProps) {
+function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
 
@@ -37,18 +38,23 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         if (x === 'relayManagerAddress') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  <span>
-                    Balance: <b>{relayManagerBalanceData?.formatted}</b>
-                  </span>{' '}
-                  <span>{relayManagerBalanceData?.symbol}</span>
+                  Balance: <b>{relayManagerBalanceData?.formatted ? formatNumber(+relayManagerBalanceData?.formatted) : 0} </b>
+                  {relayManagerBalanceData?.symbol}
                 </Typography>
               </TableCell>
             </>
@@ -56,18 +62,22 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         } else if (x === 'relayWorkerAddress') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  <span>
-                    Balance: <b>{relayWorkerBalanceData?.formatted}</b>
-                  </span>{' '}
-                  <span>{relayWorkerBalanceData?.symbol}</span>
+                  Balance: <b>{relayWorkerBalanceData?.formatted ? formatNumber(+relayWorkerBalanceData?.formatted) : 0} </b>
                 </Typography>
               </TableCell>
             </>
@@ -76,11 +86,18 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
           const accountIsOwner = isSameAddress(relayData[x], address)
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
@@ -89,31 +106,40 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
               </TableCell>
             </>
           )
-        } else if (x === 'minMaxPriorityFeePerGas') {
+        } else if (x.includes('Gas')) {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</Typography>
-              </TableCell>
-              <TableCell>
                 <Typography variant={'subtitle2'}>
-                  <b>Native currency, value in ethers</b>
+                  {relayData?.[x as keyof typeof relayData] && (
+                    <b>{formatNumber(weiToGwei(Number(relayData?.[x as keyof typeof relayData])))}</b>
+                  )}
+                 {' '} Gwei
                 </Typography>
               </TableCell>
+              <TableCell>{''}</TableCell>
             </>
           )
         } else if (x === 'ready') {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  {relayData[x as keyof PingResponse] === true ? <span>ready</span> : <span>not ready</span>}
+                  {relayData[x as keyof PingResponse] === true
+                    ? (
+                    <Typography variant='subtitle2' color='success.main'>
+                      Ready
+                    </Typography>
+                      )
+                    : (
+                    <Typography variant='subtitle2'>Not ready</Typography>
+                      )}
                 </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
@@ -122,11 +148,18 @@ function PingResponseData({ relayData, showAllInfo }: IProps) {
         } else {
           data = (
             <>
-              <TableCell>
+              <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                &nbsp;
+                {x.includes('Address') && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
               </TableCell>
               <TableCell>{''}</TableCell>
             </>

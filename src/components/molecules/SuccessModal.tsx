@@ -6,12 +6,17 @@ import { useAppDispatch, useLocalStorage } from '../../hooks'
 import { jumpToStep } from '../../feature/Relay/Commands/RegisterRelay/registerRelaySlice'
 
 const SuccessModal: FC = () => {
-  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
+  const [, setToken] = useLocalStorage('token', '')
+  const [, setHashes] = useLocalStorage('hashes', {})
+  const [, setLocalMintAmount] = useLocalStorage('localMintAmount', '')
   const [open, setOpen] = useState<boolean>(true)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setSelectedToken('')
+    setToken('')
+    setHashes({})
+    setLocalMintAmount('')
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const navigate = useNavigate()

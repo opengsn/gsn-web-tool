@@ -4,7 +4,7 @@ import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Box, Divider, Typography } from '../../components/atoms'
+import { Accordion, AccordionSummary, Alert, Box, Divider, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
@@ -47,13 +47,12 @@ export default function Relay() {
             Relay server info
           </Typography>
         </Box>
-        <Accordion
-          expanded={expanded}
-          onChange={(event, isExpanded) => {
-            setExpanded(isExpanded)
-          }}
-        >
-          <AccordionSummary>
+        <Accordion expanded={expanded}>
+          <AccordionSummary
+            onChange={(event) => {
+              setExpanded((prev) => !prev)
+            }}
+          >
             <Box width='100%' p='10px'>
               <Box
                 display='flex'
@@ -78,11 +77,17 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />}
+        {relay.relay.ready
+          ? (
+          <></>
+            )
+          : (
+          <>{connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />} </>
+            )}
         {currentStep === 6 && <SuccessModal />}
       </Box>
     )
   }
 
-  return <>Error initializing relay view</>
+  return <Alert severity='error'>Error initializing relay view</Alert>
 }

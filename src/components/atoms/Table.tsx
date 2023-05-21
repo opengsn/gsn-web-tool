@@ -11,6 +11,7 @@ import {
 
 interface IProps {
   children: ReactNode
+  width?: string
 }
 
 const Table: FC<IProps> = ({ children }) => {
@@ -33,8 +34,8 @@ const TableCellBase = styled(MuiTableCell)(({ theme }) => ({
   padding: '5px'
 }))
 
-export const TableCell: FC<IProps> = ({ children }) => {
-  return <TableCellBase>{children}</TableCellBase>
+export const TableCell: FC<IProps> = ({ children, width }) => {
+  return <TableCellBase width={width}>{children}</TableCellBase>
 }
 
 export const TableContainer: FC<IProps> = ({ children }) => {

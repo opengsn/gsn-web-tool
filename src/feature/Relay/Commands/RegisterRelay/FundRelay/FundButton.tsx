@@ -22,7 +22,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
-    enabled: !(hash == null)
+    enabled: !!hash
   })
 
   const {
@@ -38,6 +38,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
 
   useEffect(() => {
     refetch().catch(console.error)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {

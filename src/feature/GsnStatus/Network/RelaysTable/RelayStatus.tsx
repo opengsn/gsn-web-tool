@@ -1,4 +1,3 @@
-import { colors } from '../../../../theme'
 import { Box, Typography } from '../../../../components/atoms'
 
 export interface RelayStatusProps {

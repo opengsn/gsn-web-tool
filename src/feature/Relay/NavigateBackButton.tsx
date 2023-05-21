@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Box, Button } from '../../components/atoms'
 
-export default function NavigateBackButton({ autoFocus, abortFetch }: { autoFocus?: boolean; abortFetch?: unknown }) {
+export default function NavigateBackButton({ autoFocus, abortFetch }: { autoFocus?: boolean, abortFetch?: unknown }) {
   const navigate = useNavigate()
   const handleDeleteRelayData = () => {
     navigate(-1)

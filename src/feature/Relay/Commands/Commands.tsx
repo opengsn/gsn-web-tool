@@ -12,13 +12,14 @@ export default function RelayCommands() {
   const { address, isConnected } = useAccount()
 
   const isOwner = address !== undefined && isSameAddress(address, relay.ownerAddress)
-  if (address === undefined || !isOwner) {
-    return <>{!isConnected ? <MetamaskButton /> : null}</>
+
+  if (address === undefined) {
+    return <>{!isConnected && <MetamaskButton />}</>
   }
 
   return (
     <>
-      <RegisterRelay />
+      <RegisterRelay isOwner={isOwner} />
     </>
   )
 }

@@ -1,58 +1,40 @@
-import { useAccount, useContractRead } from 'wagmi'
-
+import { useContractRead } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../../hooks'
-import { isSameAddress } from '../../../utils'
-
 import { validateConfigOwnerInLineWithStakeManager } from '../relaySlice'
-
 import StakeManager from '../../../contracts/StakeManager.json'
 import StakingToken from './StakeManagerInfo/StakingToken'
-import { TableCell, TableRow, Typography } from '../../../components/atoms'
+import { useEffect } from 'react'
 
 interface stakeInfoProps {
   stakeManagerAddress: string
   relayManagerAddress: string
+  explorerLink: string | null
 }
 
-export default function StakeInfo({ stakeManagerAddress, relayManagerAddress }: stakeInfoProps) {
+export default function StakeInfo({ stakeManagerAddress, relayManagerAddress, explorerLink }: stakeInfoProps) {
   const relayData = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
 
   const dispatch = useAppDispatch()
-  const { address } = useAccount()
-  const { data: stakeInfo, isSuccess } = useContractRead({
+  const { data: stakeInfo, refetch } = useContractRead({
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'getStakeInfo',
     args: [relayManagerAddress],
+    enabled: !!relayManagerAddress,
     chainId,
     onSuccess(data) {
+      if (relayData.ready) return
       dispatch(validateConfigOwnerInLineWithStakeManager((data as any)[0].owner))
-    },
-    onError(err) {
-      console.log('error fetching data from stake manager.', { cause: err })
     }
   })
 
-  if (stakeInfo !== undefined && isSuccess) {
-    const { owner, token } = (stakeInfo as any)[0]
-    const ShowOwner = () => {
-      if (address !== undefined && isSameAddress(address, owner)) {
-        return <b>currently connected</b>
-      } else {
-        return <b>not the connected account</b>
-      }
+  useEffect(() => {
+    if (relayData.ready) {
+      refetch()
     }
+  }, [refetch, relayData.ready])
 
-    return <StakingToken stakingToken={token} chainId={chainId} />
-  }
-
-  const LoadingRow = (
-    <TableRow>
-      <TableCell>
-        <Typography variant={'subtitle2'}>Loading info from stakemanager... If , refreshing the page might help</Typography>
-      </TableCell>
-    </TableRow>
-  )
-  return <>{LoadingRow}</>
+  const token = (stakeInfo as any)?.[0]?.token
+  return <StakingToken stakingToken={token} chainId={chainId} explorerLink={explorerLink}/>
 }

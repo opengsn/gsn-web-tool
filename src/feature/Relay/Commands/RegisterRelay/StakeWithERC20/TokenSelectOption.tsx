@@ -22,7 +22,7 @@ const sx = {
 }
 
 const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, checked }) => {
-  const [_, copyToClipboard] = useCopyToClipboard()
+  const [, copyToClipboard] = useCopyToClipboard()
   const navigate = useNavigate()
   const { data: tokenData } = useToken({
     address: address as any,

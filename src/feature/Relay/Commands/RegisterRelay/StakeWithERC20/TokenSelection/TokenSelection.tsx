@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useFormik } from 'formik'
 import { FC, useContext, useEffect, useState } from 'react'
 import InsertERC20TokenAddress from './InsertERC20TokenAddress'
-import { Button, Box, Paper, Typography, ButtonType, Icon, Alert } from '../../../../../../components/atoms'
+import { Button, Box, Paper, Typography, ButtonType, Icon } from '../../../../../../components/atoms'
 import SuggestedTokenFromServer from './SuggestedTokenFromServer'
 import { truncateFromMiddle } from '../../../../../../utils'
 import { TokenContext } from '../TokenContextWrapper'
 import { jumpToStep } from '../../registerRelaySlice'
 import { RegisterSteps } from '../../RegisterFlowSteps'
-import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../../hooks'
+import { useAppDispatch, useAppSelector } from '../../../../../../hooks'
 import chains from '../../../../../../assets/chains.json'
 import { useToken } from 'wagmi'
 
@@ -26,21 +27,20 @@ const sx = {
 }
 
 const TokenSelection: FC<IProps> = ({ success }) => {
-  const { chain, chainId, handleFindFirstTokenButton, setToken, token } = useContext(TokenContext)
+  const { chain, chainId, handleFindFirstTokenButton, setToken, token, explorerLink } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
-  const [selectedToken, setSelectedToken] = useLocalStorage('selectedToken', '')
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (selectedToken !== '' && currentStep === RegisterSteps['Token selection']) {
-      setToken(selectedToken)
+    if (token !== '' && currentStep === RegisterSteps['Token selection']) {
+      setToken(token)
       dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
-  }, [selectedToken, currentStep])
+  }, [token, currentStep])
 
   useEffect(() => {
-    if (token != null && currentStep === RegisterSteps['Token selection']) {
+    if (token !== '' && currentStep === RegisterSteps['Token selection']) {
       refetch().catch(console.error)
     }
   }, [token])
@@ -54,10 +54,8 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       if (radioValue === 2) {
         const token = await handleFindFirstTokenButton()
         setToken(token)
-        setSelectedToken(token)
       } else {
         setToken(values.token)
-        setSelectedToken(values.token)
       }
       currentStep === 1 && token && dispatch(jumpToStep(RegisterSteps['Mint Selection']))
     }
@@ -90,7 +88,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       : [
           {
             label: 'Insert ERC20 token address',
-            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1}/>,
+            children: <InsertERC20TokenAddress handleChangeToken={handleChangeToken} disabled={radioValue !== 1} />,
             disabled: radioValue !== 1,
             key: 1
           },
@@ -110,19 +108,24 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           <Typography>
             <b>{tokenData?.name}</b>
           </Typography>
-          <Box component='a' href={`https://etherscan.io/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+          {explorerLink
+            ? (
+            <Box component='a' href={`${explorerLink}/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
+              <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
+              <Button.Icon>
+                <Icon.Redirect width='14px' height='14px' />
+              </Button.Icon>
+            </Box>
+              )
+            : (
             <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-            <Button.Icon>
-              <Icon.Redirect width='14px' height='14px' />
-            </Button.Icon>
-          </Box>
+              )}
         </Box>
         {currentStep === 2 && (
           <Box ml='auto'>
             <Button.Icon
               onClick={() => {
-                setToken(null)
-                setSelectedToken('')
+                setToken('')
                 dispatch(jumpToStep(RegisterSteps['Token selection']))
               }}
             >
@@ -139,19 +142,24 @@ const TokenSelection: FC<IProps> = ({ success }) => {
       <Box>
         {elements.map((element) => {
           return (
-            <Paper elevation={radioValue === element.key ? 5 : 2} key={element.key}>
-              <Box my={4} p={4}>
-                <Box display='flex'>
+            <Paper elevation={0} key={element.key}>
+              <Box
+                component='button'
+                type='button'
+                sx={{
+                  all: 'unset',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setRadioValue(element.key)
+                }}
+              >
+                <Box display='flex' my={4} p={4}>
                   <Box>
-                    <Button.Radio
-                      checked={!element.disabled}
-                      onChange={() => {
-                        setRadioValue(element.key)
-                      }}
-                    />
+                    <Button.Radio checked={!element.disabled} onChange={() => {}} />
                   </Box>
                   <Box>
-                    <Typography>{element.label}</Typography>
+                    <Typography color={!element.disabled ? 'common.main' : 'grey'}>{element.label}</Typography>
                     {element.children}
                     <Box mt={2} width='220px'>
                       <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
@@ -161,11 +169,6 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                   </Box>
                 </Box>
               </Box>
-              {getTokenAddress.isSubmitting && (
-                <Alert severity='error'>
-                  <Typography>Something went wrong, please try again</Typography>
-                </Alert>
-              )}
             </Paper>
           )
         })}

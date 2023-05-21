@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useContext, useEffect } from 'react'
 import { useBalance, useContractWrite, useProvider, useWaitForTransaction } from 'wagmi'
 import { ethers } from 'ethers'
@@ -12,42 +13,51 @@ import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
 import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
-import { HashType } from '../../../../../../types/Hash'
+import { HashType, Hashes } from '../../../../../../types/Hash'
+import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
   success: boolean
 }
 
 export default function Minter({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.minter as HashType
   const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber>('localMintAmount', ethers.constants.Zero)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber | undefined>('localMintAmount', undefined)
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
-  const [hash, setHash] = useState<HashType>()
+
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, minter: hash }))
+  }
 
   useEffect(() => {
-    if (currentStep === 2) {
+    if (currentStep === 2 && minimumStakeForToken !== null) {
       refetch().catch(console.error)
     }
-    return () => {
-      setMintAmount(minimumStakeForToken)
+  }, [token, minimumStakeForToken])
+
+  useEffect(() => {
+    if (mintAmount !== null && localMintAmount !== null) {
+      setLocalMintAmount(mintAmount)
     }
-  }, [])
+  }, [mintAmount])
 
   const { refetch } = useBalance({
     address: account as any,
     token: token as any,
     enabled: false,
     onSuccess: (data) => {
-      if (account != null && token != null && minimumStakeForToken != null) {
+      if (account != null && token != null) {
         dispatch(checkIsMintingRequired({ account, provider, relay, token })).catch(console.error)
-        const outstandingTokenAmountCalculated = minimumStakeForToken.sub(data.value)
-        setMintAmount(outstandingTokenAmountCalculated)
       }
+      const outstandingTokenAmountCalculated = minimumStakeForToken?.sub(data.value) ?? null
+      setMintAmount(outstandingTokenAmountCalculated)
     }
   })
 
@@ -94,23 +104,21 @@ export default function Minter({ success }: IProps) {
           {localMintAmount != null && <>Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH</>}
         </Typography>
         <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
       </>
     )
   }
 
-  if (mintAmount === null) return <>mintAmount is null</>
-
-  if (isSuccess) return <>Success</>
-
   return (
     <RegistrationInputWithTitle
       title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-      label={`Minting amount (minimum amount ${ethers.utils.formatEther(mintAmount) ?? 'error'} ETH)`}
+      label={`Minting amount (minimum amount ${mintAmount !== null ? ethers.utils.formatEther(mintAmount) : 'error - '} ETH)`}
       onClick={() => {
         mintToken?.()
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
+      value={localMintAmount ? ethers.utils.formatEther(localMintAmount) : ''}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}
