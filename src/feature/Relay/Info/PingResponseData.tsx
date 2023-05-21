@@ -1,6 +1,6 @@
 import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
-import { formatNumber, isSameAddress } from '../../../utils'
+import { formatNumber, isSameAddress, weiToGwei } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
 import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
 
@@ -77,7 +77,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                Balance: <b>{relayWorkerBalanceData?.formatted ? formatNumber(+relayWorkerBalanceData?.formatted) : 0} </b>
+                  Balance: <b>{relayWorkerBalanceData?.formatted ? formatNumber(+relayWorkerBalanceData?.formatted) : 0} </b>
                 </Typography>
               </TableCell>
             </>
@@ -106,14 +106,19 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
               </TableCell>
             </>
           )
-        } else if (x === 'minMaxPriorityFeePerGas') {
+        } else if (x.includes('Gas')) {
           data = (
             <>
               <TableCell width='33%'>
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{relayData.minMaxPriorityFeePerGas}</Typography>
+                <Typography variant={'subtitle2'}>
+                  {relayData?.[x as keyof typeof relayData] && (
+                    <b>{formatNumber(weiToGwei(Number(relayData?.[x as keyof typeof relayData])))}</b>
+                  )}
+                 {' '} Gwei
+                </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
             </>

@@ -51,3 +51,7 @@ export const formatMetaMaskError = (error: string) => {
 export const formatNumber = (num: number, digits: number = 6) => {
   return parseFloat(num.toFixed(digits))
 }
+
+export const weiToGwei = (wei: number): number => {
+  return wei / Math.pow(10, 9)
+}
