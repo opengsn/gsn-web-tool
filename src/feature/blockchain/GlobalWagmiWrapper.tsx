@@ -1,6 +1,6 @@
 import { getDefaultProvider, providers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
@@ -18,6 +18,7 @@ import { getNetworks } from './networks'
 import { Box } from '../../components/atoms'
 
 export default function GlobalWagmiWarpper() {
+  const path = useLocation().pathname
   const [gsnNetworks, setGsnNetworks] = useState<ChainWithGsn[]>([])
   const dispatch = useAppDispatch()
 
@@ -27,7 +28,7 @@ export default function GlobalWagmiWarpper() {
         if (gsnNetworks.length === 0) {
           console.log(gsnNetworks)
           const networksForWagmi: ChainWithGsn[] = await getNetworks()
-          dispatch(fetchNetworks({ networks: networksForWagmi })).catch(console.error)
+          if (path === ROUTES.List) dispatch(fetchNetworks({ networks: networksForWagmi }))
           setGsnNetworks(networksForWagmi)
         }
       } catch (e) {

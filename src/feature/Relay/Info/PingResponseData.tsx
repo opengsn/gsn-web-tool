@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { useAccount, useBalance } from 'wagmi'
 import { PingResponse } from '../../../types'
-import { isSameAddress } from '../../../utils'
+import { formatNumber, isSameAddress } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
 import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
 
@@ -54,7 +54,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  Balance: <b>{relayManagerBalanceData?.formatted} </b>
+                  Balance: <b>{relayManagerBalanceData?.formatted ? formatNumber(+relayManagerBalanceData?.formatted) : 0} </b>
                   {relayManagerBalanceData?.symbol}
                 </Typography>
               </TableCell>
@@ -78,7 +78,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
               </TableCell>
               <TableCell>
                 <Typography variant={'subtitle2'}>
-                  Balance: <b>{relayWorkerBalanceData?.formatted}</b> {relayWorkerBalanceData?.symbol}
+                Balance: <b>{relayWorkerBalanceData?.formatted ? formatNumber(+relayWorkerBalanceData?.formatted) : 0} </b>
                 </Typography>
               </TableCell>
             </>
