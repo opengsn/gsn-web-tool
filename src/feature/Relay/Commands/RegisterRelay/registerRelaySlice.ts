@@ -315,8 +315,14 @@ const registerSlice = createSlice({
         state.step = 4
         state.status = 'idle'
       } else {
-        state.step = +action.payload // changed to 3 from 2
-        state.status = 'idle'
+        const hashes = JSON.parse(window.localStorage.getItem('hashes') as any).approver
+        if (hashes) {
+          state.step = 4
+          state.status = 'idle'
+        } else {
+          state.step = +action.payload
+          state.status = 'idle'
+        }
       }
     })
     builder.addCase(validateIsRelayManagerStaked.pending, (state) => {

@@ -114,7 +114,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
                 <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{ethers.utils.formatEther(relayData.minMaxPriorityFeePerGas)}</Typography>
+                <Typography variant={'subtitle2'}>{relayData.minMaxPriorityFeePerGas}</Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
             </>

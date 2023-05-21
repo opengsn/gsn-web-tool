@@ -34,6 +34,9 @@ export async function copyTextToClipboard(text: string) {
 }
 
 export const formatMetaMaskError = (error: string) => {
+  if (error.includes('cannot estimate gas')) {
+    return 'Error: cannot estimate gas; transaction may fail or may require manual gas limit'
+  }
   if (error.includes('[ethjs-query] while formatting outputs from RPC')) {
     const parsed = JSON.parse(error.substring(error.indexOf('{'), error.lastIndexOf('}') + 1))
     const errorMessage = error.substring(0, error.indexOf('{') - 1)
@@ -41,7 +44,6 @@ export const formatMetaMaskError = (error: string) => {
     const output = `Error: ${errorMessage}\n Code: ${dataCode as string}\nMessage: ${dataMessage as string}`
     return output
   } else {
-    console.log(error)
     return `Error: ${error}`
   }
 }
