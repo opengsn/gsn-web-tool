@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useBlockNumber, useContractRead, useProvider } from 'wagmi'
 
-import { BigNumber, Contract, ethers, utils } from 'ethers'
+import { BigNumber, Contract, utils } from 'ethers'
 
 import BlockExplorerUrl from '../components/BlockExplorerUrl'
 import { TokenValueInfo } from './TokenValueInfo'
@@ -69,18 +69,14 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
     chainId
   })
 
-  function formatDays(days: ethers.BigNumber) {
-    const daysNumber = days.toNumber()
-    if (daysNumber > 2) {
-      return `${Math.round(daysNumber)} days`
-    }
-    const hours = daysNumber * 24
-    if (hours > 2) {
-      return `${Math.round(hours)} hrs`
-    }
+  function formatDays (secondsTotal: any): string {
+    const secNum = parseInt(secondsTotal, 10)
+    const days = Math.floor(secNum / (3600 * 24))
+    const hours = Math.floor(secNum / 3600)
+    const minutes = Math.floor((secNum - (hours * 3600)) / 60)
+    const seconds = secNum - (hours * 3600) - (minutes * 60)
 
-    const min = hours * 60
-    return `${Math.round(min)} mins`
+    return `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`
   }
 
   return (
@@ -96,13 +92,14 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           <Box>
             {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
             <Typography variant='body2' fontWeight={600}>
-              Stake:
+              Stake lock time:
             </Typography>{' '}
-            <Typography variant='body2'>lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.</Typography>
+            <Typography variant='body2'>{formatDays(hubStateData.minimumUnstakeDelay as any)} </Typography>
+            <br/>
             {stakingTokens.length > 0 ? (
               <>
                 <Typography variant='body2' fontWeight={600}>
-                  token{stakingTokens.length > 1 ? 's' : null}:
+                  Stake token{stakingTokens.length > 1 ? 's' : null}:
                 </Typography>{' '}
                 <Typography variant='body2'>
                   {stakingTokens.map((foundToken: IFoundToken) => {
