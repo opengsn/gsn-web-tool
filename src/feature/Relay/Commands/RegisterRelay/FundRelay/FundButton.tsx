@@ -1,66 +1,78 @@
-import { useContext } from 'react'
-import { toast } from 'react-toastify'
-import { usePrepareSendTransaction, useSendTransaction } from 'wagmi'
-
-import Button from 'react-bootstrap/Button'
+import { useEffect } from 'react'
+import { usePrepareSendTransaction, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
-import { FunderContext } from './Funder'
 
-import ErrorButton from '../../../components/ErrorButton'
-import LoadingButton from '../../../components/LoadingButton'
-import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
+import { Box } from '../../../../../components/atoms'
+import { TextFieldType } from '../../../../../components/atoms/TextField'
+import { BigNumber, ethers } from 'ethers'
+import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
+import { HashType } from '../../../../../types/Hash'
 
-export default function FundButton () {
+interface IProps {
+  hash?: HashType
+  setHash: (hash: HashType) => void
+  funds: number
+  setListen: React.Dispatch<React.SetStateAction<boolean>>
+  relayManagerAddress: string
+  handleChangeFunds: (value: number) => void
+}
+
+export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
-  const { relayManagerAddress, funds, setListen } = useContext(FunderContext)
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !!hash
+  })
 
-  const { config, error: prepareFundTxError, isError: prepareIsError } = usePrepareSendTransaction({
+  const {
+    config,
+    error: prepareFundTxError,
+    refetch
+  } = usePrepareSendTransaction({
     request: {
       to: relayManagerAddress,
-      value: funds
+      value: BigNumber.from(ethers.utils.parseEther(funds.toString()))
     }
   })
 
-  const { sendTransaction: fundRelay, error: fundTxError, isIdle, isError, isLoading, isSuccess } = useSendTransaction({
+  useEffect(() => {
+    refetch().catch(console.error)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const {
+    sendTransaction: fundRelay,
+    isLoading,
+    isSuccess,
+    error
+  } = useSendTransaction({
     ...config,
     ...defaultStateSwitchers,
-    onSuccess (data) {
-      const text = 'Funded relay.'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+    onSuccess: (data) => {
       setListen(true)
+      setHash(data.hash)
     }
   })
 
-  function createButton () {
-    let FundButton
-    const text = <span>Fund Relay with 0.5 ETH</span>
-
-    switch (true) {
-      case isIdle:
-        FundButton = <>
-          <Button disabled={isLoading} onClick={() => fundRelay?.()}>
-            {text}
-          </Button>
-          {prepareIsError ? <span>Error: {prepareFundTxError?.message}</span> : null}
-        </>
-        break
-      case isLoading || isSuccess:
-        FundButton = <LoadingButton />
-        break
-      case isError:
-        FundButton = <ErrorButton message={fundTxError?.message} onClick={() => fundRelay?.()}>
-          <span>Retry {text}</span>
-        </ErrorButton>
-        break
-    }
-
-    if (FundButton !== undefined) {
-      return FundButton
-    } else {
-      return <span>Error while creating FundButton</span>
-    }
-  }
-
-  return createButton()
+  return (
+    <Box my='10px'>
+      <RegistrationInputWithTitle
+        title='Transfer ETH to the server in order to - this is an explanatory text about funding relay and how it works.'
+        label='Funding amount (Recommended amount 0.5 ETH)'
+        buttonText='Fund relay'
+        isLoading={isLoading}
+        isLoadingForTransaction={isLoadingForTransaction}
+        isSuccess={isSuccess}
+        error={prepareFundTxError?.message ?? error?.message}
+        onClick={() => fundRelay?.()}
+        value={funds.toString()}
+        onChange={(value) => {
+          handleChangeFunds(+value)
+        }}
+        type={TextFieldType.Number}
+        placeholder='Type amount'
+      />
+    </Box>
+  )
 }

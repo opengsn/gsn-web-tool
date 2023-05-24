@@ -11,14 +11,7 @@ import StakeManager from '../../../../contracts/StakeManager.json'
 import { PingResponse } from '../../../../types/PingResponse'
 import { isSameAddress } from '../../../../utils'
 import { fetchRelayData } from '../../../Relay/relaySlice'
-
-export enum RegisterSteps {
-  'Funding relay',
-  'Select token and mint',
-  'Staking with ERC20 token',
-  'Authorizing Hub',
-  'Waiting for Relay to be Ready'
-}
+import { RegisterSteps } from './RegisterFlowSteps'
 
 interface registerState {
   step: RegisterSteps
@@ -45,7 +38,8 @@ const validateOwnerInPingResponse = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue('could not validate owner in /getaddr response')
     }
-  })
+  }
+)
 
 interface checkIsMintingRequiredParams {
   account: string
@@ -57,12 +51,7 @@ interface checkIsMintingRequiredParams {
 // step 0 -> 1
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
-  async ({
-    account,
-    relay,
-    provider,
-    token
-  }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
@@ -72,15 +61,13 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
       const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
 
       const { tokenFromStakeInfo }: { tokenFromStakeInfo: string } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
-
       if (tokenFromStakeInfo === constants.AddressZero || tokenFromStakeInfo === undefined) {
         if (token !== undefined) {
           const tokenContract = new ethers.Contract(token, iErc20TokenAbi, provider)
           const tokenBalance = await tokenContract.balanceOf(account)
           const tokenMinStake = await relayHub.functions.getMinimumStakePerToken(token)
           if (tokenBalance.gte(tokenMinStake[0]) === true) {
-            dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider }))
-              .catch(console.error)
+            dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider })).catch(console.error)
 
             return fulfillWithValue(true, null)
           }
@@ -93,12 +80,8 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
 
       const accountErc20Balance = await stakingTokenContract.balanceOf(account)
       const minimumStake = await relayHub.functions.getMinimumStakePerToken(tokenFromStakeInfo)
-      if (
-        !stakingTokenBytecode.includes('deposit') ||
-        accountErc20Balance.gte(minimumStake[0]) === true
-      ) {
-        dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider }))
-          .catch(console.error)
+      if (!stakingTokenBytecode.includes('deposit') || accountErc20Balance.gte(minimumStake[0]) === true) {
+        dispatch(validateIsRelayManagerStaked({ relayManagerAddress, relayHubAddress, provider })).catch(console.error)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -106,7 +89,8 @@ export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRe
     } catch (e: any) {
       return rejectWithValue(false)
     }
-  })
+  }
+)
 
 interface validateIsRelayFundedParams {
   account: string
@@ -117,20 +101,11 @@ interface validateIsRelayFundedParams {
 // step 1 -> 2
 const validateIsRelayFunded = createAsyncThunk<boolean, validateIsRelayFundedParams, { fulfilledMeta: null }>(
   'register/validateIsRelayFunded',
-  async ({
-    account,
-    relay,
-    provider
-  }: validateIsRelayFundedParams, {
-    fulfillWithValue,
-    rejectWithValue,
-    dispatch
-  }) => {
+  async ({ account, relay, provider }: validateIsRelayFundedParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
     try {
       const relayManagerBalance = await provider.getBalance(relay.relayManagerAddress)
       if (relayManagerBalance.gt(0)) {
-        dispatch(validateOwnerInStakeManager({ account, relay, provider }))
-          .catch(rejectWithValue)
+        dispatch(validateOwnerInStakeManager({ account, relay, provider })).catch(rejectWithValue)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -138,7 +113,8 @@ const validateIsRelayFunded = createAsyncThunk<boolean, validateIsRelayFundedPar
     } catch (error: any) {
       return rejectWithValue('could not fetch relay manager balance')
     }
-  })
+  }
+)
 
 interface validateOwnerInStakeManagerParams {
   account: string
@@ -146,24 +122,16 @@ interface validateOwnerInStakeManagerParams {
   provider: providers.BaseProvider
 }
 
-export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwnerInStakeManagerParams, { fulfilledMeta: null }>('register/validateOwnerInStakeManager',
-  async ({
-    account,
-    relay,
-    provider
-  }: validateOwnerInStakeManagerParams, {
-    fulfillWithValue,
-    rejectWithValue,
-    dispatch
-  }) => {
+export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwnerInStakeManagerParams, { fulfilledMeta: null }>(
+  'register/validateOwnerInStakeManager',
+  async ({ account, relay, provider }: validateOwnerInStakeManagerParams, { fulfillWithValue, rejectWithValue, dispatch }) => {
     try {
       const relayHub = new ethers.Contract(relay.relayHubAddress, RelayHub.abi, provider)
       const stakeManagerAddress = await relayHub.getStakeManager()
       const stakeManager = new ethers.Contract(stakeManagerAddress, StakeManager.abi, provider)
-      const { owner } = (await stakeManager
-        .getStakeInfo(relay.relayManagerAddress))[0]
+      const { owner } = (await stakeManager.getStakeInfo(relay.relayManagerAddress))[0]
       if (isSameAddress(account, owner)) {
-        dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
+        // dispatch(checkIsMintingRequired({ account, relay, provider })).catch(rejectWithValue)
         return fulfillWithValue(true, null)
       } else {
         return fulfillWithValue(false, null)
@@ -171,7 +139,8 @@ export const validateOwnerInStakeManager = createAsyncThunk<boolean, validateOwn
     } catch (error: any) {
       return rejectWithValue(error)
     }
-  })
+  }
+)
 
 interface validateIsRelayManagerStakedParams {
   relayManagerAddress: string
@@ -180,10 +149,12 @@ interface validateIsRelayManagerStakedParams {
 }
 
 // step 1 -> 2 -> 3
-export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsRelayManagerStakedParams, { fulfilledMeta: null }
->('register/validateIsRelayManagerStaked',
-  async ({ relayManagerAddress, relayHubAddress, provider }: validateIsRelayManagerStakedParams,
-    { fulfillWithValue, rejectWithValue, dispatch, getState }) => {
+export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsRelayManagerStakedParams, { fulfilledMeta: null }>(
+  'register/validateIsRelayManagerStaked',
+  async (
+    { relayManagerAddress, relayHubAddress, provider }: validateIsRelayManagerStakedParams,
+    { fulfillWithValue, rejectWithValue, dispatch, getState }
+  ) => {
     try {
       const relayHub = new ethers.Contract(relayHubAddress, RelayHub.abi, provider)
 
@@ -192,48 +163,46 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
       // passes? might be that the relay is ready. let's check
       const state = getState() as RootState
       if (state.relay.relay.ready) {
-        return fulfillWithValue(4, null)
+        return fulfillWithValue(6, null)
       }
       dispatch(fetchRelayData(state.relay.relayUrl)).catch(console.error)
 
-      return fulfillWithValue(3, null)
+      return fulfillWithValue(5, null)
     } catch (error: any) {
       switch (true) {
-        case (error.message.includes('relay manager not staked')):
-          return fulfillWithValue(2, null)
-        case (error.message.includes('this hub is not authorized by SM')):
+        case error.message.includes('relay manager not staked'):
           return fulfillWithValue(3, null)
-        case (error.message.includes('stake amount is too small')):
-          return fulfillWithValue(2, null)
+        case error.message.includes('this hub is not authorized by SM'):
+          return fulfillWithValue(4, null)
+        case error.message.includes('stake amount is too small'):
+          return fulfillWithValue(4, null)
         default:
-          return rejectWithValue(null)
+          return rejectWithValue(3)
       }
     }
-  })
+  }
+)
 
 interface fetchRegisterStateParams {
   provider: providers.BaseProvider
   account: string
 }
 
-export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStateParams, { fulfilledMeta: null }
->('register/fetchRegisterStateData',
+export const fetchRegisterStateData = createAsyncThunk<number, fetchRegisterStateParams, { fulfilledMeta: null }>(
+  'register/fetchRegisterStateData',
   async ({ provider, account }, { getState, dispatch, fulfillWithValue, rejectWithValue }) => {
     const state = getState() as RootState
     try {
       const relay = state.relay.relay
       if (relay.ready) {
-        return fulfillWithValue(5, null)
+        return fulfillWithValue(RegisterSteps.Success, null) // relay is ready
       }
       // start the chain of checks
-      dispatch(validateIsRelayFunded({ account, relay, provider }))
-        .catch(rejectWithValue)
+      dispatch(validateIsRelayFunded({ account, relay, provider })).catch(rejectWithValue)
       return fulfillWithValue(0, null)
     } catch (error: any) {
       if (error instanceof AxiosError) {
-        const message = (error.response?.data?.message !== '')
-          ? error.response?.data?.message
-          : error.message
+        const message = error.response?.data?.message !== '' ? error.response?.data?.message : error.message
         return rejectWithValue(message)
       }
       throw new Error(error)
@@ -245,22 +214,22 @@ const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    highlightStepError (state: registerState) {
+    highlightStepError(state: registerState) {
       state.status = 'error'
     },
-    highlightStepIdle (state: registerState) {
+    highlightStepIdle(state: registerState) {
       state.status = 'idle'
     },
-    jumpToStep (state: registerState, action: { payload: number, type: string }) {
+    jumpToStep(state: registerState, action: { payload: number, type: string }) {
       state.step = action.payload
     }
   },
   extraReducers: (builder) => {
     // main
     builder.addCase(fetchRegisterStateData.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 6) {
         state.status = 'success'
-        state.step = 4
+        state.step = 6
       } else {
         state.step = 0
         state.status = 'idle'
@@ -326,26 +295,37 @@ const registerSlice = createSlice({
     builder.addCase(checkIsMintingRequired.rejected, (state) => {
       state.status = 'idle'
     })
+
     builder.addCase(checkIsMintingRequired.fulfilled, (state, action) => {
       if (action.payload) {
-        state.step = 2
+        state.step = 3
       } else {
-        state.step = 1
+        state.step = 2
       }
     })
 
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 4) {
-        state.step = 4
+      if (action.payload === 6) {
+        state.step = 6
         state.status = 'success'
-      } else if (action.payload === 3) {
-        state.step = 3
+      } else if (action.payload === 5) {
+        // check this line
+        state.step = 5
+        state.status = 'idle'
+      } else if (action.payload === 4) {
+        state.step = 4
         state.status = 'idle'
       } else {
-        state.step = 2
-        state.status = 'idle'
+        const hashes = JSON.parse(window.localStorage.getItem('hashes') as any).approver
+        if (hashes) {
+          state.step = 4
+          state.status = 'idle'
+        } else {
+          state.step = +action.payload
+          state.status = 'idle'
+        }
       }
     })
     builder.addCase(validateIsRelayManagerStaked.pending, (state) => {
@@ -355,7 +335,7 @@ const registerSlice = createSlice({
     })
     builder.addCase(validateIsRelayManagerStaked.rejected, (state) => {
       state.status = 'idle'
-      state.step = 1
+      state.step = 4
     })
   }
 })

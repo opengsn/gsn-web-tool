@@ -1,23 +1,17 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
-import { PlusCircleFill } from 'react-bootstrap-icons'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { Button, Typography, Icon, Box } from '../../../components/atoms'
 import { ROUTES } from '../../../constants/routes'
 
 const RegisterNewButton = () => {
+  const navigate = useNavigate()
   return (
-    <div>
-      <Link to={ROUTES.RegisterNew}>
-        <Button size="lg" variant="success" className="h-75 w-100">
-          <PlusCircleFill size={24} style={{
-            display: 'inline-block',
-            marginBottom: '3px',
-            marginRight: '4px'
-          }} />{' '}
-          <span>Register New Relay</span>
-        </Button>
-      </Link>
-    </div>
+    <Button.Contained size='large' onClick={() => navigate(ROUTES.RegisterNew)}>
+      <Box height='80px' display='flex' alignItems='center'>
+        <Icon.PlusCircleFill />
+        &nbsp; &nbsp;<Typography variant={'body1'}>Register New Relay</Typography>
+      </Box>
+    </Button.Contained>
   )
 }
 

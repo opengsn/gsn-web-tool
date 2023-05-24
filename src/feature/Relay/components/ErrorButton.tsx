@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from 'react-bootstrap/Button'
-import Alert from 'react-bootstrap/Alert'
+import { Alert, Button } from '../../../components/atoms'
 
 interface ErrorButtonProps {
   children: React.ReactNode
@@ -11,12 +10,12 @@ interface ErrorButtonProps {
 const ErrorButton = ({ children, onClick, message }: ErrorButtonProps) => {
   return (
     <div>
-      <Alert variant="warning">
+      <Alert severity='error'>
         <span>Operation errored with {message}.</span>
         <br />
         <span>Retry?</span>
       </Alert>
-      <Button onClick={onClick} variant="outline-primary" className="border border-3 border-danger">{children}</Button>
+      <Button.Contained onClick={onClick}>{children}</Button.Contained>
     </div>
   )
 }

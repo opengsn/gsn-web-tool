@@ -1,37 +1,35 @@
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-
 import NetworkCard from './Network/NetworkCard'
 import NetworkLinksNew from './components/NetworkGroups'
 
 import { useAppSelector } from '../../hooks'
 import Header from './components/Header'
 import RegisterNewButton from './components/RegisterNewButton'
+import { Box, Grid } from '../../components/atoms'
 
-export default function ChainsList () {
+export default function ChainsList() {
   const networks = useAppSelector((state) => state.networkList.networks)
 
-  return <>
-    <Header />
+  return (
+    <>
+      <Header />
+      <Grid container px='12px'>
+        <Grid item xs={12} md={3}>
+          <NetworkLinksNew />
+        </Grid>
+        <Grid item xs={12} md={9}>
+          <Box height='90px' width={{ xs: '100%', md: '290px' }} ml={{ md: 'auto' }}>
+            <RegisterNewButton />
+          </Box>
+        </Grid>
+      </Grid>
 
-    {/* mx-0 prevents horizontal scrollbar from appearing within container-fluid  */}
-    <Row className="mx-0">
-      <Col sm={6} md={3}>
-        <NetworkLinksNew />
-      </Col>
-      <Col md={{ span: 2, offset: 7 }} className="">
-        <Row style={{ height: '120px' }}>
-          <RegisterNewButton />
-        </Row>
-      </Col>
-    </Row>
-
-    {Object.values(networks).map((x) => {
-      return <div key={x.chain.name}>
-        {x.chain.gsn.relayHubAddress !== undefined && x.errorMsg === ''
-          ? <NetworkCard network={x} />
-          : null}
-      </div>
-    })}
-  </>
+      {Object.values(networks).map((x) => {
+        return (
+          <div key={x.chain.name}>
+            {x.chain.gsn.relayHubAddress !== undefined && x.errorMsg === '' ? <NetworkCard network={x} /> : null}
+          </div>
+        )
+      })}
+    </>
+  )
 }

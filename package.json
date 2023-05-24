@@ -1,9 +1,12 @@
 {
   "name": "gsn-web-tool",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "/",
   "private": false,
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.15",
     "@reduxjs/toolkit": "^1.8.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -16,7 +19,6 @@
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "axios": "^0.27.2",
-    "bootstrap": "^5.2.0",
     "eslint": "^8.21.0",
     "eslint-config-react-app": "6",
     "eslint-config-standard": "17.0.0",
@@ -31,8 +33,6 @@
     "formik": "^2.2.9",
     "is-ip": "^5.0.0",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.3.1",
-    "react-bootstrap-icons": "^1.8.4",
     "react-dom": "^18.1.0",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.3.0",
@@ -50,9 +50,9 @@
     ]
   },
   "scripts": {
-    "one-hardhat-node": "npx hardhat node",
-    "two-gsn-deploy": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic",
-    "three-relay-server": "npx gsn relayer-run --ethereumNodeUrl=http://localhost:8545 --managerStakeTokenAddress=0x610178dA211FEF7D417bC0e6FeD39F05609AD788 --relayHubAddress=0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9 --url=http://localhost:8090 --workdir=/tmp/relay101/ --ownerAddress=0xcd3B766CCDd6AE721141F452C550Ca635964ce71 --port=8090",
+    "local-hardhat-node": "npx hardhat node",
+    "local-gsn": "npx gsn deploy --yes --testPaymaster --testToken --burnAddress 0x1000000000000000000000000000000000000000 --devAddress 0x2000000000000000000000000000000000000000 --mnemonic=mnemonic --minimumTokenStake 1000000000000000000",
+    "local-relay-server": "npx gsn relayer-run --ethereumNodeUrl=http://localhost:8545 --managerStakeTokenAddress=0x610178dA211FEF7D417bC0e6FeD39F05609AD788 --relayHubAddress=0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9 --url=http://localhost:8090 --workdir=./tmp/relay101/ --ownerAddress=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --port=8090",
     "lint": "eslint -f unix .",
     "start": "react-scripts start",
     "build": "react-scripts build && cd build/ && mkdir manage && cp index.html manage/",
@@ -77,6 +77,7 @@
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-n": "^15.2.4",
-    "hardhat": "^2.10.1"
+    "hardhat": "^2.10.1",
+    "prettier": "2.8.7"
   }
 }

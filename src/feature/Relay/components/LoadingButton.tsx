@@ -1,8 +1,11 @@
-import Button from 'react-bootstrap/Button'
-import Spinner from 'react-bootstrap/Spinner'
+import { CircularProgress, Button } from '../../../components/atoms'
 
 const LoadingButton = () => {
-  return <Button disabled><Spinner size="sm" animation="border"></Spinner></Button>
+  return (
+    <Button.Contained disabled>
+      <CircularProgress></CircularProgress>
+    </Button.Contained>
+  )
 }
 
 export default LoadingButton

@@ -5,6 +5,7 @@ import RelayStatus from './RelayStatus'
 import RelayUrl from './RelayUrl'
 import { RelayVersion } from './RelayVersion'
 import { ViewDetailsButton } from './ViewDetailsButton'
+import { Box, TableCell, TableRow } from '../../../../components/atoms'
 
 export interface RelayLineProps {
   url: string
@@ -13,32 +14,42 @@ export interface RelayLineProps {
   errorMsg: string
 }
 
-export default function RelayLine ({ url, relay, blockExplorer, errorMsg }: RelayLineProps) {
+export default function RelayLine({ url, relay, blockExplorer, errorMsg }: RelayLineProps) {
   const { relayManagerAddress, relayWorkerAddress, ready, version, chainId } = relay
-  if (chainId === undefined) return <tr><td>no data</td></tr>
+  if (chainId === undefined) {
+    return (
+      <TableRow>
+        <td>no data</td>
+      </TableRow>
+    )
+  }
 
-  return <tr key={relayManagerAddress}>
-    <td>
-      <RelayUrl url={url} />
-    </td>
-    <td>
-      <RelayStatus ready={ready} />
-    </td>
-    <td>
-      <RelayVersion version={version} />
-    </td>
-    <td>
-      <div><BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} /></div>
-      <div><BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} /></div>
-    </td>
-    <td>
-      <Balance
-        address={relayManagerAddress}
-        chainId={parseInt(chainId)} />
-      <Balance
-        address={relayWorkerAddress}
-        chainId={parseInt(chainId)} />
-    </td>
-    <td className="border-top"><ViewDetailsButton url={url} /></td>
-  </tr>
+  return (
+    <TableRow key={relayManagerAddress}>
+      <TableCell>
+        <RelayUrl url={url} />
+      </TableCell>
+      <TableCell>
+        <RelayStatus ready={ready} />
+      </TableCell>
+      <TableCell>
+        <RelayVersion version={version} />
+      </TableCell>
+      <TableCell>
+        <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
+        <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
+      </TableCell>
+      <TableCell>
+        <Box>
+          <Balance address={relayManagerAddress} chainId={parseInt(chainId)} />
+        </Box>
+        <Box>
+          <Balance address={relayWorkerAddress} chainId={parseInt(chainId)} />
+        </Box>
+      </TableCell>
+      <TableCell>
+        <ViewDetailsButton url={url} />
+      </TableCell>
+    </TableRow>
+  )
 }

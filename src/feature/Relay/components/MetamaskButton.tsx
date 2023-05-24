@@ -1,24 +1,29 @@
 import { useConnect } from 'wagmi'
-import Button from 'react-bootstrap/Button'
+import { Alert, Box, Button, Typography } from '../../../components/atoms'
 
-export default function MetamaskButton () {
+export default function MetamaskButton() {
   const { connect, connectors, error, pendingConnector } = useConnect()
 
   return (
-    <>
+    <Box
+      width={{
+        xs: '95%',
+        md: '300px'
+      }}
+      mx='auto'
+      mt='25px'
+      display='flex'
+    >
       {connectors.map((connector) => (
-        <Button
-          disabled={!connector.ready}
-          key={connector.id}
-          onClick={() => connect({ connector })}
-        >
-          Connect with {connector.name}
-          {!connector.ready && ' (unsupported)'}
-          {connector.id === pendingConnector?.id &&
-            ' (connecting)'}
-        </Button>
+        <Button.Contained disabled={!connector.ready} key={connector.id} onClick={() => connect({ connector })}>
+          <Typography variant={'body2'}>
+            Connect with {connector.name}
+            {!connector.ready && ' (unsupported)'}
+            {connector.id === pendingConnector?.id && ' (connecting)'}
+          </Typography>
+        </Button.Contained>
       ))}
-      {(error != null) && <div>{error.message}</div>}
-    </>
+      {error != null && <Alert severity='error'>{error.message}</Alert>}
+    </Box>
   )
 }

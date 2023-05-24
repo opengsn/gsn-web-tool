@@ -1,12 +1,12 @@
+/* eslint-disable multiline-ternary */
 import { useEffect, useState } from 'react'
 import { useBlockNumber, useContractRead, useProvider } from 'wagmi'
 
 import { BigNumber, Contract, ethers, utils } from 'ethers'
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
 
 import BlockExplorerUrl from '../components/BlockExplorerUrl'
 import { TokenValueInfo } from './TokenValueInfo'
+import { Box, Typography } from '../../../components/atoms'
 
 interface RelayHubInfoProps {
   relayHubAddress: string
@@ -20,8 +20,7 @@ export interface IFoundToken {
   minimumStake: BigNumber
 }
 
-export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplorerUrl, chainId }: RelayHubInfoProps) {
-  const ver = (version: string) => version.replace(/\+opengsn.*/, '')
+export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplorerUrl, chainId }: RelayHubInfoProps) {
   const { data: curBlockNumberData } = useBlockNumber({ chainId })
   const provider = useProvider({ chainId })
   const [stakingTokens, setStakingTokens] = useState<IFoundToken[]>([])
@@ -63,59 +62,76 @@ export default function RelayHubInfo ({ relayHubAddress, RelayHubAbi, blockExplo
     chainId
   })
 
-  const { data: versionData } = useContractRead({
+  useContractRead({
     address: relayHubAddress as any,
     abi: RelayHubAbi,
     functionName: 'versionHub',
     chainId
   })
 
-  function formatDays (days: ethers.BigNumber) {
+  function formatDays(days: ethers.BigNumber) {
     const daysNumber = days.toNumber()
-    if (daysNumber > 2) { return `${Math.round(daysNumber)} days` }
+    if (daysNumber > 2) {
+      return `${Math.round(daysNumber)} days`
+    }
     const hours = daysNumber * 24
-    if (hours > 2) { return `${Math.round(hours)} hrs` }
+    if (hours > 2) {
+      return `${Math.round(hours)} hrs`
+    }
 
     const min = hours * 60
     return `${Math.round(min)} mins`
   }
 
   return (
-    <Card.Body>
-      <ListGroup>
-        <ListGroup.Item>
-          RelayHub: <BlockExplorerUrl address={relayHubAddress}
-                                      url={blockExplorerUrl}/>{' '}<b>{typeof versionData === 'string' ? ver(versionData) : '(no version)'}</b>
-        </ListGroup.Item>
-        {hubStateData !== undefined
-          ? <>
-            <ListGroup.Item>
-              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-              Stake: lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.{' '}
-              {stakingTokens.length > 0
-                ? <span>token{stakingTokens.length > 1 ? 's' : null}:{' '}
-                  {stakingTokens.map((foundToken: IFoundToken) => {
-                    return <TokenValueInfo
-                      token={foundToken.token}
-                      minimumStake={foundToken.minimumStake}
-                      chainId={chainId}
-                      key={foundToken.token}
-                    />
-                  })}
-                </span>
-                : null
-              }
-            </ListGroup.Item>
-            <ListGroup.Item>
+    <Box mt={4}>
+      <Box>
+        <Typography variant='body2' fontWeight={600}>
+          Relay Hub:{' '}
+        </Typography>
+        <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />
+      </Box>
+      {hubStateData !== undefined ? (
+        <>
+          <Box>
+            {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+            <Typography variant='body2' fontWeight={600}>
+              Stake:
+            </Typography>{' '}
+            <Typography variant='body2'>lock time {formatDays(hubStateData.minimumUnstakeDelay as any)}.</Typography>
+            {stakingTokens.length > 0 ? (
               <>
-                {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-                Relay Fee: {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+                <Typography variant='body2' fontWeight={600}>
+                  token{stakingTokens.length > 1 ? 's' : null}:
+                </Typography>{' '}
+                <Typography variant='body2'>
+                  {stakingTokens.map((foundToken: IFoundToken) => {
+                    return (
+                      <TokenValueInfo
+                        token={foundToken.token}
+                        minimumStake={foundToken.minimumStake}
+                        chainId={chainId}
+                        key={foundToken.token}
+                      />
+                    )
+                  })}
+                </Typography>
               </>
-            </ListGroup.Item>
-          </>
-          : null
-        }
-      </ListGroup>
-    </Card.Body >
+            ) : null}
+          </Box>
+          <Box>
+            <Typography variant='body2' fontWeight={600}>
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
+              Relay Fee:
+            </Typography>{' '}
+            <Typography variant='body2'>
+              <>
+                {utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')} gwei + {hubStateData.pctRelayFee}%
+              </>
+            </Typography>
+          </Box>
+        </>
+      ) : null}
+    </Box>
   )
 }

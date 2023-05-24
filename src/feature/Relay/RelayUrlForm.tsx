@@ -1,14 +1,8 @@
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 
-import Alert from 'react-bootstrap/Alert'
-import Button from 'react-bootstrap/Button'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
-
-import { Flip, toast } from 'react-toastify'
+import { Box, Typography, TextField, Button, ButtonType, Alert } from '../../components/atoms'
 
 import { isIP } from 'is-ip'
 
@@ -16,11 +10,13 @@ import { ROUTES } from '../../constants/routes'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { PingResponse } from '../../types'
 import { deleteRelayData, fetchRelayData } from './relaySlice'
+import { texts } from '../../texts'
 
-export default function RelayUrlForm () {
+export default function RelayUrlForm() {
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
-  const relayDataFetched = (Object.keys(relayData).length > 0)
+  const relayDataFetched = Object.keys(relayData).length > 0
+  const [error, setError] = useState<string | null>(null)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useAppDispatch()
@@ -43,13 +39,14 @@ export default function RelayUrlForm () {
       url: relay.relayUrl
     },
     enableReinitialize: true,
-    onSubmit: values => {
+    onSubmit: (values) => {
+      setError(null)
       // eslint-disable-next-line no-useless-escape
       const regexpURL = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&/=]*)/i
 
       const withHttps = (url: string) => `https://${url}`
       const removeTrailingSlashes = (url: string) => url.replace(/\/+$/, '')
-      const withGetaddr = (url: string) => !/\/getaddr/i.test(url) ? `${url}/getaddr` : url
+      const withGetaddr = (url: string) => (!/\/getaddr/i.test(url) ? `${url}/getaddr` : url)
 
       const formatURL = (url: string) => withHttps(withGetaddr(removeTrailingSlashes(url)))
       const formatLocalhost = (url: string) => withGetaddr(removeTrailingSlashes(url))
@@ -65,65 +62,52 @@ export default function RelayUrlForm () {
           URL = formatLocalhost(values.url)
         }
       } else {
-        toast.dismiss()
-        toast.error('Please enter a valid URL', { position: 'top-center', hideProgressBar: true, autoClose: 1300, closeOnClick: true, transition: Flip })
+        setError('Please enter a valid URL')
         return
       }
 
-      dispatch(fetchRelayData(URL)).then((res) => {
-        if (res.type.includes('fulfilled')) {
-          const search = createSearchParams({ relayUrl: URL }).toString()
-          navigate({ pathname: ROUTES.DetailedView, search })
-        } else if (res.type.includes('rejected')) {
-          const urlFormatMessage = 'endpoint must return relay config as JSON and include HTTP or HTTPS'
-          if (URL.includes('localhost')) {
-            toast.info(
-              urlFormatMessage,
-              { autoClose: 2000, closeButton: true }
-            )
+      dispatch(fetchRelayData(URL))
+        .then((res) => {
+          if (res.type.includes('fulfilled')) {
+            const search = createSearchParams({ relayUrl: URL }).toString()
+            navigate({ pathname: ROUTES.DetailedView, search })
+          } else if (res.type.includes('rejected')) {
+            const urlFormatMessage = 'endpoint must return relay config as JSON and include HTTP or HTTPS'
+            if (URL.includes('localhost')) {
+              setError(urlFormatMessage)
+            }
           }
-        }
-      }).catch((err) => {
-        toast.error('error while fetching relay data. try refreshing the page')
-        console.error(err)
-      })
+        })
+        .catch((err) => {
+          setError('error while fetching relay data. try refreshing the page')
+          console.error(err)
+        })
     }
   })
 
   if (!relayDataFetched) {
-    return (<>
-      <Col></Col>
-      <Col md="auto" className="flex-fill">
-        {relay.loading
-          ? <span>Loading data...</span>
-          : null}
-        {relay.errorMsg !== ''
-          ? <Alert variant="danger">
-            <span>Error: {relay.errorMsg}</span>
-          </Alert>
-          : null}
-        <Form className="row" onSubmit={getRelayForm.handleSubmit}>
-          <Form.Label htmlFor="url">Relay URL
-            <InputGroup><Form.Control
-              id="url"
-              name="url"
-              type="text"
-              onChange={getRelayForm.handleChange}
-              value={getRelayForm.values.url}
-            />
-            </InputGroup></Form.Label>
-          <Button variant="success" type="submit">Fetch data</Button>
-        </Form>
-      </Col>
-      <Col></Col>
-    </>)
+    return (
+      <Box pt={8} textAlign='center' mx='auto' width={'900px'}>
+        <Box mb={8}>
+          <Typography variant={'h4'}>Relay URL</Typography>
+        </Box>
+        <Box mb='20px' textAlign='start'>
+          <Typography variant={'body1'}>{texts.relayUrl.description}</Typography>
+        </Box>
+        <Box component='form' onSubmit={getRelayForm.handleSubmit}>
+          <Box mb={8}>
+            <TextField onChange={getRelayForm.handleChange} value={getRelayForm.values.url} name='url' />
+            <Box my={1}>{error !== null && <Alert severity='error'>{error}</Alert>}</Box>
+          </Box>
+          <Box width='380px' mx='auto' height='70px'>
+            <Button.Contained size='large' type={ButtonType.SUBMIT}>
+              Fetch data
+            </Button.Contained>
+          </Box>
+        </Box>
+      </Box>
+    )
   }
 
-  if (relay.errorMsg !== '') {
-    return <>
-      <Alert variant='danger'><span>{relay.errorMsg}</span></Alert>
-    </>
-  }
-
-  return <div>Relay data is already fetched. Refresh the page.</div>
+  return <Alert severity='error'>Relay data is already fetched. Refresh the page.</Alert>
 }

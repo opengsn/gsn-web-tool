@@ -1,106 +1,130 @@
 import { ethers } from 'ethers'
-import { useContext, useState } from 'react'
-import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useContext, useEffect, useState } from 'react'
+import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { toast } from 'react-toastify'
-import Button from 'react-bootstrap/Button'
+import { useAppDispatch, useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../../hooks'
 
-import { useAppSelector, useStakeManagerAddress } from '../../../../../../hooks'
-import { useDefaultStateSwitchers } from '../../registerRelayHooks'
-
-import ErrorButton from '../../../../components/ErrorButton'
-import LoadingButton from '../../../../components/LoadingButton'
-import TransactionSuccessToast from '../../../../components/TransactionSuccessToast'
-
-import { TokenContext } from '../StakeWithERC20'
+import { TokenContext } from '../TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
+import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
+import { jumpToStep } from '../../registerRelaySlice'
+import { Alert } from '../../../../../../components/atoms'
+import CopyHash from '../../../../../../components/atoms/CopyHash'
+import { HashType, Hashes } from '../../../../../../types/Hash'
+import ExplorerLink from '../../ExplorerLink'
 
-export default function Approver () {
+interface IProps {
+  success: boolean
+}
+
+export default function Approver({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.approver as HashType
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
-  const defaultStateSwitchers = useDefaultStateSwitchers()
-
+  const dispatch = useAppDispatch()
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
   const chainId = Number(relay.chainId)
-  // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
-  const { data: currentAllowanceData, isError: currentAllowanceIsError } = useContractRead({
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, approver: hash }))
+  }
+
+  const FetchCurrentAllowance = async () => {
+    await refetchCurrentAllowance()
+  }
+
+  useEffect(() => {
+    FetchCurrentAllowance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const {
+    isError: currentAllowanceIsError,
+    isLoading: currentAllowanceIsLoading,
+    refetch: refetchCurrentAllowance
+  } = useContractRead({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'allowance',
     chainId,
+    enabled: false,
     args: [account, stakeManagerAddress],
-    onSuccess (data) {
-      setApproveAmount(
-        minimumStakeForToken.sub(data as any)
-      )
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    onSuccess: async (data) => {
+      setApproveAmount(minimumStakeForToken?.sub(data as any) ?? ethers.constants.One)
     }
   })
 
-  const { config, error: prepareApproveTxError, isError: prepareApproveTxIsError } = usePrepareContractWrite({
+  const {
+    config,
+    error: prepareApproveTxError,
+    isError: prepareApproveTxIsError,
+    isLoading: prepareApproveTxIsLoading
+  } = usePrepareContractWrite({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'approve',
+    enabled: !!approveAmount,
     args: [stakeManagerAddress, approveAmount]
   })
 
-  const { error: approveTxError, isSuccess, isError, isLoading, write: approve } = useContractWrite({
+  const {
+    error: approveTxError,
+    isSuccess,
+    isLoading,
+    write: approve
+  } = useContractWrite({
     ...config,
-    ...defaultStateSwitchers,
-    onSuccess (data) {
-      const text = 'Approved Stake Manager for spend'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+    onSuccess(data) {
+      setHash(data.hash)
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !!hash,
+    onSuccess: () => {
+      dispatch(jumpToStep(4))
     }
   })
 
   const createApproveButton = () => {
-    const text = <span>Approve token for spend by Relay Manager</span>
-    const ApproveButton = () => {
-      if (currentAllowanceData !== undefined) {
-        const text = `Increase allowance by (${ethers.utils.formatEther(approveAmount)})`
-        return <Button onClick={() => approve?.()}>{text}</Button>
-      } else {
-        return <span>Error fetching token allowance</span>
-      }
-    }
+    return (
+      <>
+        {!prepareApproveTxIsError && prepareApproveTxError === null && (
+          <RegistrationInputWithTitle
+            title='This is a short explanatory text about the allowance approval.'
+            buttonText='Approve'
+            isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading || approve == null}
+            isSuccess={isSuccess}
+            error={approveTxError?.message}
+            warningAlert='If using MetaMask, please do not change the approval amount. Choose "Use Default" to issue the approval'
+            isLoadingForTransaction={isLoadingForTransaction}
+            onClick={() => {
+              console.log(approve)
+              approve?.()
+            }}
+          />
+        )}
+        {currentAllowanceIsError && <Alert severity='error'>Error fetching token allowance</Alert>}
+        {prepareApproveTxIsError && <Alert severity='error'>Error preparing approve transaction. - {prepareApproveTxError?.message}</Alert>}
+      </>
+    )
+  }
 
-    const ApproveError = <ErrorButton message={approveTxError?.message} onClick={() => approve?.()}>
-      {text}
-    </ErrorButton>
-
-    let content
-    switch (true) {
-      case isError:
-        content = ApproveError
-        break
-      case isSuccess || approveAmount.eq(ethers.constants.Zero):
-        content = <div>
-          {'Succesfully increased allowance. \'Stake\' button will unlock after the transaction is confirmed by the network'}
-        </div>
-        break
-      case !prepareApproveTxIsError && prepareApproveTxError === null:
-        content = <ApproveButton />
-        break
-      case currentAllowanceIsError:
-        content = <span>Error fetching token allowance</span>
-        break
-      case prepareApproveTxIsError && prepareApproveTxError !== null:
-        content = <div>Error preparing approve transaction.
-          <span className="bg-warning">{prepareApproveTxError?.message}</span>
-        </div>
-        break
-      case isLoading:
-        content = <LoadingButton />
-        break
-    }
-
-    if (content === undefined) return <span>unable to initialize approve button</span>
-    return content
+  if (success) {
+    return (
+      <>
+        <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
+      </>
+    )
   }
 
   return createApproveButton()

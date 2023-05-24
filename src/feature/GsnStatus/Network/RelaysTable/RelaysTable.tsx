@@ -1,53 +1,98 @@
-import Table from 'react-bootstrap/Table'
-
 import { ChainWithGsn } from '../../../../types'
 import BlockExplorerUrl from '../../components/BlockExplorerUrl'
 import { GsnNetworkRelay } from '../../networkListSlice'
 import Balance from './Balance'
 import RelayLine from './RelayLine'
 import RelayUrl from './RelayUrl'
+import {
+  Box,
+  TableHead as MuiTableHead,
+  Typography,
+  TableBody as MuiTableBody,
+  Table,
+  TableCell,
+  TableContainer,
+  TableRow
+} from '../../../../components/atoms'
+import { colors } from '../../../../theme'
 
 interface RelaysTableProps {
   relays: GsnNetworkRelay[]
   chain: ChainWithGsn
 }
 
-export default function RelaysTable ({ relays, chain }: RelaysTableProps) {
-  const TableHead = () => (<thead>
-    <tr>
-      <th>url</th>
-      <th>status</th>
-      <th>version</th>
-      <th><abbr title="manager/worker">address</abbr></th>
-      <th>balance</th>
-    </tr>
-  </thead>)
+export default function RelaysTable({ relays, chain }: RelaysTableProps) {
+  const TableHead = () => (
+    <MuiTableHead>
+      <TableRow>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Url
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Status
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Version
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Address
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant='body2' fontWeight={600}>
+            Balance
+          </Typography>
+        </TableCell>
+        <TableCell>{''}</TableCell>
+      </TableRow>
+    </MuiTableHead>
+  )
 
   const TableBody = () => {
     const content = relays.map((x) => {
       if (x.config !== undefined) {
         return <RelayLine key={x.manager} relay={x.config} errorMsg={''} url={x.url} blockExplorer={chain.blockExplorers?.default} />
       } else {
-        return (<tr key={x.manager}>
-          <td><RelayUrl url={x.url} /></td>
-          <td colSpan={2}>
-            <span className="text-danger">{x.errorMsg}</span>
-          </td>
-          <td>
-            <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
-          </td>
-          <td><Balance address={x.manager} chainId={chain.id} /></td>
-          <td></td>
-        </tr>)
+        return (
+          <TableRow key={x.manager}>
+            <TableCell>
+              <RelayUrl url={x.url} />
+            </TableCell>
+            <TableCell>
+              <Box component='span' color={colors.red}>
+                {x.errorMsg}
+              </Box>
+            </TableCell>
+            <TableCell>
+              <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
+            </TableCell>
+            <TableCell>
+              <Balance address={x.manager} chainId={chain.id} />
+            </TableCell>
+            <TableCell>{''}</TableCell>
+          </TableRow>
+        )
       }
     })
 
-    return <tbody>{content}</tbody>
+    return <MuiTableBody>{content}</MuiTableBody>
   }
 
-  return <div className="mx-3">
-    <Table hover responsive>
-      <TableHead /><TableBody />
-    </Table >
-  </div>
+  return (
+    <Box mt={4}>
+      <TableContainer>
+        <Table>
+          <TableHead />
+          <TableBody />
+        </Table>
+      </TableContainer>
+    </Box>
+  )
 }

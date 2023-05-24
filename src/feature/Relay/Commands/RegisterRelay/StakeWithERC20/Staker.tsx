@@ -1,20 +1,25 @@
-import { useContext } from 'react'
-import { toast } from 'react-toastify'
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
-import { TokenContext } from './StakeWithERC20'
-
-import Button from 'react-bootstrap/Button'
-
-import ErrorButton from '../../../components/ErrorButton'
-import LoadingButton from '../../../components/LoadingButton'
-import TransactionSuccessToast from '../../../components/TransactionSuccessToast'
+import { useContext, useEffect } from 'react'
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
+import { TokenContext } from './TokenContextWrapper'
 
 import iErc20TokenAbi from '../../../../../contracts/iERC20TokenAbi.json'
 import StakeManager from '../../../../../contracts/StakeManager.json'
-import { useAppSelector } from '../../../../../hooks'
+import { useAppSelector, useLocalStorage } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
+import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
+import { Alert, Box } from '../../../../../components/atoms'
+import CopyHash from '../../../../../components/atoms/CopyHash'
+import { HashType, Hashes } from '../../../../../types/Hash'
+import ExplorerLink from '../ExplorerLink'
 
-export default function Stake () {
+interface IProps {
+  success: boolean
+}
+
+export default function Staker({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.staker as HashType
+
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const { address } = useAccount()
   const { token, minimumStakeForToken, stakeManagerAddress, setListen } = useContext(TokenContext)
@@ -24,70 +29,88 @@ export default function Stake () {
 
   const unstakeDelay = '15000'
 
-  const { config, error: prepareStakeTxError, refetch } = usePrepareContractWrite({
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, staker: hash }))
+  }
+
+  useEffect(() => {
+    refetchContractRead().catch(console.error)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const {
+    config,
+    error: prepareStakeTxError,
+    refetch,
+    isLoading: isPrepareStakeTxLoading
+  } = usePrepareContractWrite({
     address: stakeManagerAddress as any,
     abi: StakeManager.abi,
     functionName: 'stakeForRelayManager',
+    enabled: false,
     args: [token, relayManagerAddress, unstakeDelay, minimumStakeForToken]
   })
 
-  useContractRead({
+  const { isLoading: contractReadLoading, refetch: refetchContractRead } = useContractRead({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'allowance',
     args: [address, stakeManagerAddress],
-    watch: true,
+    enabled: false,
     chainId,
-    onSuccess () {
+    onSuccess() {
       refetch().catch(console.error)
     }
   })
 
-  const { error: stakeTxError, isSuccess, isError, isLoading, write: stakeRelayer } = useContractWrite({
+  const {
+    error: stakeTxError,
+    isSuccess,
+    isLoading,
+    write: stakeRelayer
+  } = useContractWrite({
     ...config,
     ...defaultStateSwitchers,
-    onSuccess (data) {
-      const text = 'Staked relay'
-      toast.info(<TransactionSuccessToast text={text} hash={data.hash} />)
+    onSuccess(data) {
+      setHash(data.hash)
+    }
+  })
+
+  const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
+    hash,
+    enabled: !!hash,
+    onSuccess: () => {
       setListen(true)
     }
   })
 
-  const getStakeButton = () => {
-    let content
-    const text = 'Stake'
-    switch (true) {
-      case isError:
-        content = <ErrorButton message={stakeTxError?.message} onClick={() => stakeRelayer?.()}>{text}</ErrorButton>
-        break
-      case isLoading:
-        content = <LoadingButton />
-        break
-      case isSuccess:
-        content = <div>Relayer successfully staked</div>
-        break
-      default:
-        content = <>
-          {prepareStakeTxError !== null
-            ? <>
-              <div className="p-3 mt-4 my-1 bg-warning">
-                <span className="text-dark">Account is not prepared for staking. Please try increasing allowance</span>
-              </div>
-
-              <Button disabled className="my-2">
-                {text}
-              </Button>
-            </>
-            : <Button onClick={() => stakeRelayer?.()} className="my-2">
-              {text}
-            </Button>
-          }
-        </>
-    }
-
-    if (content === undefined) return <span>unable to initialize stake button</span>
-    return content
+  if (success) {
+    return (
+      <>
+        <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
+      </>
+    )
   }
 
-  return <div>{getStakeButton()}</div>
+  return (
+    <>
+      <RegistrationInputWithTitle
+        title='This is a short explanatory text about staking, and the process now happening, and what should be confirmed on the wallet extension.'
+        buttonText='Stake'
+        isLoading={isLoading || isPrepareStakeTxLoading || contractReadLoading}
+        isSuccess={isSuccess}
+        error={stakeTxError?.message}
+        onClick={() => stakeRelayer?.()}
+        isLoadingForTransaction={isLoadingForTransaction}
+      />
+      {prepareStakeTxError !== null && (
+        <Box width='100%'>
+          <Alert severity='error'>
+            Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}
+          </Alert>
+        </Box>
+      )}
+    </>
+  )
 }

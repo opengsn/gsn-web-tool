@@ -1,0 +1,56 @@
+import { styled } from '@mui/material/styles'
+import { Accordion as MuiAccordion, AccordionDetails as MuiAccordionDetails, AccordionSummary as MuiAccordionSummary } from '@mui/material'
+import { FC, ReactNode } from 'react'
+import { Icon } from '../atoms'
+
+interface IAccordionProps {
+  children: NonNullable<ReactNode>
+  expanded?: boolean
+}
+
+export const AccordionBase = styled(MuiAccordion)<IAccordionProps>(({ theme }) => ({}))
+
+const Accordion: FC<IAccordionProps> = ({ children, expanded }) => {
+  return <AccordionBase expanded={expanded}>{children}</AccordionBase>
+}
+
+interface IAccordionSummaryProps {
+  children: ReactNode
+  onChange?: (event: React.SyntheticEvent) => void
+}
+
+export const AccordionSummaryBase = styled(MuiAccordionSummary)<IAccordionSummaryProps>(({ theme }) => ({
+  padding: '5px 20px',
+  borderBottom: `1px solid ${'grey.600'}`,
+  width: '100%',
+  cursor: 'unset !important',
+  userSelect: 'text',
+  '& .MuiAccordionSummary-content': {
+    margin: 0,
+    overflowX: 'auto'
+  },
+  '& .MuiAccordionSummary-expandIconWrapper': {
+    position: 'absolute',
+    right: 20,
+    top: 20
+  }
+}))
+
+export const AccordionSummary: FC<IAccordionSummaryProps> = ({ children, onChange }) => {
+  return <AccordionSummaryBase expandIcon={<Icon.Chevron onClick={onChange} cursor='pointer' />}>{children}</AccordionSummaryBase>
+}
+
+interface IAccordionDetailsProps {
+  children: ReactNode
+}
+
+const AccordionDetailsBase = styled(MuiAccordionDetails)<IAccordionDetailsProps>(({ theme }) => ({
+  padding: '5px 20px',
+  overflowX: 'auto'
+}))
+
+export const AccordionDetails: FC<IAccordionDetailsProps> = ({ children }) => {
+  return <AccordionDetailsBase>{children}</AccordionDetailsBase>
+}
+
+export default Accordion
