@@ -20,7 +20,7 @@ interface groupsMapped {
 const groups = {
   Ethereum: [1, 3, 4, 5, 42],
   Polygon: [137, 80001],
-  Binance: 'Binance',
+  Binance: [56, 97],
   Avalanche: 'Avalanche',
   Arbitrum: 'Arb',
   Optimism: 'Optimism'
