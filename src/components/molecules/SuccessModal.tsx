@@ -9,6 +9,7 @@ const SuccessModal: FC = () => {
   const [, setToken] = useLocalStorage('token', '')
   const [, setHashes] = useLocalStorage('hashes', {})
   const [, setLocalMintAmount] = useLocalStorage('localMintAmount', '')
+  const [, setFunds] = useLocalStorage<string>('funds', '0.5')
   const [open, setOpen] = useState<boolean>(true)
   const dispatch = useAppDispatch()
 
@@ -16,7 +17,8 @@ const SuccessModal: FC = () => {
     setToken('')
     setHashes({})
     setLocalMintAmount('')
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setFunds('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const navigate = useNavigate()
