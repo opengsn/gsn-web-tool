@@ -1,4 +1,4 @@
-import { useAppSelector, useStakeManagerAddress } from '../../../../../hooks'
+import { useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../hooks'
 import React, { useState, useEffect } from 'react'
 import { Alert, Typography } from '../../../../../components/atoms'
 
@@ -13,7 +13,7 @@ interface IProps {
 
 export default function Funder({ success }: IProps) {
   const [listen, setListen] = useState(false)
-  const [funds, setFunds] = useState<number>(0.5)
+  const [funds, setFunds] = useLocalStorage<string>('funds', '0.5')
   const [hash, setHash] = useState<HashType>()
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
@@ -23,9 +23,17 @@ export default function Funder({ success }: IProps) {
 
   useEffect(() => {
     refetch().catch(console.error)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleChangeFunds = (value: number) => {
+  const handleChangeFunds = (value: string) => {
+    if (isNaN(+value)) {
+      return
+    }
+    if (value === '') {
+      setFunds('0')
+      return
+    }
     setFunds(value)
   }
 
