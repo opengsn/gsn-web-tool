@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 import { useAppDispatch, useAppSelector, useLocalStorage, useStakeManagerAddress } from '../../../../../../hooks'
-import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 
 import { TokenContext } from '../TokenContextWrapper'
 
@@ -12,39 +11,40 @@ import RegistrationInputWithTitle from '../../../../../../components/molecules/R
 import { jumpToStep } from '../../registerRelaySlice'
 import { Alert } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
-import { HashType } from '../../../../../../types/Hash'
-import { RegisterSteps } from '../../RegisterFlowSteps'
+import { HashType, Hashes } from '../../../../../../types/Hash'
+import ExplorerLink from '../../ExplorerLink'
 
 interface IProps {
   success: boolean
 }
 
 export default function Approver({ success }: IProps) {
+  const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
+  const hash = hashes.approver as HashType
   const [approveAmount, setApproveAmount] = useState(ethers.constants.One)
   const dispatch = useAppDispatch()
-  const [hash, setHash] = useState<HashType>()
-  const [approved, setApproved] = useLocalStorage<boolean>('approved', false)
-
   const relay = useAppSelector((state) => state.relay.relay)
   const { relayHubAddress } = relay
   const chainId = Number(relay.chainId)
-  // TODO: approve amount outstanding
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
   const stakeManagerAddress = stakeManagerAddressData as any
 
-  const fetchAll = async () => {
-    await refetchCurrentAllowance().catch(console.error)
-    await refetchPrepareApprove().catch(console.error)
+  const setHash = (hash: HashType) => {
+    setHashes((prev) => ({ ...prev, approver: hash }))
+  }
+
+  const FetchCurrentAllowance = async () => {
+    await refetchCurrentAllowance()
   }
 
   useEffect(() => {
-    fetchAll().catch(console.error)
+    FetchCurrentAllowance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
-    data: currentAllowanceData,
     isError: currentAllowanceIsError,
     isLoading: currentAllowanceIsLoading,
     refetch: refetchCurrentAllowance
@@ -55,7 +55,8 @@ export default function Approver({ success }: IProps) {
     chainId,
     enabled: false,
     args: [account, stakeManagerAddress],
-    onSuccess(data) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    onSuccess: async (data) => {
       setApproveAmount(minimumStakeForToken?.sub(data as any) ?? ethers.constants.One)
     }
   })
@@ -64,13 +65,12 @@ export default function Approver({ success }: IProps) {
     config,
     error: prepareApproveTxError,
     isError: prepareApproveTxIsError,
-    isLoading: prepareApproveTxIsLoading,
-    refetch: refetchPrepareApprove
+    isLoading: prepareApproveTxIsLoading
   } = usePrepareContractWrite({
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'approve',
-    enabled: false,
+    enabled: !!approveAmount,
     args: [stakeManagerAddress, approveAmount]
   })
 
@@ -81,16 +81,14 @@ export default function Approver({ success }: IProps) {
     write: approve
   } = useContractWrite({
     ...config,
-    // ...defaultStateSwitchers,
     onSuccess(data) {
       setHash(data.hash)
-      setApproved(true)
     }
   })
 
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
-    enabled: !(hash == null),
+    enabled: !!hash,
     onSuccess: () => {
       dispatch(jumpToStep(4))
     }
@@ -120,7 +118,14 @@ export default function Approver({ success }: IProps) {
     )
   }
 
-  if (success) return <CopyHash copyValue={hash} />
+  if (success) {
+    return (
+      <>
+        <CopyHash copyValue={hash} />
+        <ExplorerLink params={hash ? `tx/${hash}` : null} />
+      </>
+    )
+  }
 
   return createApproveButton()
 }

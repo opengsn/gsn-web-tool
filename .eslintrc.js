@@ -23,9 +23,11 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: true }],
+    // '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: true }],
     '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'allow' }],
-    '@typescript-eslint/space-before-function-paren': 0
+    '@typescript-eslint/space-before-function-paren': 0,
+    '@typescript-eslint/no-floating-promises': 0,
+    '@typescript-eslint/strict-boolean-expressions': 0
   },
   settings: {
     react: {

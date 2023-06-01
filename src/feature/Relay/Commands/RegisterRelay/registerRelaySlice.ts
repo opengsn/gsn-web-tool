@@ -52,8 +52,6 @@ interface checkIsMintingRequiredParams {
 export const checkIsMintingRequired = createAsyncThunk<boolean, checkIsMintingRequiredParams, { fulfilledMeta: null }>(
   'register/checkIsMintingRequired',
   async ({ account, relay, provider, token }: checkIsMintingRequiredParams, { fulfillWithValue, rejectWithValue, getState, dispatch }) => {
-    // const state = getState() as RootState // check why checkIsMintingRequired is run
-    // if (state.register.step > 3) return fulfillWithValue(true, null)
     try {
       const { relayManagerAddress, relayHubAddress } = relay
 
@@ -171,10 +169,9 @@ export const validateIsRelayManagerStaked = createAsyncThunk<Number, validateIsR
 
       return fulfillWithValue(5, null)
     } catch (error: any) {
-      console.log(error.message)
       switch (true) {
         case error.message.includes('relay manager not staked'):
-          return fulfillWithValue(4, null)
+          return fulfillWithValue(3, null)
         case error.message.includes('this hub is not authorized by SM'):
           return fulfillWithValue(4, null)
         case error.message.includes('stake amount is too small'):
@@ -310,16 +307,25 @@ const registerSlice = createSlice({
     // validate hub is authorized
     // move to next step if action is _rejected_
     builder.addCase(validateIsRelayManagerStaked.fulfilled, (state, action) => {
-      if (action.payload === 5) {
+      if (action.payload === 6) {
+        state.step = 6
+        state.status = 'success'
+      } else if (action.payload === 5) {
         // check this line
         state.step = 5
-        state.status = 'success'
+        state.status = 'idle'
       } else if (action.payload === 4) {
         state.step = 4
         state.status = 'idle'
       } else {
-        state.step = +action.payload // changed to 3 from 2
-        state.status = 'idle'
+        const hashes = JSON.parse(window.localStorage.getItem('hashes') as any).approver
+        if (hashes) {
+          state.step = 4
+          state.status = 'idle'
+        } else {
+          state.step = +action.payload
+          state.status = 'idle'
+        }
       }
     })
     builder.addCase(validateIsRelayManagerStaked.pending, (state) => {

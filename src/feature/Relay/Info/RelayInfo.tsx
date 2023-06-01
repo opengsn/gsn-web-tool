@@ -1,9 +1,11 @@
 import { useAppSelector, useStakeManagerAddress } from '../../../hooks'
 import { PingResponse } from '../../../types/PingResponse'
+import gsnNetworks from '../../blockchain/gsn-networks.json'
 
 import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '../../../components/atoms'
+import { useEffect } from 'react'
 
 interface IProps {
   showAllInfo?: boolean
@@ -12,9 +14,18 @@ interface IProps {
 function RelayInfo({ showAllInfo }: IProps) {
   const relayData: PingResponse = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relayData.chainId)
+  const explorerLink = chainId ? (gsnNetworks as any)?.[chainId]?.[0].explorer : null
 
-  const { data: stakeManagerAddressData, isFetching, isLoading } = useStakeManagerAddress(relayData.relayHubAddress, chainId)
+  const { data: stakeManagerAddressData, refetch: refetchStakeManagerAddressData } = useStakeManagerAddress(
+    relayData.relayHubAddress,
+    chainId
+  )
   const stakeManagerAddress = stakeManagerAddressData as any
+
+  useEffect(() => {
+    refetchStakeManagerAddressData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const THead = () => (
     <TableHead>
@@ -38,43 +49,16 @@ function RelayInfo({ showAllInfo }: IProps) {
     </TableHead>
   )
 
-  const StakeMananagerInfoPreparePlaceholder = () => (
-    <>
-      <TableRow>
-        <TableCell>
-          <Typography variant={'subtitle2'}>Current Owner</Typography>
-        </TableCell>
-
-        <TableCell>
-          <Typography variant={'subtitle2'}>loading</Typography>
-        </TableCell>
-        <TableCell>{''}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>
-          <Typography variant={'subtitle2'}>staking token</Typography>
-        </TableCell>
-        <TableCell>
-          <Typography variant={'subtitle2'}>loading</Typography>
-        </TableCell>
-        <TableCell>{''}</TableCell>
-      </TableRow>
-    </>
-  )
-
-  const stakeManagerIsReady = stakeManagerAddress !== undefined && !(isLoading || isFetching)
   return (
     <Table>
       <THead />
       <TableBody>
-        <PingResponseData relayData={relayData} showAllInfo={showAllInfo} />
-        {stakeManagerIsReady
-          ? (
-          <StakeInfo stakeManagerAddress={stakeManagerAddress} relayManagerAddress={relayData.relayManagerAddress} />
-            )
-          : (
-          <StakeMananagerInfoPreparePlaceholder />
-            )}
+        <PingResponseData relayData={relayData} showAllInfo={showAllInfo} explorerLink={explorerLink} />
+        <StakeInfo
+          stakeManagerAddress={stakeManagerAddress}
+          relayManagerAddress={relayData.relayManagerAddress}
+          explorerLink={explorerLink}
+        />
       </TableBody>
     </Table>
   )
