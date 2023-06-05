@@ -1,10 +1,10 @@
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Alert, Box, Divider, Typography } from '../../components/atoms'
+import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Divider, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
@@ -21,20 +21,26 @@ export default function Relay() {
   const relayDataFetched = Object.keys(relayData).length > 0
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
-  const abortFetch = useRef<unknown>()
   const [expanded, setExpanded] = useState<boolean>(false)
   const variant = 'body1'
+  const [loading, setLoading] = useState<boolean>(false)
 
   const [searchParams] = useSearchParams()
 
-  useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true)
     const queryRelayUrl = searchParams.get('relayUrl')
     if (queryRelayUrl !== null && queryRelayUrl.length !== 0 && relay.errorMsg === '' && !relayDataFetched) {
-      const dispatchFetchRelay = dispatch(fetchRelayData(queryRelayUrl))
-      abortFetch.current = dispatchFetchRelay.abort
+      await dispatch(fetchRelayData(queryRelayUrl))
     } else if (queryRelayUrl === null) {
-      dispatch(deleteRelayData())
+      await dispatch(deleteRelayData())
     }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relay.relayUrl, searchParams, dispatch, relay.errorMsg, relayDataFetched])
 
   const connectedToWrongChainId = chain?.id !== undefined && chain?.id !== chainId && relayDataFetched
@@ -77,17 +83,11 @@ export default function Relay() {
             </Box>
           </AccordionSummary>
         </Accordion>
-        {relay.relay.ready
-          ? (
-          <></>
-            )
-          : (
-          <>{connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />} </>
-            )}
+        {relay.relay.ready ? <></> : <>{connectedToWrongChainId ? <ChainIdHandler relayChainId={chainId} /> : <RelayCommands />} </>}
         {currentStep === 6 && <SuccessModal />}
       </Box>
     )
   }
 
-  return <Alert severity='error'>Error initializing relay view</Alert>
+  return loading ? <CircularProgress /> : relayData ? null : <Alert severity='error'>Error initializing relay view</Alert>
 }

@@ -38,12 +38,7 @@ export default function TokenContextWrapper({ children }: IProps) {
   const [listen, setListen] = useState(false)
   const relay = useAppSelector((state) => state.relay.relay)
   const chainId = Number(relay.chainId)
-  const currentStep = useAppSelector((state) => state.register.step)
   const explorerLink = chainId ? (gsnNetworks as any)?.[chainId]?.[0].explorer : null
-
-  useEffect(() => {
-    console.log('currentStep', currentStep)
-  }, [currentStep])
 
   const { address } = useAccount()
   const { chain: chainData } = useNetwork()

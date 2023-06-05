@@ -12,10 +12,10 @@ import { HashType } from '../../../../../types/Hash'
 interface IProps {
   hash?: HashType
   setHash: (hash: HashType) => void
-  funds: number
+  funds: string
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: string
-  handleChangeFunds: (value: number) => void
+  handleChangeFunds: (value: string) => void
 }
 
 export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen }: IProps) {
@@ -38,7 +38,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
 
   useEffect(() => {
     refetch().catch(console.error)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -66,9 +66,9 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
         isSuccess={isSuccess}
         error={prepareFundTxError?.message ?? error?.message}
         onClick={() => fundRelay?.()}
-        value={funds.toString()}
+        value={(+funds).toString()}
         onChange={(value) => {
-          handleChangeFunds(+value)
+          handleChangeFunds(value)
         }}
         type={TextFieldType.Number}
         placeholder='Type amount'

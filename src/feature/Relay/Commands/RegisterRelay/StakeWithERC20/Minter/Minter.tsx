@@ -88,9 +88,8 @@ export default function Minter({ success }: IProps) {
 
   const handleSetMintAmount = (value?: string) => {
     try {
-      if (value === undefined) return
-
-      const amountBigNumber = ethers.utils.parseEther(value)
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      const amountBigNumber = ethers.utils.parseEther(value || '0')
       setLocalMintAmount(amountBigNumber)
     } catch (e: any) {
       // suppress error
@@ -118,7 +117,7 @@ export default function Minter({ success }: IProps) {
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
-      value={localMintAmount ? ethers.utils.formatEther(localMintAmount) : ''}
+      value={localMintAmount ? (+ethers.utils.formatEther(localMintAmount)).toString() : ''}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}
