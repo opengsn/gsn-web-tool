@@ -15,10 +15,10 @@ export default function NetworkCard({ network }: NetworkCardProps) {
   const { relayHubAddress, RelayHubAbi } = chain.gsn
 
   return (
-    <Box mt='20px'>
+    <Box mt='20px' id={chain.network}>
       <Card>
         <Box p={4}>
-          <NetworkHeader networkAnchor={chain.network} group={chain.gsn.group} name={chain.name} />
+          <NetworkHeader group={chain.gsn.group} name={chain.name} />
           <RelayHubInfo
             blockExplorerUrl={chain.blockExplorers?.default.url}
             relayHubAddress={relayHubAddress}

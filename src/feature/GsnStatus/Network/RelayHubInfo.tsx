@@ -118,7 +118,6 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Box>
           <Box>
             <Typography variant='body2' fontWeight={600}>
-              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
               Relay Fee:
             </Typography>{' '}
             <Typography variant='body2'>

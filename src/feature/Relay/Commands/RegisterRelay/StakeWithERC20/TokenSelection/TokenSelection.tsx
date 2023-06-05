@@ -112,9 +112,8 @@ const TokenSelection: FC<IProps> = ({ success }) => {
             ? (
             <Box component='a' href={`${explorerLink}/address/${tokenData?.address as string}`} target='_blank' sx={sx}>
               <Typography>{truncateFromMiddle(tokenData?.address, 15)}</Typography>
-              <Button.Icon>
-                <Icon.Redirect width='14px' height='14px' />
-              </Button.Icon>
+              &nbsp;
+              <Icon.Redirect width='14px' height='14px' />
             </Box>
               )
             : (
@@ -144,8 +143,6 @@ const TokenSelection: FC<IProps> = ({ success }) => {
           return (
             <Paper elevation={0} key={element.key}>
               <Box
-                component='button'
-                type='button'
                 sx={{
                   all: 'unset',
                   cursor: 'pointer'

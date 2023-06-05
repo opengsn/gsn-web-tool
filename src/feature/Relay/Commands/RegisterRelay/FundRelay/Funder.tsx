@@ -15,7 +15,7 @@ interface IProps {
 export default function Funder({ success }: IProps) {
   const [hashes, setHashes] = useLocalStorage<Hashes>('hashes', {})
   const [listen, setListen] = useState(false)
-  const [funds, setFunds] = useState<number>(0.5)
+  const [funds, setFunds] = useLocalStorage<string>('funds', '0.5')
   const hash = hashes.funder as HashType
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
@@ -33,7 +33,14 @@ export default function Funder({ success }: IProps) {
     }
   }, [currentStep, refetch])
 
-  const handleChangeFunds = (value: number) => {
+  const handleChangeFunds = (value: string) => {
+    if (isNaN(+value)) {
+      return
+    }
+    if (value === '') {
+      setFunds('0')
+      return
+    }
     setFunds(value)
   }
 

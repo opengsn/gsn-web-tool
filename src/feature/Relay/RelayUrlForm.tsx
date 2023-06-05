@@ -75,6 +75,8 @@ export default function RelayUrlForm() {
             const urlFormatMessage = 'endpoint must return relay config as JSON and include HTTP or HTTPS'
             if (URL.includes('localhost')) {
               setError(urlFormatMessage)
+            } else {
+              setError('error while fetching relay data. URL is wrong')
             }
           }
         })
