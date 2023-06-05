@@ -38,7 +38,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
 
   useEffect(() => {
     refetch().catch(console.error)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -66,7 +66,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
         isSuccess={isSuccess}
         error={prepareFundTxError?.message ?? error?.message}
         onClick={() => fundRelay?.()}
-        value={funds.toString()}
+        value={(+funds).toString()}
         onChange={(value) => {
           handleChangeFunds(value)
         }}
