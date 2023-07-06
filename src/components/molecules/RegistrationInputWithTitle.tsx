@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { Alert, Box, Button, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 import { formatMetaMaskError } from '../../utils'
-import placeHolderImage from '../../assets/images/placeholder-image.jpg'
+import metamaskNonceResetImage from '../../assets/images/metamask_nonce_reset.jpg'
 
 export const waitingForApproveText = 'Use your wallet'
 
@@ -93,7 +93,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
         <Alert severity='error'>
           <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
           <br />
-          {isNonceError && <Box mt={3} component='img' src={placeHolderImage} alt='Nonce Error' width='200px' />}
+          {isNonceError && <Box mt={3} component='img' src={metamaskNonceResetImage} alt='Nonce Error' width='800px' />}
         </Alert>
       )}
     </Box>
