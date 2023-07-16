@@ -34,13 +34,6 @@ export default function Funder({ success }: IProps) {
   }, [currentStep, refetch])
 
   const handleChangeFunds = (value: string) => {
-    if (isNaN(+value)) {
-      return
-    }
-    if (value === '') {
-      setFunds('0')
-      return
-    }
     setFunds(value)
   }
 

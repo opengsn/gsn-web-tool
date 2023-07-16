@@ -15,6 +15,7 @@ import { Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType, Hashes } from '../../../../../../types/Hash'
 import ExplorerLink from '../../ExplorerLink'
+import { formatEther, parseEther } from 'ethers/lib/utils.js'
 
 interface IProps {
   success: boolean
@@ -27,7 +28,7 @@ export default function Minter({ success }: IProps) {
   const relay = useAppSelector((state) => state.relay.relay)
   const currentStep = useAppSelector((state) => state.register.step)
   const [mintAmount, setMintAmount] = useState<ethers.BigNumber | null>(null)
-  const [localMintAmount, setLocalMintAmount] = useLocalStorage<ethers.BigNumber | undefined>('localMintAmount', undefined)
+  const [localMintAmount, setLocalMintAmount] = useLocalStorage<string>('localMintAmount', '0')
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
@@ -44,7 +45,7 @@ export default function Minter({ success }: IProps) {
 
   useEffect(() => {
     if (mintAmount !== null && localMintAmount !== null) {
-      setLocalMintAmount(mintAmount)
+      setLocalMintAmount(formatEther(mintAmount))
     }
   }, [mintAmount])
 
@@ -70,7 +71,7 @@ export default function Minter({ success }: IProps) {
     address: token as any,
     abi: iErc20TokenAbi,
     functionName: 'deposit',
-    overrides: { value: localMintAmount },
+    overrides: { value: parseEther(localMintAmount || '0') },
     mode: 'recklesslyUnprepared',
     ...defaultStateSwitchers,
     onSuccess(data) {
@@ -87,20 +88,14 @@ export default function Minter({ success }: IProps) {
   })
 
   const handleSetMintAmount = (value?: string) => {
-    try {
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      const amountBigNumber = ethers.utils.parseEther(value || '0')
-      setLocalMintAmount(amountBigNumber)
-    } catch (e: any) {
-      // suppress error
-    }
+    setLocalMintAmount(value ?? '0')
   }
 
   if (success) {
     return (
       <>
         <Typography variant='body2' color={'grey.600'}>
-          {localMintAmount != null && <>Mint amount: {ethers.utils.formatEther(localMintAmount)} ETH</>}
+          {localMintAmount != null && <>Mint amount: {localMintAmount} ETH</>}
         </Typography>
         <CopyHash copyValue={hash} />
         <ExplorerLink params={hash ? `tx/${hash}` : null} />
@@ -108,21 +103,24 @@ export default function Minter({ success }: IProps) {
     )
   }
 
+  const disabled = +localMintAmount <= 0
+
   return (
     <RegistrationInputWithTitle
       title='Create a new block on the blockchain network that includes your chosen token by inserting minting amount.'
-      label={`Minting amount (minimum amount ${mintAmount !== null ? ethers.utils.formatEther(mintAmount) : 'error - '} ETH)`}
+      label={`Minting amount (minimum amount ${mintAmount !== null ? formatEther(mintAmount) : 'error - '} ETH)`}
       onClick={() => {
         mintToken?.()
       }}
       isLoadingForTransaction={isLoadingForTransaction}
       onChange={(value) => handleSetMintAmount(value)}
-      value={localMintAmount ? (+ethers.utils.formatEther(localMintAmount)).toString() : ''}
+      value={localMintAmount ? localMintAmount.toString() : ''}
       error={mintTokenError?.message}
       isLoading={isLoading}
       isSuccess={isSuccess}
       type={TextFieldType.Number}
       buttonText='Mint token'
+      disabled={disabled}
     />
   )
 }

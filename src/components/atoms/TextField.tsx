@@ -18,9 +18,23 @@ interface IProps {
   name?: string
   ref?: RefObject<HTMLInputElement>
   disabled?: boolean
+  min?: number
+  step?: number
 }
 
-const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldType.Text, helperText, error, name, ref, disabled }) => {
+const TextField: FC<IProps> = ({
+  value,
+  onChange,
+  placeholder,
+  type = TextFieldType.Text,
+  helperText,
+  error,
+  name,
+  ref,
+  disabled,
+  min,
+  step
+}) => {
   return (
     <MuiTextField
       value={value}
@@ -33,6 +47,10 @@ const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldT
       name={name}
       ref={ref}
       disabled={disabled}
+      inputProps={{
+        min,
+        step
+      }}
       fullWidth
     />
   )

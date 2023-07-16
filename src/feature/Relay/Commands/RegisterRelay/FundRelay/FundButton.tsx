@@ -5,9 +5,9 @@ import { useDefaultStateSwitchers } from '../registerRelayHooks'
 
 import { Box } from '../../../../../components/atoms'
 import { TextFieldType } from '../../../../../components/atoms/TextField'
-import { BigNumber, ethers } from 'ethers'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
 import { HashType } from '../../../../../types/Hash'
+import { parseEther } from 'ethers/lib/utils.js'
 
 interface IProps {
   hash?: HashType
@@ -32,7 +32,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
   } = usePrepareSendTransaction({
     request: {
       to: relayManagerAddress,
-      value: BigNumber.from(ethers.utils.parseEther(funds.toString()))
+      value: parseEther(funds || '0')
     }
   })
 
@@ -55,6 +55,8 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
     }
   })
 
+  const disabled = +funds <= 0
+
   return (
     <Box my='10px'>
       <RegistrationInputWithTitle
@@ -66,12 +68,13 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
         isSuccess={isSuccess}
         error={prepareFundTxError?.message ?? error?.message}
         onClick={() => fundRelay?.()}
-        value={(+funds).toString()}
+        value={funds}
         onChange={(value) => {
           handleChangeFunds(value)
         }}
         type={TextFieldType.Number}
         placeholder='Type amount'
+        disabled={disabled}
       />
     </Box>
   )
