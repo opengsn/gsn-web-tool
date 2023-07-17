@@ -21,6 +21,7 @@ export default function Funder({ success }: IProps) {
   const currentStep = useAppSelector((state) => state.register.step)
   const { relayManagerAddress, relayHubAddress } = relay
   const chainId = Number(relay.chainId)
+  const [error, setError] = useState<boolean>(false)
   const { data: stakeManagerAddressData, refetch } = useStakeManagerAddress(relayHubAddress, chainId)
 
   const setHash = (hash: HashType) => {
@@ -64,6 +65,7 @@ export default function Funder({ success }: IProps) {
         handleChangeFunds={handleChangeFunds}
         relayManagerAddress={relayManagerAddress}
         setListen={setListen}
+        error={error}
       />
       {currentStep === 0 && (
         <SetOwnerListener
@@ -72,6 +74,7 @@ export default function Funder({ success }: IProps) {
           setListen={setListen}
           stakeManagerAddress={stakeManagerAddress}
           relayManagerAddress={relayManagerAddress}
+          setError={setError}
         />
       )}
     </>

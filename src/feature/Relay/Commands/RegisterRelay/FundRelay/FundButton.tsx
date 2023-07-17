@@ -16,10 +16,14 @@ interface IProps {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: string
   handleChangeFunds: (value: string) => void
+  error?: boolean
 }
 
-export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen }: IProps) {
+export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen, error }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
+  const setOwnerErrorMessage = error
+    ? 'Relay Server failed to set it\'s owner on the StakeManager.\nCheck if the funding is sufficient'
+    : undefined
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
     enabled: !!hash
@@ -45,7 +49,8 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
     sendTransaction: fundRelay,
     isLoading,
     isSuccess,
-    error
+    reset,
+    error: fundError
   } = useSendTransaction({
     ...config,
     ...defaultStateSwitchers,
@@ -54,6 +59,12 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
       setHash(data.hash)
     }
   })
+
+  useEffect(() => {
+    if (error) {
+      reset()
+    }
+  }, [error, reset])
 
   const disabled = +funds <= 0
 
@@ -66,7 +77,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
         isLoading={isLoading}
         isLoadingForTransaction={isLoadingForTransaction}
         isSuccess={isSuccess}
-        error={prepareFundTxError?.message ?? error?.message}
+        error={prepareFundTxError?.message ?? fundError?.message ?? setOwnerErrorMessage}
         onClick={() => fundRelay?.()}
         value={funds}
         onChange={(value) => {
