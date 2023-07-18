@@ -1,6 +1,7 @@
 import { useAccount, useBalance } from 'wagmi'
 import { TableCell, TableRow, Typography } from '../../../../components/atoms'
 import ExplorerLink from '../../Commands/RegisterRelay/ExplorerLink'
+import { constants } from 'ethers'
 
 interface stakingTokenProps {
   stakingToken: string
@@ -12,6 +13,7 @@ export default function StakingToken({ stakingToken, chainId, explorerLink }: st
   const { address } = useAccount()
   const { data: stakingTokenBalance } = useBalance({
     address: address as any,
+    enabled: stakingToken !== constants.AddressZero,
     token: stakingToken as any,
     chainId
   })

@@ -103,7 +103,7 @@ export default function TokenContextWrapper({ children }: IProps) {
       const minimumStake = await relayHub.functions.getMinimumStakePerToken(token)
       setMinimumStakeForToken(minimumStake[0])
     }
-    if (token !== null) {
+    if (token !== null && token !== '') {
       fetchMinimumStakeForToken()
     }
   }, [token, relayHub.functions])
