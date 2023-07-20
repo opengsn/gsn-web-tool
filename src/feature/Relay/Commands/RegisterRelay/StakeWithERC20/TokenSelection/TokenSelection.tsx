@@ -27,7 +27,7 @@ const sx = {
 }
 
 const TokenSelection: FC<IProps> = ({ success }) => {
-  const { chain, chainId, handleFindFirstTokenButton, setToken, token, explorerLink } = useContext(TokenContext)
+  const { chainId, handleFindFirstTokenButton, setToken, token, explorerLink } = useContext(TokenContext)
   const currentStep = useAppSelector((state) => state.register.step)
   const { data: tokenData, refetch } = useToken({ address: token as any, enabled: false })
   const dispatch = useAppDispatch()
@@ -62,11 +62,10 @@ const TokenSelection: FC<IProps> = ({ success }) => {
   })
 
   const handleChangeToken = (address: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getTokenAddress.setFieldValue('token', address)
   }
 
-  const supportedTokens = chains.find((chain) => chain.id === chainId)
+  const supportedTokens = chains.find((chain) => chain.id === chainId)?.tokens
 
   const elements =
     supportedTokens != null
@@ -77,7 +76,7 @@ const TokenSelection: FC<IProps> = ({ success }) => {
               <SuggestedTokenFromServer
                 chainId={chainId}
                 handleChangeToken={handleChangeToken}
-                chain={chain}
+                supportedTokens={supportedTokens}
                 getTokenAddress={getTokenAddress}
               />
             ),
@@ -159,7 +158,11 @@ const TokenSelection: FC<IProps> = ({ success }) => {
                     <Typography color={!element.disabled ? 'common.main' : 'grey'}>{element.label}</Typography>
                     {element.children}
                     <Box mt={2} width='220px'>
-                      <Button.Contained disabled={element.disabled} size='large' type={ButtonType.SUBMIT}>
+                      <Button.Contained
+                        disabled={element.disabled || (element.key !== 2 && getTokenAddress.values.token === '')}
+                        size='large'
+                        type={ButtonType.SUBMIT}
+                      >
                         Fetch Token
                       </Button.Contained>
                     </Box>

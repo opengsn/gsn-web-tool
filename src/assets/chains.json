@@ -1,1 +1,14 @@
-[{ "name": "test", "id": 0, "tokens": {} }]
+[
+  {
+    "name": "test",
+    "id": 1,
+    "tokens": [
+      {
+        "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+      },
+      {
+        "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+      }
+    ]
+  }
+]

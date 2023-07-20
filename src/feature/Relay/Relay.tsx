@@ -40,7 +40,7 @@ export default function Relay() {
 
   useEffect(() => {
     fetchData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relay.relayUrl, searchParams, dispatch, relay.errorMsg, relayDataFetched])
 
   const connectedToWrongChainId = chain?.id !== undefined && chain?.id !== chainId && relayDataFetched
