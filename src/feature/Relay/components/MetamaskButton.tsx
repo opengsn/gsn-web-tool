@@ -12,7 +12,6 @@ export default function MetamaskButton() {
       }}
       mx='auto'
       mt='25px'
-      display='flex'
     >
       {connectors.map((connector) => (
         <Button.Contained disabled={!connector.ready} key={connector.id} onClick={() => connect({ connector })} size='large'>

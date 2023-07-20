@@ -21,7 +21,7 @@ const CopyHash: FC<IProps> = ({ copyValue }) => {
 
   return (
     <Box ml='auto'>
-      <Tooltip placement='top' arrow title={isCopied ? 'Copied to clipboard!' : 'Copy to clipboard'}>
+      <Tooltip placement='top' arrow title={isCopied ? 'Copied!' : 'Copy Address'}>
         <Button onClick={handleCopyClick} sx={{ textTransform: 'none' }}>
           <Typography variant='body2' color='success' fontWeight={600}>
             Copy hash
