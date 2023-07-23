@@ -1,3 +1,5 @@
+import { PaletteOptions } from '@mui/material'
+
 const colors = {
   black: '#000000',
   azure: '#D8E5FF',
@@ -7,7 +9,36 @@ const colors = {
   white: '#FFFFFF',
   cardBackground: '#00000020',
   warning: '#ffc107',
-  success: '#2E7D32'
+  success: '#2E7D32',
+  cardBG: '#22282C',
+  mainCTA: '#FF971D',
+  mainBG: '#0F1113'
+}
+
+type HEX = `#${string}`
+
+type primaryColors = 'cardBG' | 'mainCTA' | 'mainBG' | 'main'
+
+type IPrimary = Record<primaryColors, HEX | string>
+
+const primary: IPrimary = {
+  main: '#000000',
+  cardBG: '#22282C',
+  mainCTA: '#FF971D',
+  mainBG: '#0F1113'
+}
+
+declare module '@mui/material/styles' {
+  interface PaletteColor {
+    cardBG: string
+    mainCTA: string
+    mainBG: string
+  }
+}
+
+// https://mui.com/material-ui/customization/palette/
+export const palette: PaletteOptions = {
+  primary
 }
 
 export default colors
