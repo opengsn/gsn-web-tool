@@ -27,7 +27,9 @@ module.exports = {
     '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'allow' }],
     '@typescript-eslint/space-before-function-paren': 0,
     '@typescript-eslint/no-floating-promises': 0,
-    '@typescript-eslint/strict-boolean-expressions': 0
+    '@typescript-eslint/strict-boolean-expressions': 0,
+    quotes: 'off',
+    '@typescript-eslint/quotes': 0
   },
   settings: {
     react: {

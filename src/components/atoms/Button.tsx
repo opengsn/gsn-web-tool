@@ -1,28 +1,40 @@
 import React, { FC, ReactNode } from 'react'
-import { Button as MuiButton, IconButton as MuiIconButton, Radio as MuiRadio } from '@mui/material'
+import { Button as MuiButton, IconButton as MuiIconButton, Radio as MuiRadio, styled, useTheme } from '@mui/material'
+import Typography from './Typography'
 
 export enum ButtonType {
   SUBMIT = 'submit',
   BUTTON = 'button'
 }
 
-type Color = 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'inherit'
 type Size = 'small' | 'medium' | 'large'
 
 interface IProps {
   children: ReactNode
   onClick?: () => void
   disabled?: boolean
-  color?: Color
+  bgColor?: string
+  color?: string
   type?: ButtonType
   size?: Size
+  height?: string
 }
 
-const Contained: FC<IProps> = ({ children, onClick, disabled, color, type, size }) => {
+const ButtonBase: any = styled(MuiButton, {
+  shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'height'
+})<IProps>(({ theme, bgColor, height }) => ({
+  '&.MuiButton-root': {
+    backgroundColor: bgColor ?? theme.palette.primary.mainCTA,
+    height: height ?? '56px',
+    textTransform: 'none'
+  }
+}))
+
+const Contained: FC<IProps> = ({ children, onClick, disabled, bgColor, type, size }) => {
   return (
-    <MuiButton variant='contained' onClick={onClick} disabled={disabled} color={color} type={type} size={size} fullWidth>
+    <ButtonBase variant='contained' onClick={onClick} disabled={disabled} bgColor={bgColor} type={type} size={size} fullWidth>
       {children}
-    </MuiButton>
+    </ButtonBase>
   )
 }
 
@@ -60,11 +72,29 @@ const Radio: FC<IRadioProps> = ({ onChange, checked }) => {
   return <MuiRadio onChange={onChange} checked={checked} />
 }
 
+interface ButtonCTAProps {
+  onClick: () => void
+  text: string
+  disabled?: boolean
+}
+
+export const CTA: FC<ButtonCTAProps> = ({ onClick, disabled, text }) => {
+  const theme = useTheme()
+  return (
+    <Contained onClick={onClick} disabled={disabled}>
+      <Typography variant='h3' color={theme.palette.primary.main} fontWeight={500}>
+        {text}
+      </Typography>
+    </Contained>
+  )
+}
+
 const Button = {
   Contained,
   Icon,
   Text,
-  Radio
+  Radio,
+  CTA
 }
 
 export default Button

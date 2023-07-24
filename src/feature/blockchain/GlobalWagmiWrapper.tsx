@@ -16,6 +16,7 @@ import { ChainWithGsn } from '../../types'
 import { fetchNetworks } from '../GsnStatus/networkListSlice'
 import { getNetworks } from './networks'
 import { Box } from '../../components/atoms'
+import Header from '../../components/organiasms/Header'
 
 export default function GlobalWagmiWarpper() {
   const path = useLocation().pathname
@@ -81,7 +82,8 @@ export default function GlobalWagmiWarpper() {
 
   return (
     <WagmiConfig client={client}>
-      <Box p='8px'>
+      <Header />
+      <Box p={10}>
         <Routes>
           <Route path={ROUTES.List} element={<GsnRelaysView />} />
           <Route path={ROUTES.DetailedView} element={<RelayDetailedView />} />

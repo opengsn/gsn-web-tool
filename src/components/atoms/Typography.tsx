@@ -17,7 +17,6 @@ type VariantType =
   | 'overline'
   | 'subtitle1'
   | 'subtitle2'
-  | ''
 
 interface ITypographyBase {
   color?: string
@@ -27,10 +26,11 @@ interface ITypographyBase {
 }
 
 const TypographyBase: any = styled(Typo, {
-  shouldForwardProp: (prop: string) => prop !== 'fontWeight'
-})<ITypographyBase>(({ fontWeight }) => ({
+  shouldForwardProp: (prop: string) => prop !== 'fontWeight' && prop !== 'color'
+})<ITypographyBase>(({ fontWeight, theme, color }) => ({
   fontWeight,
-  whiteSpace: 'pre-line'
+  whiteSpace: 'pre-line',
+  color: color ?? theme.palette.primary.white
 }))
 
 const Typography: FC<ITypographyBase> = ({ variant, children, color, fontWeight }) => {

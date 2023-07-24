@@ -2,7 +2,6 @@ import NetworkCard from './Network/NetworkCard'
 import NetworkLinksNew from './components/NetworkGroups'
 
 import { useAppSelector } from '../../hooks'
-import Header from './components/Header'
 import RegisterNewButton from './components/RegisterNewButton'
 import { Box, Grid } from '../../components/atoms'
 
@@ -11,7 +10,6 @@ export default function ChainsList() {
 
   return (
     <>
-      <Header />
       <Grid container px='12px'>
         <Grid item xs={12} md={3}>
           <NetworkLinksNew />
