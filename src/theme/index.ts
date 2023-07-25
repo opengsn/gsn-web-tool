@@ -6,7 +6,7 @@ export { default as colors } from './colors'
 
 const muiSpacingToPixelIndex = 2
 
-export const spacingSizeArray = [0, 1, 2, 3, 4, 5, 8, 10, 11, 15]
+export const spacingSizeArray = [0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 15]
 
 export const theme = createTheme(
   {

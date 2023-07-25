@@ -6,7 +6,16 @@ interface IProps {
 }
 
 const Card: FC<IProps> = ({ children }) => {
-  return <MuiCard variant='outlined'>{children}</MuiCard>
+  return (
+    <MuiCard
+      variant='outlined'
+      sx={{
+        bgcolor: 'primary.cardBG'
+      }}
+    >
+      {children}
+    </MuiCard>
+  )
 }
 
 interface ICardHeaderProps {
@@ -14,7 +23,7 @@ interface ICardHeaderProps {
 }
 
 export const CardHeaderBase = styled(MuiCardHeader)<ICardHeaderProps>(({ theme }) => ({
-  backgroundColor: theme.palette.grey[100]
+  backgroundColor: theme.palette.primary.cardBG
 }))
 
 export const CardHeader: FC<ICardHeaderProps> = ({ title }) => {
@@ -22,7 +31,15 @@ export const CardHeader: FC<ICardHeaderProps> = ({ title }) => {
 }
 
 export const CardContent: FC<IProps> = ({ children }) => {
-  return <MuiCardContent>{children}</MuiCardContent>
+  return (
+    <MuiCardContent
+      sx={{
+        bgcolor: 'primary.cardBG'
+      }}
+    >
+      {children}
+    </MuiCardContent>
+  )
 }
 
 export default Card

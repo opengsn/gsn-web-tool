@@ -1,6 +1,6 @@
 import { useAppSelector } from '../../../hooks'
 import { INetwork } from '../networkListSlice'
-import { Box, Icon, Typography, Chip } from '../../../components/atoms'
+import { Box, Icon, Typography, GroupChip } from '../../../components/atoms'
 import { Dispatch, SetStateAction } from 'react'
 import { useTheme } from '@mui/material'
 
@@ -45,7 +45,7 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
           const icon = icons.find((entry) => entry.key === group)?.icon
           return (
             <Box key={group}>
-              <Chip
+              <GroupChip
                 icon={icon}
                 label={
                   <Typography

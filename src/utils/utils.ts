@@ -48,7 +48,8 @@ export const formatMetaMaskError = (error: string) => {
   }
 }
 
-export const formatNumber = (num: number, digits: number = 6) => {
+export const formatNumber = (num: number | string, digits: number = 6) => {
+  if (typeof num === 'string') return num
   return parseFloat(num.toFixed(digits))
 }
 

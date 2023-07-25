@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Box, Button, Icon, Typography } from '../../../components/atoms'
+import { Box, Button, Icon, Link, Typography } from '../../../components/atoms'
+import { useTheme } from '@mui/material'
 
 interface IProps {
   address: string
@@ -7,6 +8,7 @@ interface IProps {
 }
 
 export default function BlockExplorerUrl({ address, url }: IProps) {
+  const theme = useTheme()
   const [copied, setCopied] = useState(false)
   const copyToClipBoard = async (text: string) => {
     try {
@@ -35,18 +37,24 @@ export default function BlockExplorerUrl({ address, url }: IProps) {
   let addressElem
   if (url !== undefined) {
     addressElem = (
-      <a href={`${url}/address/${address}`} target='_blank' rel='noreferrer'>
-        <span>{truncated}</span>
-      </a>
+      <Link href={`${url}/address/${address}`} textDecorationColor={theme.palette.primary.mainCTA}>
+        <Typography variant='h5' color={theme.palette.primary.mainCTA}>
+          {truncated}
+        </Typography>
+      </Link>
     )
   } else {
-    addressElem = <span>{truncated}</span>
+    addressElem = (
+      <Typography variant='h5' color={theme.palette.primary.mainCTA}>
+        {truncated}
+      </Typography>
+    )
   }
 
   return (
-    <Typography variant='body2'>
+    <>
       {addressElem}
       <Box component='span'>{copyButton}</Box>
-    </Typography>
+    </>
   )
 }

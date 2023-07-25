@@ -8,8 +8,8 @@ interface NetworkCardHeaderProps {
 
 function NetworkHeader({ group, name }: NetworkCardHeaderProps) {
   return (
-    <Typography variant='h5' fontWeight={600}>
-      Network: {group} - {name}
+    <Typography variant='h2' fontWeight={600}>
+      {group} - {name}
     </Typography>
   )
 }

@@ -43,7 +43,8 @@ export const TableContainer: FC<IProps> = ({ children }) => {
     <MuiTableContainer
       component={Paper}
       sx={{
-        p: 4
+        p: 4,
+        bgcolor: 'primary.cardBG'
       }}
     >
       {children}

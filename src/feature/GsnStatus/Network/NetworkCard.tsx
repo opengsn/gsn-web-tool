@@ -15,12 +15,13 @@ interface NetworkCardProps {
 
 const glowStyle = (theme: Theme, glowing: boolean) => ({
   animation: glowing ? 'glow 1s infinite alternate' : 'none',
+  borderRadius: theme.borderRadius.small,
   '@keyframes glow': {
     '0%': {
       boxShadow: `0 0 0 0 ${theme.palette.primary.mainCTA}`
     },
     '100%': {
-      boxShadow: `0 0 20px 0 ${theme.palette.primary.mainCTA}`
+      boxShadow: `0 0 0 1px ${theme.palette.primary.mainCTA}`
     }
   }
 })
@@ -42,15 +43,16 @@ export default function NetworkCard({ network, selectedGroup }: NetworkCardProps
 
   return (
     <Box pt='20px' className={chain.gsn.group}>
-      <Box borderRadius={theme.borderRadius.small} sx={glowStyle(theme, glowing)}>
+      <Box sx={glowStyle(theme, glowing)}>
         <Card>
-          <Box p={4}>
+          <Box p={10}>
             <NetworkHeader group={chain.gsn.group} name={chain.name} />
             <RelayHubInfo
               blockExplorerUrl={chain.blockExplorers?.default.url}
               relayHubAddress={relayHubAddress}
               RelayHubAbi={RelayHubAbi}
               chainId={chain.id}
+              activeRelays={network.activeRelays}
             />
             <RelaysTable relays={relays} chain={chain} />
           </Box>

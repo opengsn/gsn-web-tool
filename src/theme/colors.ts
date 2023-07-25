@@ -17,7 +17,7 @@ const colors = {
 
 type HEX = `#${string}`
 
-type primaryColors = 'cardBG' | 'mainCTA' | 'mainBG' | 'main' | 'white' | 'cardOutline' | 'mainBrightWhite'
+type primaryColors = 'cardBG' | 'mainCTA' | 'mainBG' | 'main' | 'white' | 'cardOutline' | 'mainBrightWhite' | 'chipBG'
 
 type IPrimary = Record<primaryColors, HEX | string>
 
@@ -28,7 +28,8 @@ const primary: IPrimary = {
   mainBG: '#0F1113',
   white: '#FFFFFF',
   cardOutline: '#ffffff33',
-  mainBrightWhite: '#ffffff99'
+  mainBrightWhite: '#ffffff99',
+  chipBG: '#01b47e40'
 }
 
 declare module '@mui/material/styles' {
@@ -39,6 +40,7 @@ declare module '@mui/material/styles' {
     white: string
     cardOutline: string
     mainBrightWhite: string
+    chipBG: string
   }
 }
 

@@ -8,7 +8,7 @@ interface IProps {
   active?: boolean
 }
 
-const ChipBase: any = styled(MuiChip, {
+const GroupChipBase: any = styled(MuiChip, {
   shouldForwardProp: (prop) => prop !== 'active'
 })<IProps>(({ theme, active }) => ({
   backgroundColor: theme.palette.primary.cardBG,
@@ -16,8 +16,22 @@ const ChipBase: any = styled(MuiChip, {
   borderRadius: theme.borderRadius.small
 }))
 
-const Chip: FC<IProps> = ({ label, icon, onClick, active }) => {
-  return <ChipBase label={label} icon={icon} onClick={onClick} active={active} />
+export const GroupChip: FC<IProps> = ({ label, icon, onClick, active }) => {
+  return <GroupChipBase label={label} icon={icon} onClick={onClick} active={active} />
 }
 
-export default Chip
+interface IChipProps extends IProps {
+  bgcolor?: string
+  size?: 'small' | 'medium'
+}
+
+const ChipBase: any = styled(MuiChip, {
+  shouldForwardProp: (prop) => prop !== 'bgcolor'
+})<IChipProps>(({ theme, bgcolor }) => ({
+  backgroundColor: bgcolor ?? theme.palette.primary.white,
+  borderRadius: theme.borderRadius.small
+}))
+
+export const Chip: FC<IChipProps> = ({ label, icon, bgcolor, size = 'small' }) => {
+  return <ChipBase label={label} icon={icon} bgcolor={bgcolor} size={size} />
+}
