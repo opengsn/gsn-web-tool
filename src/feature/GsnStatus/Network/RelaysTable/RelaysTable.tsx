@@ -16,7 +16,6 @@ import {
 } from '../../../../components/atoms'
 import { Chip } from '../../../../components/atoms/Chip'
 import { useTheme } from '@mui/material'
-import { RelayVersion } from './RelayVersion'
 
 interface RelaysTableProps {
   relays: GsnNetworkRelay[]
