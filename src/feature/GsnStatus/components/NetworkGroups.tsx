@@ -1,13 +1,30 @@
-import React from 'react'
 import { useAppSelector } from '../../../hooks'
 import { INetwork } from '../networkListSlice'
-import { Box, List, ListItem } from '../../../components/atoms'
+import { Box, Icon, Typography, Chip } from '../../../components/atoms'
+import { Dispatch, SetStateAction } from 'react'
+import { useTheme } from '@mui/material'
 
 interface NetGroup {
   [key: string]: INetwork[]
 }
 
-export default function NetworkLinksNew() {
+const icons = [
+  { key: 'Ethereum', icon: <Icon.Ethereum /> },
+  { key: 'Optimism', icon: <Icon.Optimism /> },
+  { key: 'Arbitrum', icon: <Icon.Arbitrum /> },
+  { key: 'Other', icon: <></> },
+  { key: 'Avalanche', icon: <Icon.Avalanche /> },
+  { key: 'Binance', icon: <Icon.Binance /> },
+  { key: 'Polygon', icon: <Icon.Polygon /> }
+]
+
+interface NetworkLinksNewProps {
+  setSelectedGroup: Dispatch<SetStateAction<string>>
+  selectedGroup?: string
+}
+
+export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: NetworkLinksNewProps) {
+  const theme = useTheme()
   const networks = useAppSelector((state) => state.networkList.networks)
   const networkArray = Object.values(networks)
   const netGroups = networkArray
@@ -21,26 +38,39 @@ export default function NetworkLinksNew() {
     )
 
   return (
-    <List>
+    <Box display='flex' gap={3}>
       {Object.keys(netGroups)
         .filter((g) => netGroups[g].length > 0)
-        .map((g) => {
+        .map((group) => {
+          const icon = icons.find((entry) => entry.key === group)?.icon
           return (
-            <ListItem key={g}>
-              <Box p={1}>
-                <span>{g}: </span>
-                <span>
-                  {netGroups[g].map((net: INetwork, index: number) => (
-                    <span key={net.chain.id}>
-                      {index > 0 ? ', ' : ''}
-                      <a href={`#${net.chain.network}`}>{net.chain.name}</a> ({net.activeRelays})
-                    </span>
-                  ))}
-                </span>
-              </Box>
-            </ListItem>
+            <Box key={group}>
+              <Chip
+                icon={icon}
+                label={
+                  <Typography
+                    variant='h5'
+                    color={selectedGroup === group ? theme.palette.primary.mainCTA : theme.palette.primary.mainBrightWhite}
+                  >
+                    {group}
+                  </Typography>
+                }
+                onClick={() => {
+                  if (selectedGroup === group) {
+                    setSelectedGroup('')
+                    return
+                  }
+
+                  setSelectedGroup(group)
+                  document?.getElementsByClassName?.(group)[0]?.scrollIntoView({
+                    behavior: 'smooth'
+                  })
+                }}
+                active={selectedGroup === group}
+              />
+            </Box>
           )
         })}
-    </List>
+    </Box>
   )
 }

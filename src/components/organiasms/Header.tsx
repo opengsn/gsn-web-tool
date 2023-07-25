@@ -77,7 +77,7 @@ const Header: FC = () => {
           </Box>
         )}
       </Box>
-      <Box mt='13px'>
+      <Box mt='13px' mb={5}>
         <Divider />
       </Box>
     </>

@@ -83,7 +83,7 @@ export default function GlobalWagmiWarpper() {
   return (
     <WagmiConfig client={client}>
       <Header />
-      <Box p={10}>
+      <Box>
         <Routes>
           <Route path={ROUTES.List} element={<GsnRelaysView />} />
           <Route path={ROUTES.DetailedView} element={<RelayDetailedView />} />
