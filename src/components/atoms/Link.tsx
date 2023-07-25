@@ -11,6 +11,7 @@ const Link: FC<IProps> = ({ href, children, textDecorationColor }) => {
     <a
       href={href}
       style={{
+        textDecoration: textDecorationColor ? 'underline' : 'none',
         textDecorationColor
       }}
       target='_blank'

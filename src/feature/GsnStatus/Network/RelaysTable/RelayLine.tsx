@@ -36,8 +36,14 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
         <RelayVersion version={version} />
       </TableCell>
       <TableCell>
-        <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
-        <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
+        <Box display='flex' flexDirection='column'>
+          <Box>
+            <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
+          </Box>
+          <Box>
+            <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
+          </Box>
+        </Box>
       </TableCell>
       <TableCell>
         <Box>

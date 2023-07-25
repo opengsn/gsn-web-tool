@@ -1,3 +1,4 @@
+import { useTheme } from '@mui/material'
 import { Typography } from '../../../../components/atoms'
 
 export interface IRelayVersion {
@@ -5,5 +6,10 @@ export interface IRelayVersion {
 }
 
 export function RelayVersion({ version }: IRelayVersion) {
-  return <Typography variant='body2'>{version.replace(/\+opengsn.*/, '')}</Typography>
+  const theme = useTheme()
+  return (
+    <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+      {version.replace(/\+opengsn.*/, '')}
+    </Typography>
+  )
 }

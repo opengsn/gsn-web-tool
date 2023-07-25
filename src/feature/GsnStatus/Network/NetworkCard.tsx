@@ -1,4 +1,4 @@
-import { Box, Card } from '../../../components/atoms'
+import { Accordion, AccordionDetails, AccordionSummary, Box } from '../../../components/atoms'
 
 import NetworkHeader from './NetworkHeader'
 import RelayHubInfo from './RelayHubInfo'
@@ -31,6 +31,7 @@ export default function NetworkCard({ network, selectedGroup }: NetworkCardProps
   const { relayHubAddress, RelayHubAbi } = chain.gsn
   const theme = useTheme()
   const [glowing, setGlowing] = useState<boolean>(false)
+  const [expanded, setExpanded] = useState<boolean>(false)
 
   useEffect(() => {
     if (selectedGroup === chain.gsn.group) {
@@ -44,19 +45,29 @@ export default function NetworkCard({ network, selectedGroup }: NetworkCardProps
   return (
     <Box pt='20px' className={chain.gsn.group}>
       <Box sx={glowStyle(theme, glowing)}>
-        <Card>
-          <Box p={10}>
-            <NetworkHeader group={chain.gsn.group} name={chain.name} />
-            <RelayHubInfo
-              blockExplorerUrl={chain.blockExplorers?.default.url}
-              relayHubAddress={relayHubAddress}
-              RelayHubAbi={RelayHubAbi}
-              chainId={chain.id}
-              activeRelays={network.activeRelays}
-            />
-            <RelaysTable relays={relays} chain={chain} />
-          </Box>
-        </Card>
+        <Accordion expanded={expanded}>
+          <AccordionSummary
+            onChange={(event) => {
+              setExpanded((prev) => !prev)
+            }}
+          >
+            <Box p={15}>
+              <NetworkHeader group={chain.gsn.group} name={chain.name} />
+              <RelayHubInfo
+                blockExplorerUrl={chain.blockExplorers?.default.url}
+                relayHubAddress={relayHubAddress}
+                RelayHubAbi={RelayHubAbi}
+                chainId={chain.id}
+                activeRelays={network.activeRelays}
+              />
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box p={15}>
+              <RelaysTable relays={relays} chain={chain} />
+            </Box>
+          </AccordionDetails>
+        </Accordion>
       </Box>
     </Box>
   )

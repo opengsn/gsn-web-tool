@@ -58,6 +58,7 @@ export default function Relay() {
             onChange={(event) => {
               setExpanded((prev) => !prev)
             }}
+            isManage
           >
             <Box width='100%' p='10px'>
               <Box

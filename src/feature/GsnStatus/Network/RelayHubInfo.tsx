@@ -81,7 +81,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
     const minutes = Math.floor((secNum - hours * 3600) / 60)
     const seconds = secNum - hours * 3600 - minutes * 60
 
-    return `${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`
   }
   return (
     <Box mt={5} display='flex' alignItems='center' gap={7}>
@@ -130,7 +130,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
             </Typography>{' '}
             <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
               <>
-                {formatNumber(+(utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei')))} gwei + {hubStateData.pctRelayFee}%
+                {formatNumber(+utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei'))} gwei + {hubStateData.pctRelayFee}%
               </>
             </Typography>
           </Box>
@@ -146,7 +146,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
                   {activeRelays}
                 </Typography>
               }
-              bgcolor={theme.palette.primary.chipBG}
+              bgcolor={theme.palette.primary.chipBGSuccess}
             />
           </Box>
         </>

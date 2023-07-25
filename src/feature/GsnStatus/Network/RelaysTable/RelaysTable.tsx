@@ -14,7 +14,9 @@ import {
   TableContainer,
   TableRow
 } from '../../../../components/atoms'
-import { colors } from '../../../../theme'
+import { Chip } from '../../../../components/atoms/Chip'
+import { useTheme } from '@mui/material'
+import { RelayVersion } from './RelayVersion'
 
 interface RelaysTableProps {
   relays: GsnNetworkRelay[]
@@ -22,35 +24,36 @@ interface RelaysTableProps {
 }
 
 export default function RelaysTable({ relays, chain }: RelaysTableProps) {
+  const theme = useTheme()
   const TableHead = () => (
     <MuiTableHead>
       <TableRow>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
-            Url
+        <TableCell width='40%'>
+          <Typography variant='h4' fontWeight={600}>
+            URL
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h4' fontWeight={600}>
             Status
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h4' fontWeight={600}>
             Version
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h4' fontWeight={600}>
             Address
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='10%'>
+          <Typography variant='h4' fontWeight={600}>
             Balance
           </Typography>
         </TableCell>
-        <TableCell>{''}</TableCell>
+        <TableCell width='5%'>{''}</TableCell>
       </TableRow>
     </MuiTableHead>
   )
@@ -66,10 +69,16 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
               <RelayUrl url={x.url} />
             </TableCell>
             <TableCell>
-              <Box component='span' color={colors.red}>
-                {x.errorMsg}
-              </Box>
+              <Chip
+                label={
+                  <Typography color={theme.palette.primary.chipTextError} variant='h4'>
+                    {x.errorMsg}
+                  </Typography>
+                }
+                bgcolor={theme.palette.primary.chipBGError}
+              />
             </TableCell>
+            <TableCell>{''}</TableCell>
             <TableCell>
               <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
             </TableCell>

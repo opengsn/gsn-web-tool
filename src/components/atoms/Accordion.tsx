@@ -8,7 +8,11 @@ interface IAccordionProps {
   expanded?: boolean
 }
 
-export const AccordionBase = styled(MuiAccordion)<IAccordionProps>(({ theme }) => ({}))
+export const AccordionBase = styled(MuiAccordion)<IAccordionProps>(({ theme }) => ({
+  backgroundColor: theme.palette.primary.cardBG,
+  border: `1px solid ${theme.palette.primary.cardOutline}`,
+  borderRadius: `${theme.borderRadius.medium} !important`
+}))
 
 const Accordion: FC<IAccordionProps> = ({ children, expanded }) => {
   return <AccordionBase expanded={expanded}>{children}</AccordionBase>
@@ -17,10 +21,10 @@ const Accordion: FC<IAccordionProps> = ({ children, expanded }) => {
 interface IAccordionSummaryProps {
   children: ReactNode
   onChange?: (event: React.SyntheticEvent) => void
+  isManage?: boolean
 }
 
-export const AccordionSummaryBase = styled(MuiAccordionSummary)<IAccordionSummaryProps>(({ theme }) => ({
-  padding: '5px 20px',
+export const AccordionSummaryBase: any = styled(MuiAccordionSummary)<IAccordionSummaryProps>(({ theme, isManage }) => ({
   borderBottom: `1px solid ${'grey.600'}`,
   width: '100%',
   cursor: 'unset !important',
@@ -31,13 +35,17 @@ export const AccordionSummaryBase = styled(MuiAccordionSummary)<IAccordionSummar
   },
   '& .MuiAccordionSummary-expandIconWrapper': {
     position: 'absolute',
-    right: 20,
-    top: 20
+    right: isManage ? 20 : 30,
+    top: isManage && 20
   }
 }))
 
-export const AccordionSummary: FC<IAccordionSummaryProps> = ({ children, onChange }) => {
-  return <AccordionSummaryBase expandIcon={<Icon.Chevron onClick={onChange} cursor='pointer' />}>{children}</AccordionSummaryBase>
+export const AccordionSummary: FC<IAccordionSummaryProps> = ({ children, onChange, isManage }) => {
+  return (
+    <AccordionSummaryBase expandIcon={<Icon.Chevron onClick={onChange} cursor='pointer' />} isManage={isManage}>
+      {children}
+    </AccordionSummaryBase>
+  )
 }
 
 interface IAccordionDetailsProps {
@@ -45,7 +53,6 @@ interface IAccordionDetailsProps {
 }
 
 const AccordionDetailsBase = styled(MuiAccordionDetails)<IAccordionDetailsProps>(({ theme }) => ({
-  padding: '5px 20px',
   overflowX: 'auto'
 }))
 

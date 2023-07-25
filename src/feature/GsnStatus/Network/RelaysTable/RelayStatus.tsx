@@ -1,13 +1,21 @@
-import { Box, Typography } from '../../../../components/atoms'
+import { useTheme } from '@mui/material'
+import { Typography } from '../../../../components/atoms'
+import { Chip } from '../../../../components/atoms/Chip'
 
 export interface RelayStatusProps {
   ready: boolean
 }
 
 export default function RelayStatus({ ready }: RelayStatusProps) {
+  const theme = useTheme()
   return (
-    <Box component='span' sx={{ color: ready ? 'success.main' : 'warning.main' }}>
-      <Typography variant='body2'> {ready ? 'Ready' : 'Pending'}</Typography>
-    </Box>
+    <Chip
+      bgcolor={ready ? theme.palette.primary.chipBGSuccess : theme.palette.primary.chipBGPending}
+      label={
+        <Typography color={ready ? theme.palette.primary.mainPos : theme.palette.primary.chipTextPending} variant='h4'>
+          {ready ? 'Ready' : 'Pending'}
+        </Typography>
+      }
+    />
   )
 }

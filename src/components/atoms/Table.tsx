@@ -30,8 +30,12 @@ export const TableHead: FC<IProps> = ({ children }) => {
   return <TableHeadBase>{children}</TableHeadBase>
 }
 
-const TableCellBase = styled(MuiTableCell)(({ theme }) => ({
-  padding: '5px'
+const TableCellBase = styled(MuiTableCell, {
+  shouldForwardProp: (prop) => prop !== 'width'
+})(({ theme, width }) => ({
+  padding: '5px',
+  borderColor: theme.palette.primary.cardOutline,
+  width: width ?? 'auto'
 }))
 
 export const TableCell: FC<IProps> = ({ children, width }) => {
@@ -43,8 +47,8 @@ export const TableContainer: FC<IProps> = ({ children }) => {
     <MuiTableContainer
       component={Paper}
       sx={{
-        p: 4,
-        bgcolor: 'primary.cardBG'
+        bgcolor: 'primary.cardBG',
+        boxShadow: 'none'
       }}
     >
       {children}

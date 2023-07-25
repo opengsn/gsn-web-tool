@@ -21,6 +21,7 @@ const Icon = {
   Clipboard,
   ClipboardCheck,
   Chevron,
+  ChevronRight: () => <Chevron style={{ transform: 'rotate(90deg)' }} />,
   Success,
   Edit,
   Info: (props: { fill?: string, width?: string, height?: string }) => <Info {...props} />,
