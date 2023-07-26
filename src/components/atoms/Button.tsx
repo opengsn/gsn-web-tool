@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, MouseEvent, ReactNode } from 'react'
 import { Button as MuiButton, IconButton as MuiIconButton, Radio as MuiRadio, styled, useTheme } from '@mui/material'
 import Typography from './Typography'
 
@@ -11,7 +11,7 @@ type Size = 'small' | 'medium' | 'large'
 
 interface IProps {
   children: ReactNode
-  onClick?: () => void
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   bgColor?: string
   color?: string

@@ -14,6 +14,9 @@ const Link: FC<IProps> = ({ href, children, textDecorationColor }) => {
         textDecoration: textDecorationColor ? 'underline' : 'none',
         textDecorationColor
       }}
+      onClick={(e) => {
+        e.stopPropagation()
+      }}
       target='_blank'
       rel='noreferrer'
     >

@@ -1,13 +1,28 @@
 import React, { ReactElement } from 'react'
 import { Tooltip as MuiTooltip, TooltipProps, styled, tooltipClasses } from '@mui/material'
 
+type Placement =
+  | 'bottom-end'
+  | 'bottom-start'
+  | 'bottom'
+  | 'left-end'
+  | 'left-start'
+  | 'left'
+  | 'right-end'
+  | 'right-start'
+  | 'right'
+  | 'top-end'
+  | 'top-start'
+  | 'top'
+
 interface IProps extends TooltipProps {
   children: ReactElement
   title: ReactElement | string
+  placement?: Placement
 }
 
-const Tooltip = styled(({ className, title, children }: IProps) => (
-  <MuiTooltip title={title} placement='bottom-end' classes={{ popper: className }}>
+const Tooltip = styled(({ className, title, children, placement = 'top' }: IProps) => (
+  <MuiTooltip title={title} classes={{ popper: className }} placement={placement}>
     {children}
   </MuiTooltip>
 ))(({ theme }) => ({

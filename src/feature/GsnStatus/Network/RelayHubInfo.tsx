@@ -85,10 +85,13 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
   }
   return (
     <Box mt={5} display='flex' alignItems='center' gap={7}>
-      <Box>
-        <Typography variant='h5' fontWeight={600}>
-          Relay Hub:{' '}
-        </Typography>
+      <Box display='flex' alignItems='center' height='24px'>
+        <Box>
+          <Typography variant='h5' fontWeight={600}>
+            Relay Hub:
+          </Typography>
+          &nbsp;
+        </Box>
         <BlockExplorerUrl address={relayHubAddress} url={blockExplorerUrl} />
       </Box>
       {hubStateData !== undefined ? (

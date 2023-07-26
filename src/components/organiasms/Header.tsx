@@ -33,6 +33,7 @@ const Header: FC = () => {
         {isHome && (
           <Box display='flex' alignItems='center' gap={15}>
             <Tooltip
+              placement='bottom-end'
               title={
                 <>
                   <Typography variant='h5' fontWeight={700}>

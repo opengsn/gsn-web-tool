@@ -29,6 +29,7 @@ export const AccordionSummaryBase: any = styled(MuiAccordionSummary)<IAccordionS
   width: '100%',
   cursor: 'unset !important',
   userSelect: 'text',
+  margin: 0,
   '& .MuiAccordionSummary-content': {
     margin: 0,
     overflowX: 'auto'

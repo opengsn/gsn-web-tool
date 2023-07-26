@@ -6,6 +6,8 @@ import RelayUrl from './RelayUrl'
 import { RelayVersion } from './RelayVersion'
 import { ViewDetailsButton } from './ViewDetailsButton'
 import { Box, TableCell, TableRow } from '../../../../components/atoms'
+import { createSearchParams, useNavigate } from 'react-router-dom'
+import { ROUTES } from '../../../../constants/routes'
 
 export interface RelayLineProps {
   url: string
@@ -16,6 +18,7 @@ export interface RelayLineProps {
 
 export default function RelayLine({ url, relay, blockExplorer, errorMsg }: RelayLineProps) {
   const { relayManagerAddress, relayWorkerAddress, ready, version, chainId } = relay
+  const navigate = useNavigate()
   if (chainId === undefined) {
     return (
       <TableRow>
@@ -25,7 +28,10 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
   }
 
   return (
-    <TableRow key={relayManagerAddress}>
+    <TableRow
+      key={relayManagerAddress}
+      onClick={() => navigate({ pathname: ROUTES.DetailedView, search: createSearchParams({ relayUrl: url }).toString() })}
+    >
       <TableCell>
         <RelayUrl url={url} />
       </TableCell>
@@ -36,11 +42,11 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
         <RelayVersion version={version} />
       </TableCell>
       <TableCell>
-        <Box display='flex' flexDirection='column'>
-          <Box>
+        <Box display='flex' flexDirection='column' gap={1}>
+          <Box display='flex' justifyContent='space-between' width='95px'>
             <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
           </Box>
-          <Box>
+          <Box display='flex' justifyContent='space-between' width='95px'>
             <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
           </Box>
         </Box>

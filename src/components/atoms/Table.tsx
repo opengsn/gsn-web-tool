@@ -12,16 +12,22 @@ import {
 interface IProps {
   children: ReactNode
   width?: string
+  onClick?: () => void
 }
 
 const Table: FC<IProps> = ({ children }) => {
   return <MuiTable>{children}</MuiTable>
 }
 
-const TableRowBase = styled(MuiRowTable)<IProps>(({ theme }) => ({}))
+const TableRowBase = styled(MuiRowTable)<IProps>(({ theme, onClick }) => ({
+  cursor: onClick ? 'pointer' : 'default',
+  '&:hover': onClick && {
+    backgroundColor: theme.palette.primary.tableRowHover
+  }
+}))
 
-export const TableRow: FC<IProps> = ({ children }) => {
-  return <TableRowBase>{children}</TableRowBase>
+export const TableRow: FC<IProps> = ({ children, onClick }) => {
+  return <TableRowBase onClick={onClick}>{children}</TableRowBase>
 }
 
 const TableHeadBase = styled(MuiTableHead)(({ theme }) => ({}))

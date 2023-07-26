@@ -63,7 +63,7 @@ export default function NetworkCard({ network, selectedGroup }: NetworkCardProps
             </Box>
           </AccordionSummary>
           <AccordionDetails>
-            <Box p={15}>
+            <Box p='0 15px 15px 15px'>
               <RelaysTable relays={relays} chain={chain} />
             </Box>
           </AccordionDetails>

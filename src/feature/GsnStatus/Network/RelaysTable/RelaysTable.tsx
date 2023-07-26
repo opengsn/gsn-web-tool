@@ -58,37 +58,44 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
   )
 
   const TableBody = () => {
-    const content = relays.map((x) => {
-      if (x.config !== undefined) {
-        return <RelayLine key={x.manager} relay={x.config} errorMsg={''} url={x.url} blockExplorer={chain.blockExplorers?.default} />
-      } else {
-        return (
-          <TableRow key={x.manager}>
-            <TableCell>
-              <RelayUrl url={x.url} />
-            </TableCell>
-            <TableCell>
-              <Chip
-                label={
-                  <Typography color={theme.palette.primary.chipTextError} variant='h4'>
-                    {x.errorMsg}
-                  </Typography>
-                }
-                bgcolor={theme.palette.primary.chipBGError}
-              />
-            </TableCell>
-            <TableCell>{''}</TableCell>
-            <TableCell>
-              <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
-            </TableCell>
-            <TableCell>
-              <Balance address={x.manager} chainId={chain.id} />
-            </TableCell>
-            <TableCell>{''}</TableCell>
-          </TableRow>
-        )
-      }
-    })
+    const sortedRelays = [...relays]
+    const content = sortedRelays
+      .sort((a, b) => (a.config !== undefined ? -1 : 1))
+      .map((x) => {
+        if (x.config !== undefined) {
+          return <RelayLine key={x.manager} relay={x.config} errorMsg={''} url={x.url} blockExplorer={chain.blockExplorers?.default} />
+        } else {
+          return (
+            <TableRow key={x.manager}>
+              <TableCell>
+                <RelayUrl url={x.url} />
+              </TableCell>
+              <TableCell>
+                <Chip
+                  label={
+                    <Typography color={theme.palette.primary.chipTextError} variant='h4'>
+                      {x.errorMsg}
+                    </Typography>
+                  }
+                  bgcolor={theme.palette.primary.chipBGError}
+                />
+              </TableCell>
+              <TableCell>{''}</TableCell>
+              <TableCell>
+                <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
+                <br />
+                <br />
+              </TableCell>
+              <TableCell>
+                <Balance address={x.manager} chainId={chain.id} />
+                <br />
+                <br />
+              </TableCell>
+              <TableCell>{''}</TableCell>
+            </TableRow>
+          )
+        }
+      })
 
     return <MuiTableBody>{content}</MuiTableBody>
   }
