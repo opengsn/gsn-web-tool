@@ -8,22 +8,22 @@ interface NetGroup {
   [key: string]: INetwork[]
 }
 
-const icons = [
-  { key: 'Ethereum', icon: <Icon.Ethereum /> },
-  { key: 'Optimism', icon: <Icon.Optimism /> },
-  { key: 'Arbitrum', icon: <Icon.Arbitrum /> },
-  { key: 'Other', icon: <></> },
-  { key: 'Avalanche', icon: <Icon.Avalanche /> },
-  { key: 'Binance', icon: <Icon.Binance /> },
-  { key: 'Polygon', icon: <Icon.Polygon /> }
-]
-
 interface NetworkLinksNewProps {
   setSelectedGroup: Dispatch<SetStateAction<string>>
   selectedGroup?: string
 }
 
 export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: NetworkLinksNewProps) {
+  const icons = [
+    { key: 'Ethereum', icon: <Icon.Ethereum /> },
+    { key: 'Optimism', icon: <Icon.Optimism /> },
+    { key: 'Arbitrum', icon: <Icon.Arbitrum /> },
+    { key: 'Other', icon: <></> },
+    { key: 'Avalanche', icon: <Icon.Avalanche /> },
+    { key: 'Binance', icon: <Icon.Binance /> },
+    { key: 'Polygon', icon: <Icon.Polygon /> }
+  ]
+
   const theme = useTheme()
   const networks = useAppSelector((state) => state.networkList.networks)
   const networkArray = Object.values(networks)
@@ -36,13 +36,14 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
       }),
       {}
     )
-
+  console.log(netGroups)
   return (
     <Box display='flex' gap={3}>
       {Object.keys(netGroups)
         .filter((g) => netGroups[g].length > 0)
         .map((group) => {
-          const icon = icons.find((entry) => entry.key === group)?.icon
+          // const icon = icons[group as keyof typeof icons]
+          const icon = icons.find((icon) => icon.key === group)?.icon
           return (
             <Box key={group}>
               <GroupChip

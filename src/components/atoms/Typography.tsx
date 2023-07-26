@@ -23,19 +23,23 @@ interface ITypographyBase {
   fontWeight?: number
   children: ReactNode
   variant?: VariantType
+  fontFamily?: string
+  opacity?: number
 }
 
 const TypographyBase: any = styled(Typo, {
   shouldForwardProp: (prop: string) => prop !== 'fontWeight' && prop !== 'color'
-})<ITypographyBase>(({ fontWeight, theme, color }) => ({
+})<ITypographyBase>(({ fontWeight, theme, color, fontFamily, opacity }) => ({
   fontWeight,
   whiteSpace: 'pre-line',
-  color: color ?? theme.palette.primary.white
+  color: color ?? theme.palette.primary.white,
+  fontFamily: fontFamily && fontFamily,
+  opacity: opacity && opacity
 }))
 
-const Typography: FC<ITypographyBase> = ({ variant, children, color, fontWeight }) => {
+const Typography: FC<ITypographyBase> = ({ variant, children, color, fontWeight, fontFamily, opacity }) => {
   return (
-    <TypographyBase variant={variant} component='span' color={color} fontWeight={fontWeight}>
+    <TypographyBase variant={variant} component='span' color={color} fontWeight={fontWeight} fontFamily={fontFamily} opacity={opacity}>
       {children}
     </TypographyBase>
   )

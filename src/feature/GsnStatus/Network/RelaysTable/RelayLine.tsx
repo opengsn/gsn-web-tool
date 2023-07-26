@@ -44,10 +44,10 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
       <TableCell>
         <Box display='flex' flexDirection='column' gap={1}>
           <Box display='flex' justifyContent='space-between' width='95px'>
-            <BlockExplorerUrl url={blockExplorer?.url} address={relayManagerAddress} />
+            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayManagerAddress}`} address={relayManagerAddress} />
           </Box>
           <Box display='flex' justifyContent='space-between' width='95px'>
-            <BlockExplorerUrl url={blockExplorer?.url} address={relayWorkerAddress} />
+            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayWorkerAddress}`} address={relayWorkerAddress} />
           </Box>
         </Box>
       </TableCell>

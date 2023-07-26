@@ -6,6 +6,7 @@ import StakeInfo from './StakeInfo'
 import PingResponseData from './PingResponseData'
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from '../../../components/atoms'
 import { useEffect } from 'react'
+import { Poppins } from '../../../theme/font'
 
 interface IProps {
   showAllInfo?: boolean
@@ -24,24 +25,24 @@ function RelayInfo({ showAllInfo }: IProps) {
 
   useEffect(() => {
     refetchStakeManagerAddressData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const THead = () => (
     <TableHead>
       <TableRow>
-        <TableCell>
-          <Typography fontWeight={600} variant={'subtitle2'}>
+        <TableCell width='35%'>
+          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
             Name
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography fontWeight={600} variant={'subtitle2'}>
+        <TableCell width='45%'>
+          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
             Value
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography fontWeight={600} variant={'subtitle2'}>
+        <TableCell width='20%'>
+          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
             Extra
           </Typography>
         </TableCell>

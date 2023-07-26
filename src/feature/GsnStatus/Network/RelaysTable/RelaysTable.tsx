@@ -82,7 +82,7 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
               </TableCell>
               <TableCell>{''}</TableCell>
               <TableCell>
-                <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
+                <BlockExplorerUrl address={x.manager} url={`${chain.blockExplorers?.default.url ?? ''}/address/${x.manager}`} />
                 <br />
                 <br />
               </TableCell>

@@ -3,6 +3,9 @@ import { PingResponse } from '../../../types'
 import { formatNumber, isSameAddress, weiToGwei } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
 import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
+import { Poppins } from '../../../theme/font'
+import { useTheme } from '@mui/material'
+import { Chip } from '../../../components/atoms/Chip'
 
 const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
 
@@ -15,6 +18,7 @@ interface IProps {
 function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
+  const theme = useTheme()
 
   const { data: relayManagerBalanceData } = useBalance({
     address: relayData.relayManagerAddress as any,
@@ -39,10 +43,14 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins}>
+                  {relayData[x as keyof PingResponse]?.toString()}
+                </Typography>
                 &nbsp;
                 {relayData[x as keyof PingResponse]?.toString() && (
                   <ExplorerLink
@@ -52,7 +60,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
                 )}
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   Balance: <b>{relayManagerBalanceData?.formatted ? formatNumber(+relayManagerBalanceData?.formatted) : 0} </b>
                   {relayManagerBalanceData?.symbol}
                 </Typography>
@@ -63,10 +71,14 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins}>
+                  {relayData[x as keyof PingResponse]?.toString()}
+                </Typography>
                 &nbsp;
                 {relayData[x as keyof PingResponse]?.toString() && (
                   <ExplorerLink
@@ -76,7 +88,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
                 )}
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   Balance: <b>{relayWorkerBalanceData?.formatted ? formatNumber(+relayWorkerBalanceData?.formatted) : 0} </b>
                 </Typography>
               </TableCell>
@@ -87,10 +99,14 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins}>
+                  {relayData[x as keyof PingResponse]?.toString()}
+                </Typography>
                 &nbsp;
                 {relayData[x as keyof PingResponse]?.toString() && (
                   <ExplorerLink
@@ -100,8 +116,8 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
                 )}
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>
-                  <b>{accountIsOwner ? 'currently connected' : 'switch to owner to enable actions'}</b>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {accountIsOwner ? 'currently connected' : 'switch to owner to enable actions'}
                 </Typography>
               </TableCell>
             </>
@@ -110,35 +126,47 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>
+                <Typography variant={'h5'} fontFamily={Poppins}>
                   {relayData?.[x as keyof typeof relayData] && (
                     <b>{formatNumber(weiToGwei(Number(relayData?.[x as keyof typeof relayData])))}</b>
-                  )}
-                 {' '} Gwei
+                  )}{' '}
+                  Gwei
                 </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
             </>
           )
         } else if (x === 'ready') {
+          const isReady = relayData[x as keyof PingResponse] === true
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>
-                  {relayData[x as keyof PingResponse] === true
+                <Typography variant={'h5'} fontFamily={Poppins}>
+                  {isReady
                     ? (
-                    <Typography variant='subtitle2' color='success.main'>
-                      Ready
-                    </Typography>
+                    <Chip
+                      bgcolor={theme.palette.primary.chipBGSuccess}
+                      label={
+                        <Typography fontFamily={Poppins} color={theme.palette.primary.mainPos} variant='h5'>
+                          Ready
+                        </Typography>
+                      }
+                    />
                       )
                     : (
-                    <Typography variant='subtitle2'>Not ready</Typography>
+                    <Typography variant={'h5'} fontFamily={Poppins}>
+                      Not Ready
+                    </Typography>
                       )}
                 </Typography>
               </TableCell>
@@ -149,10 +177,14 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           data = (
             <>
               <TableCell width='33%'>
-                <Typography variant={'subtitle2'}>{camelCaseToHuman(x)}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant={'subtitle2'}>{relayData[x as keyof PingResponse]?.toString()}</Typography>
+                <Typography variant={'h5'} fontFamily={Poppins}>
+                  {relayData[x as keyof PingResponse]?.toString()}
+                </Typography>
                 &nbsp;
                 {x.includes('Address') && (
                   <ExplorerLink

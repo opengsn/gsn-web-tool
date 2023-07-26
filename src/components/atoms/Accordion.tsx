@@ -34,10 +34,13 @@ export const AccordionSummaryBase: any = styled(MuiAccordionSummary)<IAccordionS
     margin: 0,
     overflowX: 'auto'
   },
+  '& .MuiAccordionSummary-content.Mui-expanded': {
+    margin: 0
+  },
   '& .MuiAccordionSummary-expandIconWrapper': {
     position: 'absolute',
-    right: isManage ? 20 : 30,
-    top: isManage && 20
+    right: 30,
+    top: isManage && 27.25
   }
 }))
 
