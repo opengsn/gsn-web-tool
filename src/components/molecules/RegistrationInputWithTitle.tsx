@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { Alert, Box, Button, Divider, Icon, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 import { formatMetaMaskError } from '../../utils'
@@ -21,7 +21,7 @@ interface IProps {
   value?: string
   placeholder?: string
   isLoadingForTransaction?: boolean
-  warningAlert?: string
+  warningAlert?: ReactNode
   disabled?: boolean
 }
 
@@ -56,8 +56,8 @@ const RegistrationInputWithTitle: FC<IProps> = ({
 
   return (
     <Box>
-      <Box>
-        <Typography variant={'h5'} fontWeight={700}>
+      <Box mt={5}>
+        <Typography variant={'h5'} fontWeight={600}>
           {title}
         </Typography>
       </Box>
@@ -74,7 +74,9 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       {warningAlert != null && (
         <Box mb={'10px'} width='400px'>
           <Alert severity='warning'>
-            <Typography variant='body2'>{warningAlert}</Typography>
+            <Typography variant='h6' fontWeight={300}>
+              {warningAlert}
+            </Typography>
           </Alert>
         </Box>
       )}
@@ -95,9 +97,11 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       <Box width='220px' mb={10}>
         <Button.CTA disabled={isLoading || isLoadingForTransaction || isSuccess || disabled} onClick={onClick} text={renderButtonText()} />
         {isLoading && (
-          <Alert severity='info' icon={<Icon.Info />}>
-            {waitingForApproveText}
-          </Alert>
+          <Box mt={5}>
+            <Alert severity='info' icon={<Icon.Info />}>
+              <Typography variant='h6'>{waitingForApproveText}</Typography>
+            </Alert>
+          </Box>
         )}
       </Box>
       {error && (

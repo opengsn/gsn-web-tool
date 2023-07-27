@@ -80,5 +80,17 @@ export default function Relay() {
     )
   }
 
-  return loading ? <CircularProgress /> : relayData ? null : <Alert severity='error'>Error initializing relay view</Alert>
+  return loading
+    ? (
+    <CircularProgress />
+      )
+    : relayData
+      ? null
+      : (
+    <Alert severity='error'>
+      <Typography variant='h6' fontWeight={600}>
+        Error initializing relay view
+      </Typography>
+    </Alert>
+        )
 }

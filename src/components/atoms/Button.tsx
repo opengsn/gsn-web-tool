@@ -28,7 +28,7 @@ const ButtonBase: any = styled(MuiButton, {
     height: height ?? '56px',
     textTransform: 'none',
     '&.Mui-disabled': {
-      backgroundColor: theme.palette.primary.cardOutline
+      backgroundColor: theme.palette.primary.mainCTADisabled
     }
   }
 }))
@@ -72,19 +72,35 @@ interface IRadioProps {
 }
 
 const Radio: FC<IRadioProps> = ({ onChange, checked }) => {
-  return <MuiRadio onChange={onChange} checked={checked} />
+  const theme = useTheme()
+  return (
+    <MuiRadio
+      onChange={onChange}
+      checked={checked}
+      sx={{
+        padding: '0 !important',
+        '& .MuiSvgIcon-root:not(.MuiSvgIcon-root ~ .MuiSvgIcon-root)': {
+          color: theme.palette.primary.cardOutline
+        },
+        '& .MuiSvgIcon-root + .MuiSvgIcon-root': {
+          color: theme.palette.primary.mainCTA
+        }
+      }}
+    />
+  )
 }
 
 interface ButtonCTAProps {
-  onClick: () => void
+  onClick?: () => void
   text: string
   disabled?: boolean
+  type?: ButtonType
 }
 
-export const CTA: FC<ButtonCTAProps> = ({ onClick, disabled, text }) => {
+export const CTA: FC<ButtonCTAProps> = ({ onClick, disabled, text, type }) => {
   const theme = useTheme()
   return (
-    <Contained onClick={onClick} disabled={disabled}>
+    <Contained onClick={onClick} disabled={disabled} type={type}>
       <Typography variant='h3' color={theme.palette.primary.main} fontWeight={500}>
         {text}
       </Typography>

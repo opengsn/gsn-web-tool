@@ -15,13 +15,15 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
     <Box>
       <Alert severity='error'>
         <Box mb='10px'>
-          <Typography variant='body2'>
+          <Typography variant='h6' fontWeight={600}>
             Wrong chain : Wallet is connected to ID #{chain?.id} while the relay is on #{relayChainId}
           </Typography>
         </Box>
         {error !== null && (
           <Box mb='10px'>
-            <Typography variant='body2'>Chain ID check failed: {error?.message}</Typography>
+            <Typography variant='h6' fontWeight={600}>
+              Chain ID check failed: {error?.message}
+            </Typography>
           </Box>
         )}
       </Alert>
@@ -33,7 +35,7 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
         </Box>
         {isLoading && (
           <Alert severity='info' icon={false}>
-            <Typography variant='body1'>{waitingForApproveText} </Typography>
+            <Typography variant='h6'>{waitingForApproveText} </Typography>
           </Alert>
         )}
       </Box>

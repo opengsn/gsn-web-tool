@@ -22,6 +22,9 @@ const AlertBase = styled(
     backgroundColor: theme.palette.primary.alertInfoBG,
     color: theme.palette.primary.white
   },
+  '&.MuiAlert-standardWarning': {
+    backgroundColor: theme.palette.primary.alertWarningBG
+  },
   '& .MuiAlert-message': {
     display: 'flex',
     alignItems: 'center'

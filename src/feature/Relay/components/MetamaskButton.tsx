@@ -1,5 +1,5 @@
 import { useConnect } from 'wagmi'
-import { Alert, Box, Button } from '../../../components/atoms'
+import { Alert, Box, Button, Typography } from '../../../components/atoms'
 
 export default function MetamaskButton() {
   const { connect, connectors, error, pendingConnector } = useConnect()
@@ -23,7 +23,13 @@ export default function MetamaskButton() {
           }`}
         />
       ))}
-      {error != null && <Alert severity='error'>{error.message}</Alert>}
+      {error != null && (
+        <Alert severity='error'>
+          <Typography variant='h6' fontWeight={600}>
+            {error.message}
+          </Typography>
+        </Alert>
+      )}
     </Box>
   )
 }

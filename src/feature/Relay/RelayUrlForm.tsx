@@ -99,7 +99,15 @@ export default function RelayUrlForm() {
         <Box component='form' onSubmit={getRelayForm.handleSubmit}>
           <Box mb={8}>
             <TextField onChange={getRelayForm.handleChange} value={getRelayForm.values.url} name='url' />
-            <Box my={1}>{error !== null && <Alert severity='error'>{error}</Alert>}</Box>
+            <Box my={1}>
+              {error !== null && (
+                <Alert severity='error'>
+                  <Typography variant='h6' fontWeight={600}>
+                    {error}
+                  </Typography>
+                </Alert>
+              )}
+            </Box>
           </Box>
           <Box width='380px' mx='auto' height='70px'>
             <Button.Contained size='large' type={ButtonType.SUBMIT}>
@@ -111,5 +119,12 @@ export default function RelayUrlForm() {
     )
   }
 
-  return <Alert severity='error'>Relay data is already fetched. Refresh the page.</Alert>
+  return (
+    <Alert severity='error'>
+      {' '}
+      <Typography variant='h6' fontWeight={600}>
+        Relay data is already fetched. Refresh the page.
+      </Typography>
+    </Alert>
+  )
 }

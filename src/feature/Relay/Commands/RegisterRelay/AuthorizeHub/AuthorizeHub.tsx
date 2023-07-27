@@ -20,7 +20,7 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
 
   useEffect(() => {
     refetchPrepareContractWrite().catch(console.error)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { data: stakeManagerAddressData } = useStakeManagerAddress(relayHubAddress, chainId)
@@ -60,7 +60,9 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
       {isError
         ? (
         <Alert severity='error'>
-          <Typography>{authorizeTxError?.message}</Typography>
+          <Typography variant='h6' fontWeight={600}>
+            {authorizeTxError?.message}
+          </Typography>
         </Alert>
           )
         : (

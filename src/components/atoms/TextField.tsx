@@ -57,6 +57,9 @@ const TextField: FC<IProps> = ({
               borderWidth: '1px',
               borderColor: 'primary.mainBG'
             }
+          },
+          '& ::placeholder': {
+            opacity: 0.9
           }
         }
       }}

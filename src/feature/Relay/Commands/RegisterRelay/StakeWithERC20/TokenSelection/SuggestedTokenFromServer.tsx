@@ -7,13 +7,14 @@ interface IProps {
   supportedTokens: any // TODO: type
   getTokenAddress: any
   handleChangeToken: (token: string) => void
+  explorerLink: string | null
 }
 
-const SuggestedTokenFromServer: FC<IProps> = ({ chainId, supportedTokens, getTokenAddress, handleChangeToken }) => {
+const SuggestedTokenFromServer: FC<IProps> = ({ chainId, supportedTokens, getTokenAddress, handleChangeToken, explorerLink }) => {
   return (
     <Box>
       <Box>
-        <Typography variant='body2'>Select token from list:</Typography>
+        <Typography variant='h5'>Select token from list:</Typography>
       </Box>
       {supportedTokens?.map((token: any) => {
         return (
@@ -23,6 +24,7 @@ const SuggestedTokenFromServer: FC<IProps> = ({ chainId, supportedTokens, getTok
             chainId={chainId}
             handleChangeToken={handleChangeToken}
             checked={getTokenAddress.values.token === token.address}
+            explorerLink={explorerLink}
           />
         )
       })}

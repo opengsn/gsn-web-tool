@@ -11,11 +11,12 @@ import { useAppDispatch, useAppSelector, useLocalStorage } from '../../../../../
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { useDefaultStateSwitchers } from '../../registerRelayHooks'
 import { TextFieldType } from '../../../../../../components/atoms/TextField'
-import { Typography } from '../../../../../../components/atoms'
+import { Box, Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType, Hashes } from '../../../../../../types/Hash'
 import ExplorerLink from '../../ExplorerLink'
 import { formatEther, parseEther } from 'ethers/lib/utils.js'
+import { useTheme } from '@mui/material'
 
 interface IProps {
   success: boolean
@@ -32,6 +33,7 @@ export default function Minter({ success }: IProps) {
   const { token, account, minimumStakeForToken } = useContext(TokenContext)
   const defaultStateSwitchers = useDefaultStateSwitchers()
   const provider = useProvider()
+  const theme = useTheme()
 
   const setHash = (hash: HashType) => {
     setHashes((prev) => ({ ...prev, minter: hash }))
@@ -94,11 +96,13 @@ export default function Minter({ success }: IProps) {
   if (success) {
     return (
       <>
-        <Typography variant='body2' color={'grey.600'}>
-          {localMintAmount != null && <>Mint amount: {localMintAmount} ETH</>}
-        </Typography>
         <CopyHash copyValue={hash} />
         <ExplorerLink params={hash ? `tx/${hash}` : null} />
+        <Box width='100%'>
+          <Typography variant='h6' color={theme.palette.primary.mainPos}>
+            {localMintAmount != null && <>Mint amount: {localMintAmount} ETH</>}
+          </Typography>
+        </Box>
       </>
     )
   }
