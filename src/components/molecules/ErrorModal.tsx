@@ -16,13 +16,13 @@ const ErrorModal: FC = () => {
           <Icon.Info width='40px' height='40px' fill='black' />
         </Box>
         <Box>
-          <Typography variant={'h6'}>Request failed</Typography>
+          <Typography variant={'h1'}>Request failed</Typography>
         </Box>
-        <Box width='600px' textAlign='start' mx='auto' mt={4}>
-          Please make sure that your machine is connected to the electricity <br />
+        <Box textAlign='start' mx='auto' mt={4}>
+          <Typography variant='h4'>Please make sure that your machine is connected to the electricity</Typography>
         </Box>
-        <Box width='200px' mx='auto' mt={4}>
-          <Button.Contained>OK</Button.Contained>
+        <Box width='200px' mx='auto' mt={10}>
+          <Button.CTA text='OK' onClick={() => setOpen(false)} />
         </Box>
       </Box>
     </Modal>
