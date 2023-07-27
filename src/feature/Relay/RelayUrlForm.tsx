@@ -11,12 +11,14 @@ import { useAppDispatch, useAppSelector } from '../../hooks'
 import { PingResponse } from '../../types'
 import { deleteRelayData, fetchRelayData } from './relaySlice'
 import { texts } from '../../texts'
+import { useTheme } from '@mui/material'
 
 export default function RelayUrlForm() {
   const relay = useAppSelector((state) => state.relay)
   const relayData: PingResponse = relay.relay
   const relayDataFetched = Object.keys(relayData).length > 0
   const [error, setError] = useState<string | null>(null)
+  const theme = useTheme()
 
   const [searchParams, setSearchParams] = useSearchParams()
   const dispatch = useAppDispatch()
@@ -89,9 +91,18 @@ export default function RelayUrlForm() {
 
   if (!relayDataFetched) {
     return (
-      <Box pt={8} textAlign='center' mx='auto' width={'900px'}>
+      <Box
+        textAlign='center'
+        mx='auto'
+        width={'900px'}
+        bgcolor='primary.cardBG'
+        border='1px solid'
+        borderColor='primary.cardOutline'
+        borderRadius={theme.borderRadius.medium}
+        p={15}
+      >
         <Box mb={8}>
-          <Typography variant={'h5'}>Relay URL</Typography>
+          <Typography variant={'h1'}>Relay URL</Typography>
         </Box>
         <Box mb='20px' textAlign='start'>
           <Typography variant={'body1'}>{texts.relayUrl.description}</Typography>
@@ -99,7 +110,7 @@ export default function RelayUrlForm() {
         <Box component='form' onSubmit={getRelayForm.handleSubmit}>
           <Box mb={8}>
             <TextField onChange={getRelayForm.handleChange} value={getRelayForm.values.url} name='url' />
-            <Box my={1}>
+            <Box my={4}>
               {error !== null && (
                 <Alert severity='error'>
                   <Typography variant='h6' fontWeight={600}>
@@ -109,10 +120,8 @@ export default function RelayUrlForm() {
               )}
             </Box>
           </Box>
-          <Box width='380px' mx='auto' height='70px'>
-            <Button.Contained size='large' type={ButtonType.SUBMIT}>
-              Fetch data
-            </Button.Contained>
+          <Box width='380px' mx='auto'>
+            <Button.CTA type={ButtonType.SUBMIT} text='Fetch data' />
           </Box>
         </Box>
       </Box>
