@@ -56,7 +56,9 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
 
   return (
     <Box mt={4}>
-      <Typography>{text}</Typography>
+      <Typography variant='h4' fontWeight={600}>
+        {text}
+      </Typography>
       {isError
         ? (
         <Alert severity='error'>
@@ -67,7 +69,11 @@ export default function AuthorizeHub({ setListen, listen, setIsAuthorizeHub, isA
           )
         : (
         <Box mt={4}>
-          <CircularProgress />
+          <CircularProgress
+            sx={{
+              color: 'primary.mainCTA'
+            }}
+          />
         </Box>
           )}
     </Box>

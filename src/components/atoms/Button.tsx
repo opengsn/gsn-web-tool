@@ -14,28 +14,38 @@ interface IProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   bgColor?: string
-  color?: string
+  borderColor?: string
   type?: ButtonType
   size?: Size
   height?: string
 }
 
 const ButtonBase: any = styled(MuiButton, {
-  shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'height'
-})<IProps>(({ theme, bgColor, height }) => ({
+  shouldForwardProp: (prop) => prop !== 'bgColor' && prop !== 'height' && prop !== 'borderColor'
+})<IProps>(({ theme, bgColor, height, borderColor }) => ({
   '&.MuiButton-root': {
     backgroundColor: bgColor ?? theme.palette.primary.mainCTA,
     height: height ?? '56px',
     textTransform: 'none',
+    border: borderColor && `1px solid ${borderColor}`,
     '&.Mui-disabled': {
       backgroundColor: theme.palette.primary.mainCTADisabled
     }
   }
 }))
 
-const Contained: FC<IProps> = ({ children, onClick, disabled, bgColor, type, size }) => {
+const Contained: FC<IProps> = ({ children, onClick, disabled, bgColor, type, size, borderColor }) => {
   return (
-    <ButtonBase variant='contained' onClick={onClick} disabled={disabled} bgColor={bgColor} type={type} size={size} fullWidth>
+    <ButtonBase
+      variant='contained'
+      onClick={onClick}
+      disabled={disabled}
+      bgColor={bgColor}
+      type={type}
+      size={size}
+      borderColor={borderColor}
+      fullWidth
+    >
       {children}
     </ButtonBase>
   )

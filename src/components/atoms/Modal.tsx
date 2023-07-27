@@ -16,7 +16,13 @@ const Modal: FC<IProps> = ({ children, open, onClose }) => {
         textAlign: 'center'
       }}
     >
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        sx={{
+          p: 0
+        }}
+      >
+        {children}
+      </DialogContent>
     </MuiDialog>
   )
 }

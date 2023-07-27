@@ -46,7 +46,8 @@ export default function Minter({ success }: IProps) {
   }, [token, minimumStakeForToken])
 
   useEffect(() => {
-    if (mintAmount !== null && localMintAmount !== null) {
+    if (mintAmount !== null && localMintAmount !== null && +formatEther(mintAmount) !== 0) {
+      console.log(formatEther(mintAmount))
       setLocalMintAmount(formatEther(mintAmount))
     }
   }, [mintAmount])
