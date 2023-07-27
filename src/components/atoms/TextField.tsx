@@ -43,6 +43,23 @@ const TextField: FC<IProps> = ({
       type={type}
       helperText={helperText}
       size='small'
+      sx={{
+        '& .MuiInputBase-root': {
+          color: 'primary.mainBrightWhite',
+          '& fieldset': {
+            borderColor: 'primary.cardOutline'
+          },
+          '&:hover fieldset': {
+            borderColor: 'primary.mainBG'
+          },
+          '&.Mui-focused': {
+            '& fieldset': {
+              borderWidth: '1px',
+              borderColor: 'primary.mainBG'
+            }
+          }
+        }
+      }}
       error={error}
       name={name}
       ref={ref}

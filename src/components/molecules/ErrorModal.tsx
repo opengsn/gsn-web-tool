@@ -15,7 +15,7 @@ const ErrorModal: FC = () => {
         <Icon.Info width='40px' height='40px' fill='black' />
       </Box>
       <Box>
-        <Typography variant={'h5'}>Request failed</Typography>
+        <Typography variant={'h6'}>Request failed</Typography>
       </Box>
       <Box width='600px' textAlign='start' mx='auto' mt={4}>
         1. Please make sure that your machine is connected to the electricity <br />

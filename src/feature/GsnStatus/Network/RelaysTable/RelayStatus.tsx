@@ -12,7 +12,7 @@ export default function RelayStatus({ ready }: RelayStatusProps) {
     <Chip
       bgcolor={ready ? theme.palette.primary.chipBGSuccess : theme.palette.primary.chipBGPending}
       label={
-        <Typography color={ready ? theme.palette.primary.mainPos : theme.palette.primary.chipTextPending} variant='h4'>
+        <Typography color={ready ? theme.palette.primary.mainPos : theme.palette.primary.chipTextPending} variant='h5'>
           {ready ? 'Ready' : 'Pending'}
         </Typography>
       }

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import React, { FC } from 'react'
-import { Alert, Box, Button, TextField, Typography } from '../atoms'
+import { Alert, Box, Button, Divider, Icon, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 import { formatMetaMaskError } from '../../utils'
 import metamaskNonceResetImage from '../../assets/images/metamask_nonce_reset.jpg'
+import { useTheme } from '@mui/material'
 
 export const waitingForApproveText = 'Use your wallet'
 
@@ -40,6 +41,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   warningAlert,
   disabled
 }) => {
+  const theme = useTheme()
   const renderButtonText = () => {
     if (isLoadingForTransaction || isSuccess) {
       return 'Processing...'
@@ -53,13 +55,20 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   const isNonceError = error?.includes('Nonce too high')
 
   return (
-    <Box my='10px'>
-      <Box mb='5px'>
-        <Typography variant={'subtitle2'}>{title}</Typography>
+    <Box>
+      <Box>
+        <Typography variant={'h5'} fontWeight={700}>
+          {title}
+        </Typography>
+      </Box>
+      <Box mt={10} mb={7}>
+        <Divider />
       </Box>
       {label != null && (
-        <Box>
-          <Typography variant='body2'>{label}</Typography>
+        <Box mb={2}>
+          <Typography variant='h4' color={theme.palette.primary.mainCTA}>
+            {label}
+          </Typography>
         </Box>
       )}
       {warningAlert != null && (
@@ -70,7 +79,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
         </Box>
       )}
       {onChange != null && (
-        <Box width='400px' mb='10px'>
+        <Box width='400px' mb={10}>
           <TextField
             type={type}
             onChange={(e) => {
@@ -83,19 +92,19 @@ const RegistrationInputWithTitle: FC<IProps> = ({
           />
         </Box>
       )}
-      <Box width='220px' mb='10px'>
-        <Button.Contained disabled={isLoading || isLoadingForTransaction || isSuccess || disabled} onClick={onClick} size='large'>
-          <Typography variant={'body2'}>{renderButtonText()}</Typography>
-        </Button.Contained>
+      <Box width='220px' mb={10}>
+        <Button.CTA disabled={isLoading || isLoadingForTransaction || isSuccess || disabled} onClick={onClick} text={renderButtonText()} />
         {isLoading && (
-          <Alert severity='info' icon={false}>
+          <Alert severity='info' icon={<Icon.Info/>}>
             {waitingForApproveText}
           </Alert>
         )}
       </Box>
       {error && (
         <Alert severity='error'>
-          <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
+          <Typography variant='h6' fontWeight={600}>
+            {formatMetaMaskError(error)}
+          </Typography>
           <br />
           {isNonceError && <Box mt={3} component='img' src={metamaskNonceResetImage} alt='Nonce Error' width='800px' />}
         </Alert>

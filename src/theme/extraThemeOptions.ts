@@ -1,6 +1,6 @@
 type ThemeBorderRadiusKeys = 'xSmall' | 'small' | 'medium' | 'large' | 'full'
 type ThemeFontWeightsKeys = 'normal' | 'medium' | 'bold' | 'xBold'
-type ThemeFontSizesKeys = 'xLarge' | 'large' | 'medium' | 'small' | 'xSmall'
+type ThemeFontSizesKeys = 'xLarge' | 'large' | 'medium' | 'regular' | 'small' | 'xSmall'
 type ThemeBorderRadius = Record<ThemeBorderRadiusKeys, `${number}px` | `${number}%`>
 type ThemeFontWeights = Record<ThemeFontWeightsKeys, number>
 type ThemeFontSizes = Record<ThemeFontSizesKeys, string>
@@ -33,6 +33,7 @@ export const extraThemeOptions: ExtraThemeOptions = {
     xLarge: '30px',
     large: '24px',
     medium: '18px',
+    regular: '16px',
     small: '14px',
     xSmall: '12px'
   }

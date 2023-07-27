@@ -87,7 +87,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
     <Box mt={5} display='flex' alignItems='center' gap={7}>
       <Box display='flex' alignItems='center' height='24px'>
         <Box>
-          <Typography variant='h5' fontWeight={600}>
+          <Typography variant='h6' fontWeight={600}>
             Relay Hub:
           </Typography>
           &nbsp;
@@ -97,19 +97,19 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
       {hubStateData !== undefined ? (
         <>
           <Box>
-            <Typography variant='h5' fontWeight={600}>
+            <Typography variant='h6' fontWeight={600}>
               Stake lock time:
             </Typography>{' '}
-            <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+            <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
               {formatDays(hubStateData.minimumUnstakeDelay as any)}{' '}
             </Typography>
           </Box>
           {stakingTokens.length > 0 ? (
             <Box>
-              <Typography variant='h5' fontWeight={600}>
+              <Typography variant='h6' fontWeight={600}>
                 Stake token{stakingTokens.length > 1 ? 's' : null}:
               </Typography>{' '}
-              <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+              <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
                 {stakingTokens.map((foundToken: IFoundToken, index: number) => {
                   const lastItem = index === stakingTokens.length - 1
                   return (
@@ -128,24 +128,24 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
             </Box>
           ) : null}
           <Box>
-            <Typography variant='h5' fontWeight={600}>
+            <Typography variant='h6' fontWeight={600}>
               Relay Fee:
             </Typography>{' '}
-            <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+            <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
               <>
                 {formatNumber(+utils.formatUnits(hubStateData.baseRelayFee as any, 'gwei'))} gwei + {hubStateData.pctRelayFee}%
               </>
             </Typography>
           </Box>
           <Box>
-            <Typography variant='h5' fontWeight={600}>
+            <Typography variant='h6' fontWeight={600}>
               Online Networks:
             </Typography>{' '}
           </Box>
           <Box ml={'-10px'}>
             <Chip
               label={
-                <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+                <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
                   {activeRelays}
                 </Typography>
               }

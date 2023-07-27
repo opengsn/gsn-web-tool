@@ -26,7 +26,10 @@ const ButtonBase: any = styled(MuiButton, {
   '&.MuiButton-root': {
     backgroundColor: bgColor ?? theme.palette.primary.mainCTA,
     height: height ?? '56px',
-    textTransform: 'none'
+    textTransform: 'none',
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.primary.cardOutline
+    }
   }
 }))
 

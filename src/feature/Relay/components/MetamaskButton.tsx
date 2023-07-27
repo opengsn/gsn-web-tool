@@ -1,5 +1,5 @@
 import { useConnect } from 'wagmi'
-import { Alert, Box, Button, Typography } from '../../../components/atoms'
+import { Alert, Box, Button } from '../../../components/atoms'
 
 export default function MetamaskButton() {
   const { connect, connectors, error, pendingConnector } = useConnect()
@@ -11,16 +11,17 @@ export default function MetamaskButton() {
         md: '300px'
       }}
       mx='auto'
-      mt='25px'
+      mt='60px'
     >
       {connectors.map((connector) => (
-        <Button.Contained disabled={!connector.ready} key={connector.id} onClick={() => connect({ connector })} size='large'>
-          <Typography variant={'body2'}>
-            Connect with {connector.name}
-            {!connector.ready && ' (unsupported)'}
-            {connector.id === pendingConnector?.id && ' (connecting)'}
-          </Typography>
-        </Button.Contained>
+        <Button.CTA
+          disabled={!connector.ready}
+          key={connector.id}
+          onClick={() => connect({ connector })}
+          text={`Connect with ${connector.name} ${!connector.ready ? ' (unsupported)' : ''} ${
+            connector.id === pendingConnector?.id ? ' (connecting)' : ''
+          }`}
+        />
       ))}
       {error != null && <Alert severity='error'>{error.message}</Alert>}
     </Box>

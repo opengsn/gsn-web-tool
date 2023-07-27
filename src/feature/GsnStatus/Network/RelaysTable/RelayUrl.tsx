@@ -8,7 +8,7 @@ export default function RelayUrl({ url }: RelayUrlProps) {
   const withoutGetaddr = (url: string) => url.replace(/\/getaddr/, '')
   return (
     <Link href={url}>
-      <Typography variant='h5'>{withoutGetaddr(url)}</Typography>
+      <Typography variant='h6'>{withoutGetaddr(url)}</Typography>
     </Link>
   )
 }

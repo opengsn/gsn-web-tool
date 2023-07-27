@@ -28,27 +28,27 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
     <MuiTableHead>
       <TableRow>
         <TableCell width='40%'>
-          <Typography variant='h4' fontWeight={600}>
+          <Typography variant='h5' fontWeight={600}>
             URL
           </Typography>
         </TableCell>
         <TableCell width='15%'>
-          <Typography variant='h4' fontWeight={600}>
+          <Typography variant='h5' fontWeight={600}>
             Status
           </Typography>
         </TableCell>
         <TableCell width='15%'>
-          <Typography variant='h4' fontWeight={600}>
+          <Typography variant='h5' fontWeight={600}>
             Version
           </Typography>
         </TableCell>
         <TableCell width='15%'>
-          <Typography variant='h4' fontWeight={600}>
+          <Typography variant='h5' fontWeight={600}>
             Address
           </Typography>
         </TableCell>
         <TableCell width='10%'>
-          <Typography variant='h4' fontWeight={600}>
+          <Typography variant='h5' fontWeight={600}>
             Balance
           </Typography>
         </TableCell>
@@ -73,7 +73,7 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
               <TableCell>
                 <Chip
                   label={
-                    <Typography color={theme.palette.primary.chipTextError} variant='h4'>
+                    <Typography color={theme.palette.primary.chipTextError} variant='h5'>
                       {x.errorMsg}
                     </Typography>
                   }

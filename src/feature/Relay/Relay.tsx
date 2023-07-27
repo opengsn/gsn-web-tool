@@ -4,7 +4,7 @@ import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Divider, Typography } from '../../components/atoms'
+import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
@@ -62,7 +62,7 @@ export default function Relay() {
                   p: 5
                 })}
               >
-                <Typography variant='h5' fontWeight={600}>
+                <Typography variant='h6' fontWeight={600}>
                   Relay Hub:
                 </Typography>
                 &nbsp;

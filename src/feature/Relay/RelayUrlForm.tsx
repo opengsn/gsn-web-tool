@@ -91,7 +91,7 @@ export default function RelayUrlForm() {
     return (
       <Box pt={8} textAlign='center' mx='auto' width={'900px'}>
         <Box mb={8}>
-          <Typography variant={'h4'}>Relay URL</Typography>
+          <Typography variant={'h5'}>Relay URL</Typography>
         </Box>
         <Box mb='20px' textAlign='start'>
           <Typography variant={'body1'}>{texts.relayUrl.description}</Typography>

@@ -8,7 +8,7 @@ export interface IRelayVersion {
 export function RelayVersion({ version }: IRelayVersion) {
   const theme = useTheme()
   return (
-    <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+    <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
       {version.replace(/\+opengsn.*/, '')}
     </Typography>
   )

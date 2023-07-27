@@ -24,13 +24,13 @@ export default function StakingToken({ stakingToken, chainId, explorerLink }: st
   const BalanceData = () => {
     if (address !== undefined) {
       return (
-        <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           Balance: <b>{stakingTokenBalance?.formatted ?? '0.0'}</b> {stakingTokenBalance?.symbol}
         </Typography>
       )
     } else {
       return (
-        <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           Balance: <b>0.0</b>
         </Typography>
       )
@@ -40,19 +40,19 @@ export default function StakingToken({ stakingToken, chainId, explorerLink }: st
   return (
     <TableRow>
       <TableCell>
-        <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           Staking Token
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography variant={'h5'} fontFamily={Poppins}>
+        <Typography variant={'h6'} fontFamily={Poppins}>
           {stakingToken || 'Loading..'}
         </Typography>
         &nbsp;
         {stakingToken && <ExplorerLink explorerLink={explorerLink} params={`address/${stakingToken}`} />}
       </TableCell>
       <TableCell>
-        <Typography variant={'h5'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           <BalanceData />
         </Typography>
       </TableCell>

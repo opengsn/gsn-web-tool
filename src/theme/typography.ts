@@ -14,9 +14,12 @@ export const typography: TypographyOptions | ((palette: Palette) => TypographyOp
     fontSize: extraThemeOptions.fontSizes.medium
   },
   h4: {
-    fontSize: extraThemeOptions.fontSizes.small
+    fontSize: extraThemeOptions.fontSizes.regular
   },
   h5: {
+    fontSize: extraThemeOptions.fontSizes.small
+  },
+  h6: {
     fontSize: extraThemeOptions.fontSizes.xSmall
   }
 }

@@ -41,13 +41,19 @@ export default function Funder({ success }: IProps) {
   const stakeManagerAddress = stakeManagerAddressData as any
 
   if (stakeManagerAddress === undefined) {
-    return <Alert severity='error'>Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem</Alert>
+    return (
+      <Alert severity='error'>
+        <Typography variant='h6'>
+          Problem fetching data from RPC. Is wallet connected? Refreshing the page might solve the problem
+        </Typography>
+      </Alert>
+    )
   }
 
   if (success ?? false) {
     return (
       <>
-        <Typography variant='body2' color={'grey.600'}>
+        <Typography variant='h6' color={'grey.600'}>
           Relay funded with {funds} ETH
         </Typography>
         <CopyHash copyValue={hash} />

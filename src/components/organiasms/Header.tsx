@@ -36,16 +36,16 @@ const Header: FC = () => {
               placement='bottom-end'
               title={
                 <>
-                  <Typography variant='h5' fontWeight={700}>
+                  <Typography variant='h6' fontWeight={700}>
                     Beta 3.0 Version
                   </Typography>
                   <br />
-                  <Typography variant='h5' fontWeight={400} color={theme.palette.primary.mainBrightWhite}>
+                  <Typography variant='h6' fontWeight={400} color={theme.palette.primary.mainBrightWhite}>
                     This is the status page of the new GSN v3.0.0-beta.3 network. For the previous GSN v2 network see
                   </Typography>
                   &nbsp;
                   <Link href='https://relays-v2.opengsn.org/' textDecorationColor={theme.palette.primary.mainCTA}>
-                    <Typography variant='h5' fontWeight={400} color={theme.palette.primary.mainCTA}>
+                    <Typography variant='h6' fontWeight={400} color={theme.palette.primary.mainCTA}>
                       here
                     </Typography>
                   </Link>

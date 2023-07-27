@@ -50,7 +50,7 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
                 icon={icon}
                 label={
                   <Typography
-                    variant='h5'
+                    variant='h6'
                     color={selectedGroup === group ? theme.palette.primary.mainCTA : theme.palette.primary.mainBrightWhite}
                   >
                     {group}

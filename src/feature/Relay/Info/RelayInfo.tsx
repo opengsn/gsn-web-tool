@@ -32,17 +32,17 @@ function RelayInfo({ showAllInfo }: IProps) {
     <TableHead>
       <TableRow>
         <TableCell width='35%'>
-          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
+          <Typography fontWeight={500} variant={'h5'} fontFamily={Poppins} opacity={0.8}>
             Name
           </Typography>
         </TableCell>
         <TableCell width='45%'>
-          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
+          <Typography fontWeight={500} variant={'h5'} fontFamily={Poppins} opacity={0.8}>
             Value
           </Typography>
         </TableCell>
         <TableCell width='20%'>
-          <Typography fontWeight={500} variant={'h4'} fontFamily={Poppins} opacity={0.8}>
+          <Typography fontWeight={500} variant={'h5'} fontFamily={Poppins} opacity={0.8}>
             Extra
           </Typography>
         </TableCell>

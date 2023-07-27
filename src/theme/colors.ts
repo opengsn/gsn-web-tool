@@ -34,6 +34,7 @@ type primaryColors =
   | 'tableRowHover'
   | 'copyButtonBG'
   | 'relayHubBG'
+  | 'alertInfoBG'
 
 type IPrimary = Record<primaryColors, HEX | string>
 
@@ -53,7 +54,8 @@ const primary: IPrimary = {
   chipTextPending: '#FFC107',
   tableRowHover: '#2D3337',
   copyButtonBG: '#84888A',
-  relayHubBG: '#383D41'
+  relayHubBG: '#383D41',
+  alertInfoBG: '#47edf826'
 }
 
 declare module '@mui/material/styles' {
@@ -73,6 +75,7 @@ declare module '@mui/material/styles' {
     tableRowHover: string
     copyButtonBG: string
     relayHubBG: string
+    alertInfoBG: string
   }
 }
 

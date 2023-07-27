@@ -37,7 +37,7 @@ function Balance({ address, chainId }: ManagerBalanceProps) {
   }
 
   return (
-    <Typography variant='h5' color={theme.palette.primary.mainBrightWhite}>
+    <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
       {content}
     </Typography>
   )
