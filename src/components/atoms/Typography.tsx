@@ -2,21 +2,7 @@ import { FC, ReactNode } from 'react'
 import { Typography as Typo } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
-type VariantType =
-  | 'body1'
-  | 'body2'
-  | 'button'
-  | 'caption'
-  | 'h1'
-  | 'h2'
-  | 'h3'
-  | 'h4'
-  | 'h5'
-  | 'h6'
-  | 'inherit'
-  | 'overline'
-  | 'subtitle1'
-  | 'subtitle2'
+type VariantType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body2' | 'body1'
 
 interface ITypographyBase {
   color?: string

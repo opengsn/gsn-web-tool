@@ -95,7 +95,7 @@ const RegistrationInputWithTitle: FC<IProps> = ({
       <Box width='220px' mb={10}>
         <Button.CTA disabled={isLoading || isLoadingForTransaction || isSuccess || disabled} onClick={onClick} text={renderButtonText()} />
         {isLoading && (
-          <Alert severity='info' icon={<Icon.Info/>}>
+          <Alert severity='info' icon={<Icon.Info />}>
             {waitingForApproveText}
           </Alert>
         )}

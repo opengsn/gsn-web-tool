@@ -27,7 +27,7 @@ const Icon = {
   Info: (props: { fill?: string, width?: string, height?: string }) => <Info {...props} />,
   Token,
   CopyToClipboard,
-  Redirect: (props: { width?: string, height?: string }) => <Redirect {...props} />,
+  Redirect: (props: { width?: string, height?: string, fill?: string }) => <Redirect {...props} />,
   Question,
   Ethereum,
   Optimism,

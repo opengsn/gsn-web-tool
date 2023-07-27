@@ -14,12 +14,13 @@ interface IStep {
 const Step: FC<IStep> = ({ children, title, step, expanded, success }) => {
   const theme = useTheme()
   return (
-    <Card>
+    <Card success={success}>
       <Box
         display='flex'
         flexDirection={expanded ? 'column' : 'row'}
         alignItems={expanded ? 'start' : 'center'}
-        p={15}
+        flexWrap='wrap'
+        p={10}
         bgcolor={'primary.cardBG'}
       >
         <Box mr={2}>
