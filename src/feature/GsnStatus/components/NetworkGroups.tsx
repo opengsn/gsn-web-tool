@@ -1,8 +1,14 @@
 import { useAppSelector } from '../../../hooks'
 import { INetwork } from '../networkListSlice'
-import { Box, Icon, Typography, GroupChip } from '../../../components/atoms'
+import { Box, Typography, GroupChip } from '../../../components/atoms'
 import { Dispatch, SetStateAction } from 'react'
 import { useTheme } from '@mui/material'
+import optimismIcon from '../../../assets/icons/networks/optimism.svg'
+import ethereumIcon from '../../../assets/icons/networks/ethereum.svg'
+import avalancheIcon from '../../../assets/icons/networks/avalanche.svg'
+import polygonIcon from '../../../assets/icons/networks/polygon.svg'
+import binanceIcon from '../../../assets/icons/networks/binance.svg'
+import arbitrumIcon from '../../../assets/icons/networks/arbitrum.svg'
 
 interface NetGroup {
   [key: string]: INetwork[]
@@ -13,17 +19,17 @@ interface NetworkLinksNewProps {
   selectedGroup?: string
 }
 
-export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: NetworkLinksNewProps) {
-  const icons = [
-    { key: 'Ethereum', icon: <Icon.Ethereum /> },
-    { key: 'Optimism', icon: <Icon.Optimism /> },
-    { key: 'Arbitrum', icon: <Icon.Arbitrum /> },
-    { key: 'Other', icon: <></> },
-    { key: 'Avalanche', icon: <Icon.Avalanche /> },
-    { key: 'Binance', icon: <Icon.Binance /> },
-    { key: 'Polygon', icon: <Icon.Polygon /> }
-  ]
+const icons = [
+  { key: 'Ethereum', icon: ethereumIcon },
+  { key: 'Optimism', icon: optimismIcon },
+  { key: 'Arbitrum', icon: arbitrumIcon },
+  { key: 'Other' },
+  { key: 'Avalanche', icon: avalancheIcon },
+  { key: 'Binance', icon: binanceIcon },
+  { key: 'Polygon', icon: polygonIcon }
+]
 
+export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: NetworkLinksNewProps) {
   const theme = useTheme()
   const networks = useAppSelector((state) => state.networkList.networks)
   const networkArray = Object.values(networks)
@@ -36,7 +42,7 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
       }),
       {}
     )
-  console.log(netGroups)
+
   return (
     <Box display='flex' gap={3}>
       {Object.keys(netGroups)
@@ -47,7 +53,7 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
           return (
             <Box key={group}>
               <GroupChip
-                icon={icon}
+                icon={icon ? <img src={icon} alt='test' /> : <></>}
                 label={
                   <Typography
                     variant='h6'

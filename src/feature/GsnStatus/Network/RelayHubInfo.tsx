@@ -1,5 +1,5 @@
 /* eslint-disable multiline-ternary */
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useBlockNumber, useContractRead, useProvider } from 'wagmi'
 
 import { BigNumber, Contract, utils } from 'ethers'
@@ -113,7 +113,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
                 {stakingTokens.map((foundToken: IFoundToken, index: number) => {
                   const lastItem = index === stakingTokens.length - 1
                   return (
-                    <>
+                    <Fragment key={index}>
                       <TokenValueInfo
                         token={foundToken.token}
                         minimumStake={foundToken.minimumStake}
@@ -121,7 +121,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
                         key={foundToken.token}
                       />
                       {lastItem ? null : ', '}
-                    </>
+                    </Fragment>
                   )
                 })}
               </Typography>

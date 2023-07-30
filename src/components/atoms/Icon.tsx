@@ -9,12 +9,6 @@ import { ReactComponent as Token } from '../../assets/icons/token.svg'
 import { ReactComponent as CopyToClipboard } from '../../assets/icons/copy-to-clipboard.svg'
 import { ReactComponent as Redirect } from '../../assets/icons/redirect.svg'
 import { ReactComponent as Question } from '../../assets/icons/question.svg'
-import { ReactComponent as Ethereum } from '../../assets/icons/networks/ethereum.svg'
-import { ReactComponent as Optimism } from '../../assets/icons/networks/optimism.svg'
-import { ReactComponent as Arbitrum } from '../../assets/icons/networks/arbitrum.svg'
-import { ReactComponent as Avalanche } from '../../assets/icons/networks/avalanche.svg'
-import { ReactComponent as Binance } from '../../assets/icons/networks/binance.svg'
-import { ReactComponent as Polygon } from '../../assets/icons/networks/polygon.svg'
 
 const Icon = {
   PlusCircleFill: (props: { fill?: string }) => <PlusCircleFill {...props} />,
@@ -28,13 +22,7 @@ const Icon = {
   Token,
   CopyToClipboard,
   Redirect: (props: { width?: string, height?: string, fill?: string }) => <Redirect {...props} />,
-  Question,
-  Ethereum,
-  Optimism,
-  Arbitrum,
-  Avalanche,
-  Binance,
-  Polygon
+  Question
 }
 
 export default Icon
