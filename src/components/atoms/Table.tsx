@@ -12,16 +12,22 @@ import {
 interface IProps {
   children: ReactNode
   width?: string
+  onClick?: () => void
 }
 
 const Table: FC<IProps> = ({ children }) => {
   return <MuiTable>{children}</MuiTable>
 }
 
-const TableRowBase = styled(MuiRowTable)<IProps>(({ theme }) => ({}))
+const TableRowBase = styled(MuiRowTable)<IProps>(({ theme, onClick }) => ({
+  cursor: onClick ? 'pointer' : 'default',
+  '&:hover': onClick && {
+    backgroundColor: theme.palette.primary.tableRowHover
+  }
+}))
 
-export const TableRow: FC<IProps> = ({ children }) => {
-  return <TableRowBase>{children}</TableRowBase>
+export const TableRow: FC<IProps> = ({ children, onClick }) => {
+  return <TableRowBase onClick={onClick}>{children}</TableRowBase>
 }
 
 const TableHeadBase = styled(MuiTableHead)(({ theme }) => ({}))
@@ -30,8 +36,12 @@ export const TableHead: FC<IProps> = ({ children }) => {
   return <TableHeadBase>{children}</TableHeadBase>
 }
 
-const TableCellBase = styled(MuiTableCell)(({ theme }) => ({
-  padding: '5px'
+const TableCellBase = styled(MuiTableCell, {
+  shouldForwardProp: (prop) => prop !== 'width'
+})(({ theme, width }) => ({
+  padding: '5px',
+  borderColor: theme.palette.primary.cardOutline,
+  width: width ?? 'auto'
 }))
 
 export const TableCell: FC<IProps> = ({ children, width }) => {
@@ -43,7 +53,8 @@ export const TableContainer: FC<IProps> = ({ children }) => {
     <MuiTableContainer
       component={Paper}
       sx={{
-        p: 4
+        bgcolor: 'primary.cardBG',
+        boxShadow: 'none'
       }}
     >
       {children}

@@ -7,7 +7,7 @@ import StakeManager from '../../../../../contracts/StakeManager.json'
 import { useAppSelector, useLocalStorage } from '../../../../../hooks'
 import { useDefaultStateSwitchers } from '../registerRelayHooks'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
-import { Alert, Box } from '../../../../../components/atoms'
+import { Alert, Box, Typography } from '../../../../../components/atoms'
 import CopyHash from '../../../../../components/atoms/CopyHash'
 import { HashType, Hashes } from '../../../../../types/Hash'
 import ExplorerLink from '../ExplorerLink'
@@ -107,7 +107,9 @@ export default function Staker({ success }: IProps) {
       {prepareStakeTxError !== null && (
         <Box width='100%'>
           <Alert severity='error'>
-            Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}
+            <Typography variant='h6' fontWeight={600}>
+              Account is not prepared for staking. Please try increasing allowance - {prepareStakeTxError.message}
+            </Typography>
           </Alert>
         </Box>
       )}

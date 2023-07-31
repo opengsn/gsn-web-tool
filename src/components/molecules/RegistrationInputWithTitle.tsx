@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import React, { FC } from 'react'
-import { Alert, Box, Button, TextField, Typography } from '../atoms'
+import React, { FC, ReactNode } from 'react'
+import { Alert, Box, Button, Divider, Icon, TextField, Typography } from '../atoms'
 import { TextFieldType } from '../atoms/TextField'
 import { formatMetaMaskError } from '../../utils'
 import metamaskNonceResetImage from '../../assets/images/metamask_nonce_reset.jpg'
+import { useTheme } from '@mui/material'
 
 export const waitingForApproveText = 'Use your wallet'
 
@@ -20,7 +21,8 @@ interface IProps {
   value?: string
   placeholder?: string
   isLoadingForTransaction?: boolean
-  warningAlert?: string
+  warningAlert?: ReactNode
+  disabled?: boolean
 }
 
 const RegistrationInputWithTitle: FC<IProps> = ({
@@ -36,8 +38,10 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   label,
   placeholder,
   isLoadingForTransaction,
-  warningAlert
+  warningAlert,
+  disabled
 }) => {
+  const theme = useTheme()
   const renderButtonText = () => {
     if (isLoadingForTransaction || isSuccess) {
       return 'Processing...'
@@ -51,24 +55,33 @@ const RegistrationInputWithTitle: FC<IProps> = ({
   const isNonceError = error?.includes('Nonce too high')
 
   return (
-    <Box my='10px'>
-      <Box mb='5px'>
-        <Typography variant={'subtitle2'}>{title}</Typography>
+    <Box>
+      <Box mt={5}>
+        <Typography variant={'h5'} fontWeight={600}>
+          {title}
+        </Typography>
+      </Box>
+      <Box mt={10} mb={7}>
+        <Divider />
       </Box>
       {label != null && (
-        <Box>
-          <Typography variant='body2'>{label}</Typography>
+        <Box mb={2}>
+          <Typography variant='h4' color={theme.palette.primary.mainCTA}>
+            {label}
+          </Typography>
         </Box>
       )}
       {warningAlert != null && (
         <Box mb={'10px'} width='400px'>
           <Alert severity='warning'>
-            <Typography variant='body2'>{warningAlert}</Typography>
+            <Typography variant='h6' fontWeight={300}>
+              {warningAlert}
+            </Typography>
           </Alert>
         </Box>
       )}
       {onChange != null && (
-        <Box width='400px' mb='10px'>
+        <Box width='400px' mb={10}>
           <TextField
             type={type}
             onChange={(e) => {
@@ -76,22 +89,26 @@ const RegistrationInputWithTitle: FC<IProps> = ({
             }}
             value={value}
             placeholder={placeholder}
+            min={0}
+            step={0.5}
           />
         </Box>
       )}
-      <Box width='220px' mb='10px'>
-        <Button.Contained disabled={isLoading || isLoadingForTransaction || isSuccess} onClick={onClick} size='large'>
-          <Typography variant={'body2'}>{renderButtonText()}</Typography>
-        </Button.Contained>
+      <Box width='220px' mb={10}>
+        <Button.CTA disabled={isLoading || isLoadingForTransaction || isSuccess || disabled} onClick={onClick} text={renderButtonText()} />
         {isLoading && (
-          <Alert severity='info' icon={false}>
-            {waitingForApproveText}
-          </Alert>
+          <Box mt={5}>
+            <Alert severity='info' icon={<Icon.Info />}>
+              <Typography variant='h6'>{waitingForApproveText}</Typography>
+            </Alert>
+          </Box>
         )}
       </Box>
       {error && (
         <Alert severity='error'>
-          <Typography variant='body2'>{formatMetaMaskError(error)}</Typography>
+          <Typography variant='h6' fontWeight={600}>
+            {formatMetaMaskError(error)}
+          </Typography>
           <br />
           {isNonceError && <Box mt={3} component='img' src={metamaskNonceResetImage} alt='Nonce Error' width='800px' />}
         </Alert>

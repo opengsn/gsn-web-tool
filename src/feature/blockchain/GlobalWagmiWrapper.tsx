@@ -16,6 +16,7 @@ import { ChainWithGsn } from '../../types'
 import { fetchNetworks } from '../GsnStatus/networkListSlice'
 import { getNetworks } from './networks'
 import { Box } from '../../components/atoms'
+import Header from '../../components/organiasms/Header'
 
 export default function GlobalWagmiWarpper() {
   const path = useLocation().pathname
@@ -26,7 +27,6 @@ export default function GlobalWagmiWarpper() {
     const fetchNets = async () => {
       try {
         if (gsnNetworks.length === 0) {
-          console.log(gsnNetworks)
           const networksForWagmi: ChainWithGsn[] = await getNetworks()
           if (path === ROUTES.List) dispatch(fetchNetworks({ networks: networksForWagmi }))
           setGsnNetworks(networksForWagmi)
@@ -38,7 +38,7 @@ export default function GlobalWagmiWarpper() {
     fetchNets().catch((e) => {
       console.error(e)
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, gsnNetworks.length])
 
   if (gsnNetworks.length === 0) return <>loading...</>
@@ -82,7 +82,8 @@ export default function GlobalWagmiWarpper() {
 
   return (
     <WagmiConfig client={client}>
-      <Box p='8px'>
+      <Header />
+      <Box>
         <Routes>
           <Route path={ROUTES.List} element={<GsnRelaysView />} />
           <Route path={ROUTES.DetailedView} element={<RelayDetailedView />} />

@@ -26,24 +26,22 @@ export default function RegisterRelay({ isOwner }: { isOwner: boolean }) {
       <Box
         width={{
           xs: '95%',
-          md: '300px'
+          md: '120px'
         }}
         mx='auto'
-        mt='25px'
+        mt='60px'
       >
-        <Button.Contained
-          size='large'
+        <Button.CTA
           onClick={handleShowRegisterRelay}
           aria-controls='register-relay-form'
           aria-expanded={showRegisterRelay}
           disabled={!isOwner}
-        >
-          Register
-        </Button.Contained>
+          text='Register'
+        />
         {!isOwner && (
           <Box>
             <Alert severity='warning'>
-              <Typography variant='subtitle2'>Connected wallet address is not the configured Relay Server owner address</Typography>
+              <Typography variant='h5'>Connected wallet address is not the configured Relay Server owner address</Typography>
             </Alert>
           </Box>
         )}
@@ -58,14 +56,12 @@ export default function RegisterRelay({ isOwner }: { isOwner: boolean }) {
   }, [address, dispatch, provider])
 
   return (
-    <Box my='25px'>
+    <Box my='60px'>
       {!showRegisterRelay && <CollapseButton />}
       <Collapse in={!!showRegisterRelay}>
-        <Box textAlign='center' mb='25px'>
-          <Typography variant={'h4'} fontWeight={600}>
-            Registration
-          </Typography>
-        </Box>
+        {/* <Box textAlign='center' mb='25px'>
+          <Typography variant={'h2'}>Registration</Typography>
+        </Box> */}
         <Box>{showRegisterRelay && <RegisterFlowSteps currentStep={currentStep} />}</Box>
       </Collapse>
     </Box>

@@ -15,7 +15,7 @@ const Header = () => {
       <Box component='img' src='favicon.ico' height='50px' alt='icon' />
       <Box mx={1}>
         <Box>
-          <Typography variant='h4'>GSN (v3.0.0-beta.3) Relay Servers</Typography>
+          <Typography variant='h5'>GSN (v3.0.0-beta.3) Relay Servers</Typography>
         </Box>
         <Box>
           <Typography variant='body2'>

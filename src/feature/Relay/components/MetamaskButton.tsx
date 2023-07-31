@@ -11,19 +11,25 @@ export default function MetamaskButton() {
         md: '300px'
       }}
       mx='auto'
-      mt='25px'
-      display='flex'
+      mt='60px'
     >
       {connectors.map((connector) => (
-        <Button.Contained disabled={!connector.ready} key={connector.id} onClick={() => connect({ connector })}>
-          <Typography variant={'body2'}>
-            Connect with {connector.name}
-            {!connector.ready && ' (unsupported)'}
-            {connector.id === pendingConnector?.id && ' (connecting)'}
-          </Typography>
-        </Button.Contained>
+        <Button.CTA
+          disabled={!connector.ready}
+          key={connector.id}
+          onClick={() => connect({ connector })}
+          text={`Connect with ${connector.name} ${!connector.ready ? ' (unsupported)' : ''} ${
+            connector.id === pendingConnector?.id ? ' (connecting)' : ''
+          }`}
+        />
       ))}
-      {error != null && <Alert severity='error'>{error.message}</Alert>}
+      {error != null && (
+        <Alert severity='error'>
+          <Typography variant='h6' fontWeight={600}>
+            {error.message}
+          </Typography>
+        </Alert>
+      )}
     </Box>
   )
 }

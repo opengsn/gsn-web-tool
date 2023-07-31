@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { ethers } from 'ethers'
 import { useContext, useEffect, useState } from 'react'
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
@@ -9,7 +10,7 @@ import { TokenContext } from '../TokenContextWrapper'
 import iErc20TokenAbi from '../../../../../../contracts/iERC20TokenAbi.json'
 import RegistrationInputWithTitle from '../../../../../../components/molecules/RegistrationInputWithTitle'
 import { jumpToStep } from '../../registerRelaySlice'
-import { Alert } from '../../../../../../components/atoms'
+import { Alert, Typography } from '../../../../../../components/atoms'
 import CopyHash from '../../../../../../components/atoms/CopyHash'
 import { HashType, Hashes } from '../../../../../../types/Hash'
 import ExplorerLink from '../../ExplorerLink'
@@ -104,15 +105,31 @@ export default function Approver({ success }: IProps) {
             isLoading={isLoading || prepareApproveTxIsLoading || currentAllowanceIsLoading || approve == null}
             isSuccess={isSuccess}
             error={approveTxError?.message}
-            warningAlert='If using MetaMask, please do not change the approval amount. Choose "Use Default" to issue the approval'
+            warningAlert={
+              <>
+                If using <b>MetaMask</b>, please do not change the approval amount. Choose "Use Default" to issue the approval
+              </>
+            }
             isLoadingForTransaction={isLoadingForTransaction}
             onClick={() => {
               approve?.()
             }}
           />
         )}
-        {currentAllowanceIsError && <Alert severity='error'>Error fetching token allowance</Alert>}
-        {prepareApproveTxIsError && <Alert severity='error'>Error preparing approve transaction. - {prepareApproveTxError?.message}</Alert>}
+        {currentAllowanceIsError && (
+          <Alert severity='error'>
+            <Typography variant='h6' fontWeight={600}>
+              Error fetching token allowance
+            </Typography>
+          </Alert>
+        )}
+        {prepareApproveTxIsError && (
+          <Alert severity='error'>
+            <Typography variant='h6' fontWeight={600}>
+              Error preparing approve transaction. - {prepareApproveTxError?.message}
+            </Typography>
+          </Alert>
+        )}
       </>
     )
   }

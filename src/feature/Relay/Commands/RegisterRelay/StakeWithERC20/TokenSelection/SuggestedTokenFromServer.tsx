@@ -1,41 +1,33 @@
 import React, { FC } from 'react'
-import { Button, Icon, Typography, Box, ButtonType } from '../../../../../../components/atoms'
+import { Typography, Box } from '../../../../../../components/atoms'
 import TokenSelectOption from '../TokenSelectOption'
-import { ChainWithGsn } from '../../../../../../types'
 
 interface IProps {
   chainId: number
-  chain: ChainWithGsn
+  supportedTokens: any // TODO: type
   getTokenAddress: any
   handleChangeToken: (token: string) => void
+  explorerLink: string | null
 }
 
-const SuggestedTokenFromServer: FC<IProps> = ({ chainId, chain, getTokenAddress, handleChangeToken }) => {
+const SuggestedTokenFromServer: FC<IProps> = ({ chainId, supportedTokens, getTokenAddress, handleChangeToken, explorerLink }) => {
   return (
     <Box>
-      <Typography>Suggested Tokens from server</Typography> &nbsp;
-      <Button.Icon onClick={() => {}}>
-        <Icon.Info fill={'black'} width='16px' height='16px' />
-      </Button.Icon>
       <Box>
-        <Typography variant='body2'>Select token from list:</Typography>
+        <Typography variant='h5'>Select token from list:</Typography>
       </Box>
-      {chain.stakingTokens?.map((stakingToken) => {
+      {supportedTokens?.map((token: any) => {
         return (
           <TokenSelectOption
-            key={stakingToken}
-            address={stakingToken}
+            key={token}
+            address={token.address}
             chainId={chainId}
             handleChangeToken={handleChangeToken}
-            checked={getTokenAddress.values.token === stakingToken}
+            checked={getTokenAddress.values.token === token.address}
+            explorerLink={explorerLink}
           />
         )
       })}
-      <Box width='180px' height='60px' mt='20px'>
-        <Button.Contained type={ButtonType.SUBMIT}>
-          <Typography variant={'subtitle2'}>Fetch token</Typography>
-        </Button.Contained>
-      </Box>
     </Box>
   )
 }
