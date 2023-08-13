@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
-import { Box, Card, Icon, Typography } from '../../../../components/atoms'
+import { Box, Card, Typography } from '../../../../components/atoms'
 import { RegisterSteps } from './RegisterFlowSteps'
-import { colors } from '../../../../theme'
+import { useTheme } from '@mui/material'
 
 interface IStep {
   children: ReactNode
@@ -12,23 +12,23 @@ interface IStep {
 }
 
 const Step: FC<IStep> = ({ children, title, step, expanded, success }) => {
-  const typographyColor = success ? 'success.main' : 'common.black'
+  const theme = useTheme()
   return (
-    <Card>
+    <Card success={success}>
       <Box
         display='flex'
         flexDirection={expanded ? 'column' : 'row'}
         alignItems={expanded ? 'start' : 'center'}
-        p={4}
-        bgcolor={success ? colors.lightGreen : 'common.white'}
+        flexWrap='wrap'
+        p={10}
+        bgcolor={'primary.cardBG'}
       >
         <Box mr={2}>
           <Box display='flex' gap='10px' width='100%' alignItems='center'>
-            {success && <Icon.Success />}
-            <Typography variant={'body1'} fontWeight={600} color={typographyColor}>
+            <Typography variant={'h4'} fontWeight={600} color={theme.palette.primary.white}>
               Step {step + 1}:
             </Typography>
-            <Typography variant={'body1'} fontWeight={500} color={typographyColor}>
+            <Typography variant={'h4'} fontWeight={300} color={theme.palette.primary.mainBrightWhite}>
               {title}
             </Typography>
           </Box>

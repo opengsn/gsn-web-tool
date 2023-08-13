@@ -5,9 +5,9 @@ import { useDefaultStateSwitchers } from '../registerRelayHooks'
 
 import { Box } from '../../../../../components/atoms'
 import { TextFieldType } from '../../../../../components/atoms/TextField'
-import { BigNumber, ethers } from 'ethers'
 import RegistrationInputWithTitle from '../../../../../components/molecules/RegistrationInputWithTitle'
 import { HashType } from '../../../../../types/Hash'
+import { parseEther } from 'ethers/lib/utils.js'
 
 interface IProps {
   hash?: HashType
@@ -16,10 +16,14 @@ interface IProps {
   setListen: React.Dispatch<React.SetStateAction<boolean>>
   relayManagerAddress: string
   handleChangeFunds: (value: string) => void
+  error?: boolean
 }
 
-export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen }: IProps) {
+export default function FundButton({ setHash, funds, handleChangeFunds, hash, relayManagerAddress, setListen, error }: IProps) {
   const defaultStateSwitchers = useDefaultStateSwitchers()
+  const setOwnerErrorMessage = error
+    ? 'Relay Server failed to set it\'s owner on the StakeManager.\nCheck if the funding is sufficient'
+    : undefined
   const { isLoading: isLoadingForTransaction } = useWaitForTransaction({
     hash,
     enabled: !!hash
@@ -32,7 +36,7 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
   } = usePrepareSendTransaction({
     request: {
       to: relayManagerAddress,
-      value: BigNumber.from(ethers.utils.parseEther(funds.toString()))
+      value: parseEther(funds || '0')
     }
   })
 
@@ -45,7 +49,8 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
     sendTransaction: fundRelay,
     isLoading,
     isSuccess,
-    error
+    reset,
+    error: fundError
   } = useSendTransaction({
     ...config,
     ...defaultStateSwitchers,
@@ -54,6 +59,14 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
       setHash(data.hash)
     }
   })
+
+  useEffect(() => {
+    if (error) {
+      reset()
+    }
+  }, [error, reset])
+
+  const disabled = +funds <= 0
 
   return (
     <Box my='10px'>
@@ -64,14 +77,15 @@ export default function FundButton({ setHash, funds, handleChangeFunds, hash, re
         isLoading={isLoading}
         isLoadingForTransaction={isLoadingForTransaction}
         isSuccess={isSuccess}
-        error={prepareFundTxError?.message ?? error?.message}
+        error={prepareFundTxError?.message ?? fundError?.message ?? setOwnerErrorMessage}
         onClick={() => fundRelay?.()}
-        value={(+funds).toString()}
+        value={funds}
         onChange={(value) => {
           handleChangeFunds(value)
         }}
         type={TextFieldType.Number}
         placeholder='Type amount'
+        disabled={disabled}
       />
     </Box>
   )

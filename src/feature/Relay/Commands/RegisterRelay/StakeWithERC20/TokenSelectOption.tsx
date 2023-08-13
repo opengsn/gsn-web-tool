@@ -1,15 +1,14 @@
 import { FC } from 'react'
 import { useToken } from 'wagmi'
 import { Box, Button, Icon, Typography } from '../../../../../components/atoms'
-import { useCopyToClipboard } from '../../../../../hooks'
-import { truncateFromMiddle } from '../../../../../utils'
-import { useNavigate } from 'react-router-dom'
+import BlockExplorerUrl from '../../../../GsnStatus/components/BlockExplorerUrl'
 
 interface IProps {
   address: string
   chainId: number
   handleChangeToken: (address: string) => void
   checked: boolean
+  explorerLink: string | null
 }
 
 const sx = {
@@ -17,13 +16,11 @@ const sx = {
   border: '1px solid black',
   alignItems: 'center',
   width: 'fit-content',
-  paddingX: '10px',
+  padding: '10px',
   borderRadius: '10px'
 }
 
-const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, checked }) => {
-  const [, copyToClipboard] = useCopyToClipboard()
-  const navigate = useNavigate()
+const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, checked, explorerLink }) => {
   const { data: tokenData } = useToken({
     address: address as any,
     chainId
@@ -39,29 +36,16 @@ const TokenSelectOption: FC<IProps> = ({ address, chainId, handleChangeToken, ch
           checked={checked}
         />
       </Box>
+      &nbsp;
       <Box sx={sx}>
-        <Icon.Token />
+        <Icon.Token /> {/* token from json */}
         <Box ml='10px'>
-          <Typography fontWeight={600}>{tokenData?.name ?? 'Token name:'}</Typography>
+          <Typography variant='h5' fontWeight={600}>
+            {tokenData?.name ?? 'Token name:'}
+          </Typography>
         </Box>
-        <Button.Text
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onClick={async () => {
-            await copyToClipboard(address)
-          }}
-        >
-          <Box component='span' marginRight='15px'>
-            <Typography>{truncateFromMiddle(address, 15)}</Typography>
-          </Box>
-          <Icon.CopyToClipboard />
-        </Button.Text>
-        <Button.Icon
-          onClick={() => {
-            navigate(`https://etherscan.io/address/${address}`)
-          }}
-        >
-          <Icon.Redirect />
-        </Button.Icon>
+        &nbsp;
+        <BlockExplorerUrl address={address} url={explorerLink ? `${explorerLink}/${address}` : undefined} />
       </Box>
     </Box>
   )

@@ -2,6 +2,8 @@ import { useAccount, useBalance } from 'wagmi'
 import { TableCell, TableRow, Typography } from '../../../../components/atoms'
 import ExplorerLink from '../../Commands/RegisterRelay/ExplorerLink'
 import { constants } from 'ethers'
+import { Poppins } from '../../../../theme/font'
+import { useTheme } from '@mui/material'
 
 interface stakingTokenProps {
   stakingToken: string
@@ -17,17 +19,18 @@ export default function StakingToken({ stakingToken, chainId, explorerLink }: st
     token: stakingToken as any,
     chainId
   })
+  const theme = useTheme()
 
   const BalanceData = () => {
     if (address !== undefined) {
       return (
-        <Typography variant='subtitle2'>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           Balance: <b>{stakingTokenBalance?.formatted ?? '0.0'}</b> {stakingTokenBalance?.symbol}
         </Typography>
       )
     } else {
       return (
-        <Typography variant='subtitle2'>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           Balance: <b>0.0</b>
         </Typography>
       )
@@ -37,15 +40,19 @@ export default function StakingToken({ stakingToken, chainId, explorerLink }: st
   return (
     <TableRow>
       <TableCell>
-        <Typography variant={'subtitle2'}>Staking Token</Typography>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+          Staking Token
+        </Typography>
       </TableCell>
       <TableCell>
-        <Typography variant={'subtitle2'}>{stakingToken || 'Loading..'}</Typography>
+        <Typography variant={'h6'} fontFamily={Poppins}>
+          {stakingToken || 'Loading..'}
+        </Typography>
         &nbsp;
         {stakingToken && <ExplorerLink explorerLink={explorerLink} params={`address/${stakingToken}`} />}
       </TableCell>
       <TableCell>
-        <Typography variant={'subtitle2'}>
+        <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
           <BalanceData />
         </Typography>
       </TableCell>

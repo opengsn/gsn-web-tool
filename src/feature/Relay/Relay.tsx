@@ -4,7 +4,7 @@ import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Divider, Typography } from '../../components/atoms'
+import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
@@ -12,6 +12,7 @@ import RelayCommands from './Commands/Commands'
 import { PingResponse } from '../../types/PingResponse'
 import ChainIdHandler from './components/ChainIdHandler'
 import SuccessModal from '../../components/molecules/SuccessModal'
+import BlockExplorerUrl from '../GsnStatus/components/BlockExplorerUrl'
 
 export default function Relay() {
   const dispatch = useAppDispatch()
@@ -22,7 +23,6 @@ export default function Relay() {
   const chainId = Number(relayData.chainId)
   const { chain } = useNetwork()
   const [expanded, setExpanded] = useState<boolean>(false)
-  const variant = 'body1'
   const [loading, setLoading] = useState<boolean>(false)
 
   const [searchParams] = useSearchParams()
@@ -40,44 +40,35 @@ export default function Relay() {
 
   useEffect(() => {
     fetchData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [relay.relayUrl, searchParams, dispatch, relay.errorMsg, relayDataFetched])
 
   const connectedToWrongChainId = chain?.id !== undefined && chain?.id !== chainId && relayDataFetched
 
   if (relayDataFetched) {
     return (
-      <Box width='95%' mx='auto' py='25px'>
-        <Box mb='25px' textAlign='center'>
-          <Typography variant='h4' fontWeight={600}>
-            Relay server info
-          </Typography>
-        </Box>
+      <Box width='95%' mx='auto' py='20px'>
         <Accordion expanded={expanded}>
           <AccordionSummary
             onChange={(event) => {
               setExpanded((prev) => !prev)
             }}
+            isManage={true}
           >
             <Box width='100%' p='10px'>
               <Box
-                display='flex'
-                flexDirection={{
-                  xs: 'column',
-                  md: 'row'
-                }}
-                sx={{ overflowWrap: 'anywhere' }}
+                sx={(theme) => ({
+                  bgcolor: theme.palette.primary.relayHubBG,
+                  p: 5
+                })}
               >
-                <Typography fontWeight={600} variant={variant}>
-                  Relay address:
+                <Typography variant='h6' fontWeight={600}>
+                  Relay Hub:
                 </Typography>
                 &nbsp;
-                <Typography variant={variant}>{relay.relayUrl}</Typography>
+                <BlockExplorerUrl address={relay.relayUrl} url={relay.relayUrl} truncate={false} />
               </Box>
-              <Box my='10px'>
-                <Divider />
-              </Box>
-              <Box>
+              <Box mt='15px'>
                 <RelayInfo showAllInfo={expanded} />
               </Box>
             </Box>
@@ -89,5 +80,17 @@ export default function Relay() {
     )
   }
 
-  return loading ? <CircularProgress /> : relayData ? null : <Alert severity='error'>Error initializing relay view</Alert>
+  return loading
+    ? (
+    <CircularProgress />
+      )
+    : relayData
+      ? null
+      : (
+    <Alert severity='error'>
+      <Typography variant='h6' fontWeight={600}>
+        Error initializing relay view
+      </Typography>
+    </Alert>
+        )
 }

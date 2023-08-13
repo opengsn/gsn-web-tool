@@ -1,32 +1,15 @@
-import { useState } from 'react'
-import { Box, Button, Icon, Typography } from '../../../components/atoms'
+import { Box, Link, Typography } from '../../../components/atoms'
+import { useTheme } from '@mui/material'
+import CopyButton from '../../../components/molecules/CopyButton'
 
 interface IProps {
   address: string
   url?: string
+  truncate?: boolean
 }
 
-export default function BlockExplorerUrl({ address, url }: IProps) {
-  const [copied, setCopied] = useState(false)
-  const copyToClipBoard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 8000)
-    } catch (err) {
-      setCopied(false)
-    }
-  }
-
-  const copyButton = (
-    <Button.Icon
-      onClick={() => {
-        copyToClipBoard(address).catch(console.error)
-      }}
-    >
-      {copied ? <Icon.ClipboardCheck /> : <Icon.Clipboard />}
-    </Button.Icon>
-  )
+export default function BlockExplorerUrl({ address, url, truncate = true }: IProps) {
+  const theme = useTheme()
 
   const firstFourCharsInAddr = address.slice(2, 6)
   const lastFourCharsInAddr = address.slice(-4)
@@ -35,18 +18,27 @@ export default function BlockExplorerUrl({ address, url }: IProps) {
   let addressElem
   if (url !== undefined) {
     addressElem = (
-      <a href={`${url}/address/${address}`} target='_blank' rel='noreferrer'>
-        <span>{truncated}</span>
-      </a>
+      <Link href={url} textDecorationColor={theme.palette.primary.mainCTA}>
+        <Typography variant='h6' color={theme.palette.primary.mainCTA}>
+          {truncate ? truncated : address}
+        </Typography>
+      </Link>
     )
   } else {
-    addressElem = <span>{truncated}</span>
+    addressElem = (
+      <Typography variant='h6' color={theme.palette.primary.mainCTA}>
+        {truncate ? truncated : address}
+      </Typography>
+    )
   }
 
   return (
-    <Typography variant='body2'>
+    <>
       {addressElem}
-      <Box component='span'>{copyButton}</Box>
-    </Typography>
+      &nbsp;
+      <Box component='span'>
+        <CopyButton copyValue={address} />
+      </Box>
+    </>
   )
 }

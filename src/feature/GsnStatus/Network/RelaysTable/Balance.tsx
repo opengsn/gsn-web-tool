@@ -1,12 +1,21 @@
 import { useBalance } from 'wagmi'
+import { formatNumber } from '../../../../utils'
+import { Typography } from '../../../../components/atoms'
+import { useTheme } from '@mui/material'
 
 export interface ManagerBalanceProps {
   address: string
   chainId: number
 }
 
-function Balance ({ address, chainId }: ManagerBalanceProps) {
-  const { data: balanceData, isError, isSuccess, isLoading } = useBalance({
+function Balance({ address, chainId }: ManagerBalanceProps) {
+  const theme = useTheme()
+  const {
+    data: balanceData,
+    isError,
+    isSuccess,
+    isLoading
+  } = useBalance({
     address: address as any,
     watch: false,
     chainId
@@ -15,19 +24,23 @@ function Balance ({ address, chainId }: ManagerBalanceProps) {
   let content
   switch (true) {
     case isError:
-      content = <span>problem fetching balance data </span>
+      content = 'problem fetching balance data'
       break
     case isLoading:
-      content = <span>Loading...</span>
+      content = 'Loading...'
       break
     case isSuccess:
-      content = <span>{balanceData?.formatted}</span>
+      content = formatNumber(+(balanceData?.formatted ?? 0))
       break
     default:
-      content = <span>error fetching balance</span>
+      content = 'error fetching balance'
   }
 
-  return <div>{content}</div>
+  return (
+    <Typography variant='h6' color={theme.palette.primary.mainBrightWhite}>
+      {content}
+    </Typography>
+  )
 }
 
 export default Balance

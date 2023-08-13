@@ -16,9 +16,10 @@ interface IProps {
   stakeManagerAddress: string
   relayManagerAddress: string
   chainId: number
+  setError: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function SetOwnerListener({ listen, setListen, stakeManagerAddress, relayManagerAddress, chainId }: IProps) {
+export default function SetOwnerListener({ listen, setListen, stakeManagerAddress, relayManagerAddress, chainId, setError }: IProps) {
   const dispatch = useAppDispatch()
   const currentStep = useAppSelector((state) => state.register.step)
   const { address: account } = useAccount()
@@ -48,8 +49,8 @@ export default function SetOwnerListener({ listen, setListen, stakeManagerAddres
 
   useEffect(() => {
     if (listen && account !== undefined && stakeInfo !== undefined && currentStep === 0) {
+      setError(false)
       const { owner } = (stakeInfo as any)[0]
-
       const askIfOwnerIsSet = async () => {
         const sleepCount = 15
         const sleepMs = 5000
@@ -57,7 +58,6 @@ export default function SetOwnerListener({ listen, setListen, stakeManagerAddres
           let i = 0
           while (true) {
             console.debug(`Waiting ${sleepMs}ms ${i}/${sleepCount} for relayer to set (us) as owner`)
-            await sleep(sleepMs)
             const newStakeInfo = await refetch()
             if (newStakeInfo.data === undefined) {
               throw new Error('Failed to refetch StakeManager data')
@@ -68,9 +68,12 @@ export default function SetOwnerListener({ listen, setListen, stakeManagerAddres
               break
             }
             if (sleepCount === i++) {
+              setError(true)
+              console.error('RelayServer failed to set its owner on the StakeManager')
               setListen(false)
-              throw new Error('RelayServer failed to set its owner on the StakeManager')
+              break
             }
+            await sleep(sleepMs)
           }
         }
       }

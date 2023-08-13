@@ -14,7 +14,8 @@ import {
   TableContainer,
   TableRow
 } from '../../../../components/atoms'
-import { colors } from '../../../../theme'
+import { Chip } from '../../../../components/atoms/Chip'
+import { useTheme } from '@mui/material'
 
 interface RelaysTableProps {
   relays: GsnNetworkRelay[]
@@ -22,65 +23,79 @@ interface RelaysTableProps {
 }
 
 export default function RelaysTable({ relays, chain }: RelaysTableProps) {
+  const theme = useTheme()
   const TableHead = () => (
     <MuiTableHead>
       <TableRow>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
-            Url
+        <TableCell width='40%'>
+          <Typography variant='h5' fontWeight={600}>
+            URL
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h5' fontWeight={600}>
             Status
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h5' fontWeight={600}>
             Version
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='15%'>
+          <Typography variant='h5' fontWeight={600}>
             Address
           </Typography>
         </TableCell>
-        <TableCell>
-          <Typography variant='body2' fontWeight={600}>
+        <TableCell width='10%'>
+          <Typography variant='h5' fontWeight={600}>
             Balance
           </Typography>
         </TableCell>
-        <TableCell>{''}</TableCell>
+        <TableCell width='5%'>{''}</TableCell>
       </TableRow>
     </MuiTableHead>
   )
 
   const TableBody = () => {
-    const content = relays.map((x) => {
-      if (x.config !== undefined) {
-        return <RelayLine key={x.manager} relay={x.config} errorMsg={''} url={x.url} blockExplorer={chain.blockExplorers?.default} />
-      } else {
-        return (
-          <TableRow key={x.manager}>
-            <TableCell>
-              <RelayUrl url={x.url} />
-            </TableCell>
-            <TableCell>
-              <Box component='span' color={colors.red}>
-                {x.errorMsg}
-              </Box>
-            </TableCell>
-            <TableCell>
-              <BlockExplorerUrl address={x.manager} url={chain.blockExplorers?.default.url} />
-            </TableCell>
-            <TableCell>
-              <Balance address={x.manager} chainId={chain.id} />
-            </TableCell>
-            <TableCell>{''}</TableCell>
-          </TableRow>
-        )
-      }
-    })
+    const sortedRelays = [...relays]
+    const content = sortedRelays
+      .sort((a, b) => (a.config !== undefined ? -1 : 1))
+      .map((x) => {
+        if (x.config !== undefined) {
+          return <RelayLine key={x.manager} relay={x.config} errorMsg={''} url={x.url} blockExplorer={chain.blockExplorers?.default} />
+        } else {
+          return (
+            <TableRow key={x.manager}>
+              <TableCell>
+                <RelayUrl url={x.url} />
+              </TableCell>
+              <TableCell>
+                <Chip
+                  label={
+                    <Typography color={theme.palette.primary.chipTextError} variant='h5'>
+                      {x.errorMsg}
+                    </Typography>
+                  }
+                  bgcolor={theme.palette.primary.chipBGError}
+                />
+              </TableCell>
+              <TableCell>{''}</TableCell>
+              <TableCell>
+                <BlockExplorerUrl address={x.manager} url={`${chain.blockExplorers?.default.url ?? ''}/address/${x.manager}`} />
+                <br />
+                <br />
+              </TableCell>
+              <TableCell>
+                <Balance address={x.manager} chainId={chain.id} />
+                <br />
+                <br />
+              </TableCell>
+              <TableCell>{''}</TableCell>
+            </TableRow>
+          )
+        }
+      })
 
     return <MuiTableBody>{content}</MuiTableBody>
   }

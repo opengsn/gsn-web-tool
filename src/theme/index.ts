@@ -1,13 +1,17 @@
 import { createTheme } from '@mui/material'
 import { extraThemeOptions } from './extraThemeOptions'
+import { palette } from './colors'
+import { typography } from './typography'
 export { default as colors } from './colors'
 
-const muiSpacingToPixelIndex = 4
+const muiSpacingToPixelIndex = 2
 
-export const spacingSizeArray = [0, 1, 2, 3, 4, 8]
+export const spacingSizeArray = [0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 15]
 
 export const theme = createTheme(
   {
+    typography,
+    palette,
     spacing: (value: number | string) => {
       if (value === 'auto') {
         return 'auto'

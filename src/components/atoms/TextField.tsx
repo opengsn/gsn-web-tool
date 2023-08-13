@@ -18,9 +18,23 @@ interface IProps {
   name?: string
   ref?: RefObject<HTMLInputElement>
   disabled?: boolean
+  min?: number
+  step?: number
 }
 
-const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldType.Text, helperText, error, name, ref, disabled }) => {
+const TextField: FC<IProps> = ({
+  value,
+  onChange,
+  placeholder,
+  type = TextFieldType.Text,
+  helperText,
+  error,
+  name,
+  ref,
+  disabled,
+  min,
+  step
+}) => {
   return (
     <MuiTextField
       value={value}
@@ -29,10 +43,34 @@ const TextField: FC<IProps> = ({ value, onChange, placeholder, type = TextFieldT
       type={type}
       helperText={helperText}
       size='small'
+      sx={{
+        '& .MuiInputBase-root': {
+          color: 'primary.mainBrightWhite',
+          '& fieldset': {
+            borderColor: 'primary.cardOutline'
+          },
+          '&:hover fieldset': {
+            borderColor: 'primary.mainBG'
+          },
+          '&.Mui-focused': {
+            '& fieldset': {
+              borderWidth: '1px',
+              borderColor: 'primary.mainBG'
+            }
+          },
+          '& ::placeholder': {
+            opacity: 0.9
+          }
+        }
+      }}
       error={error}
       name={name}
       ref={ref}
       disabled={disabled}
+      inputProps={{
+        min,
+        step
+      }}
       fullWidth
     />
   )

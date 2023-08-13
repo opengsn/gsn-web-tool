@@ -14,18 +14,20 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
   return (
     <Box>
       <Alert severity='error'>
-        <Box mb='10px'>
-          <Typography variant='body2'>
-            Wrong chain : Wallet is connected to ID #{chain?.id} while the relay is on #{relayChainId}
+        <Box>
+          <Typography variant='h6' fontWeight={600}>
+            Wrong chain : Wallet is connected to ID #{chain?.id} while the relay is on #{relayChainId} &nbsp;
           </Typography>
         </Box>
         {error !== null && (
-          <Box mb='10px'>
-            <Typography variant='body2'>Chain ID check failed: {error?.message}</Typography>
+          <Box my='10px'>
+            <Typography variant='h6' fontWeight={600}>
+              Chain ID check failed: {error?.message}
+            </Typography>
           </Box>
         )}
       </Alert>
-      <Box width='200px'>
+      <Box width='200px' mx='auto'>
         <Box>
           <Button.Contained disabled={isLoading} onClick={() => switchNetwork?.(relayChainId)}>
             {!isLoading ? <>Switch network</> : <>Processing...</>}
@@ -33,7 +35,7 @@ export default function ChainIdHandler({ relayChainId }: chainIdHandlerProps) {
         </Box>
         {isLoading && (
           <Alert severity='info' icon={false}>
-            <Typography variant='body1'>{waitingForApproveText} </Typography>
+            <Typography variant='h6'>{waitingForApproveText} </Typography>
           </Alert>
         )}
       </Box>

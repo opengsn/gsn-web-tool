@@ -1,0 +1,33 @@
+<svg width="32" height="31" viewBox="0 0 32 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="question (1) 1" clip-path="url(#clip0_161_1576)">
+<g id="g687">
+<g id="g689">
+<g id="Clip path group">
+<mask id="mask0_161_1576" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="31">
+<g id="clipPath695">
+<path id="path693" d="M0.5 3.8147e-06H31.5V31H0.5V3.8147e-06Z" fill="white"/>
+</g>
+</mask>
+<g mask="url(#mask0_161_1576)">
+<g id="g691">
+<g id="g697">
+<path id="path699" fill-rule="evenodd" clip-rule="evenodd" d="M17.9456 20.4286C18.4468 20.4286 18.8538 20.8355 18.8538 21.3368C18.8538 21.8381 18.4468 22.245 17.9456 22.245C17.4442 22.245 17.0374 21.8381 17.0374 21.3368C17.0374 20.8355 17.4442 20.4286 17.9456 20.4286Z" fill="#FF971D"/>
+</g>
+<g id="g701">
+<path id="path703" d="M15.0272 12.5817C15.0272 10.9698 16.3336 9.6633 17.9456 9.6633C19.5575 9.6633 20.8639 10.9698 20.8639 12.5817C20.8639 13.7972 20.2564 14.9324 19.2452 15.6065C19.2165 15.6255 19.1878 15.6445 19.1591 15.6639C18.4008 16.1693 17.9456 17.0205 17.9456 17.9315V17.932" stroke="#FF971D" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="g705">
+<path id="path707" d="M6.54106 24.5231C7.38109 23.9297 7.61456 22.7857 7.07418 21.9107C5.93893 20.041 5.29931 17.8444 5.29931 15.5001C5.29931 8.52027 10.9658 2.85381 17.9456 2.85381C24.9253 2.85381 30.5918 8.52027 30.5918 15.5001C30.5918 22.4798 24.9253 28.1462 17.9456 28.1462H1.4082C1.4082 28.1462 4.56584 25.9176 6.54106 24.5231Z" stroke="#FF971D" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_161_1576">
+<rect width="31" height="31" fill="white" transform="translate(0.5)"/>
+</clipPath>
+</defs>
+</svg>

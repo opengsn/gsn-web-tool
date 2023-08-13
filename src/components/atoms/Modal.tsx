@@ -12,11 +12,20 @@ const Modal: FC<IProps> = ({ children, open, onClose }) => {
     <MuiDialog
       open={open}
       onClose={onClose}
-      sx={{
-        textAlign: 'center'
-      }}
+      sx={(theme) => ({
+        textAlign: 'center',
+        '& .MuiDialog-paper': {
+          borderRadius: theme.borderRadius.medium
+        }
+      })}
     >
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        sx={{
+          p: 0
+        }}
+      >
+        {children}
+      </DialogContent>
     </MuiDialog>
   )
 }
