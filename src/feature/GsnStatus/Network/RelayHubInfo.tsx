@@ -92,7 +92,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Typography>
           &nbsp;
         </Box>
-        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrl ?? ''}/address/relayHubAddress`} />
+        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrl ?? ''}/address/${relayHubAddress}`} />
       </Box>
       {hubStateData !== undefined ? (
         <>
