@@ -59,6 +59,7 @@ export default function SetOwnerListener({ listen, setListen, stakeManagerAddres
           while (true) {
             console.debug(`Waiting ${sleepMs}ms ${i}/${sleepCount} for relayer to set (us) as owner`)
             const newStakeInfo = await refetch()
+            console.debug(`newStakeInfo: ${JSON.stringify(newStakeInfo)}`)
             if (newStakeInfo.data === undefined) {
               throw new Error('Failed to refetch StakeManager data')
             }

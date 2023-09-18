@@ -15,7 +15,7 @@ interface IProps {
   explorerLink: string | null
 }
 
-function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
+function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
   const theme = useTheme()
@@ -42,7 +42,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
         if (x === 'relayManagerAddress') {
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -70,7 +70,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
         } else if (x === 'relayWorkerAddress') {
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -98,7 +98,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           const accountIsOwner = isSameAddress(relayData[x], address)
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -125,7 +125,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
         } else if (x.includes('Gas')) {
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -145,27 +145,29 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
           const isReady = relayData[x as keyof PingResponse] === true
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'h6'} fontFamily={Poppins}>
-                  {isReady ? (
-                    <Chip
-                      bgcolor={theme.palette.primary.chipBGSuccess}
-                      label={
-                        <Typography fontFamily={Poppins} color={theme.palette.primary.mainPos} variant='h6'>
-                          Ready
-                        </Typography>
-                      }
-                    />
-                  ) : (
-                    <Typography variant={'h6'} fontFamily={Poppins}>
-                      Not Ready
-                    </Typography>
-                  )}
+                  {
+                    isReady
+                      ? (
+                        <Chip
+                          bgcolor={theme.palette.primary.chipBGSuccess}
+                          label={
+                            <Typography fontFamily={Poppins} color={theme.palette.primary.mainPos} variant="h6">
+                              Ready
+                            </Typography>
+                          }
+                        />)
+                      : (
+                        <Typography variant={'h6'} fontFamily={Poppins}>
+                          Not Ready
+                        </Typography>)
+                  }
                 </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
@@ -174,7 +176,7 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
         } else {
           data = (
             <>
-              <TableCell width='33%'>
+              <TableCell width="33%">
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -195,11 +197,15 @@ function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
             </>
           )
         }
-        return showAllInfo ?? false ? (
+        return showAllInfo ?? false
+          ? (
           <TableRow key={i}>{data}</TableRow>
-        ) : accordionSummaryInfoArr.includes(x) ? (
+            )
+          : accordionSummaryInfoArr.includes(x)
+            ? (
           <TableRow key={i}>{data}</TableRow>
-        ) : null
+              )
+            : null
       })}
     </>
   )
