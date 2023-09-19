@@ -9,6 +9,7 @@ import avalancheIcon from '../../../assets/icons/networks/avalanche.svg'
 import polygonIcon from '../../../assets/icons/networks/polygon.svg'
 import binanceIcon from '../../../assets/icons/networks/binance.svg'
 import arbitrumIcon from '../../../assets/icons/networks/arbitrum.svg'
+import gnosisIcon from '../../../assets/icons/networks/gnosis.svg'
 
 interface NetGroup {
   [key: string]: INetwork[]
@@ -23,22 +24,25 @@ const icons = [
   { key: 'Ethereum', icon: ethereumIcon },
   { key: 'Optimism', icon: optimismIcon },
   { key: 'Arbitrum', icon: arbitrumIcon },
-  { key: 'Other' },
   { key: 'Avalanche', icon: avalancheIcon },
   { key: 'Binance', icon: binanceIcon },
-  { key: 'Polygon', icon: polygonIcon }
+  { key: 'Gnosis', icon: gnosisIcon },
+  { key: 'Polygon', icon: polygonIcon },
+  { key: 'Other' }
 ]
 
 export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: NetworkLinksNewProps) {
   const theme = useTheme()
   const networks = useAppSelector((state) => state.networkList.networks)
-  const networkArray = Object.values(networks)
-  const netGroups = networkArray
+
+  const sortedNetworks = Object.values(networks).sort((a, b) => a.group.localeCompare(b.group))
+
+  const netGroups = sortedNetworks
     .map((n) => n.group)
     .reduce(
       (set: NetGroup, g: string) => ({
         ...set,
-        [g]: networkArray.filter((net) => net.group === g && net.errorMsg === '')
+        [g]: sortedNetworks.filter((net) => net.group === g && net.errorMsg === '')
       }),
       {}
     )
@@ -48,12 +52,11 @@ export default function NetworkLinksNew({ setSelectedGroup, selectedGroup }: Net
       {Object.keys(netGroups)
         .filter((g) => netGroups[g].length > 0)
         .map((group) => {
-          // const icon = icons[group as keyof typeof icons]
           const icon = icons.find((icon) => icon.key === group)?.icon
           return (
             <Box key={group}>
               <GroupChip
-                icon={icon ? <img src={icon} alt='test' /> : <></>}
+                icon={icon ? <img src={icon} alt='icon' /> : <></>}
                 label={
                   <Typography
                     variant='h6'

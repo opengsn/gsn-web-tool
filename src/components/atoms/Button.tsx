@@ -118,12 +118,21 @@ export const CTA: FC<ButtonCTAProps> = ({ onClick, disabled, text, type }) => {
   )
 }
 
+export const Unstyled: FC<IProps> = ({ children, onClick, disabled }) => {
+  return (
+    <button onClick={onClick} disabled={disabled} style={{ all: 'unset', cursor: 'pointer', width: '100%' }}>
+      {children}
+    </button>
+  )
+}
+
 const Button = {
   Contained,
   Icon,
   Text,
   Radio,
-  CTA
+  CTA,
+  Unstyled
 }
 
 export default Button

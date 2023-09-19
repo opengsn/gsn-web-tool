@@ -11,7 +11,7 @@ interface IProps {
 export default function BlockExplorerUrl({ address, url, truncate = true }: IProps) {
   const theme = useTheme()
 
-  const firstFourCharsInAddr = address.slice(2, 6)
+  const firstFourCharsInAddr = address.slice(0, 4)
   const lastFourCharsInAddr = address.slice(-4)
   const truncated = `${firstFourCharsInAddr}...${lastFourCharsInAddr}`
 

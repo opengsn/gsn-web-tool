@@ -23,23 +23,32 @@ export default function RegisterRelay({ isOwner }: { isOwner: boolean }) {
 
   const CollapseButton = () => {
     return (
-      <Box
-        width={{
-          xs: '95%',
-          md: '120px'
-        }}
-        mx='auto'
-        mt='60px'
-      >
-        <Button.CTA
-          onClick={handleShowRegisterRelay}
-          aria-controls='register-relay-form'
-          aria-expanded={showRegisterRelay}
-          disabled={!isOwner}
-          text='Register'
-        />
+      <Box>
+        <Box
+          width={{
+            xs: '95%',
+            md: '120px'
+          }}
+          mx='auto'
+          mt='60px'
+        >
+          <Button.CTA
+            onClick={handleShowRegisterRelay}
+            aria-controls='register-relay-form'
+            aria-expanded={showRegisterRelay}
+            disabled={!isOwner}
+            text='Register'
+          />
+        </Box>
         {!isOwner && (
-          <Box>
+          <Box
+            mt={5}
+            width={{
+              xs: '95%',
+              md: '300px'
+            }}
+            mx='auto'
+          >
             <Alert severity='warning'>
               <Typography variant='h5'>Connected wallet address is not the configured Relay Server owner address</Typography>
             </Alert>

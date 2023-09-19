@@ -37,12 +37,12 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
             Status
           </Typography>
         </TableCell>
-        <TableCell width='15%'>
+        <TableCell width='10%'>
           <Typography variant='h5' fontWeight={600}>
             Version
           </Typography>
         </TableCell>
-        <TableCell width='15%'>
+        <TableCell width='20%'>
           <Typography variant='h5' fontWeight={600}>
             Address
           </Typography>
@@ -82,9 +82,14 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
               </TableCell>
               <TableCell>{''}</TableCell>
               <TableCell>
-                <BlockExplorerUrl address={x.manager} url={`${chain.blockExplorers?.default.url ?? ''}/address/${x.manager}`} />
+                <Box display='flex' width='160px'>
+                  <Box mr='auto'>
+                    <Typography variant='h6'>Manager</Typography>
+                  </Box>
+                  <BlockExplorerUrl address={x.manager} url={`${chain.blockExplorers?.default.url ?? ''}/address/${x.manager}`} />
                 <br />
                 <br />
+                </Box>
               </TableCell>
               <TableCell>
                 <Balance address={x.manager} chainId={chain.id} />

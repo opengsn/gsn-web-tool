@@ -13,23 +13,29 @@ const Header: FC = () => {
   return (
     <>
       <Box display='flex' alignItems='center' justifyContent='space-between' px={10} pt={10}>
-        <Box display='flex' alignItems='center'>
-          <Box mr='10px'>
-            <img src='favicon.ico' height='50px' alt='icon' />
+        <Button.Unstyled
+          onClick={() => {
+            navigate('/')
+          }}
+        >
+          <Box display='flex' alignItems='center'>
+            <Box mr='10px'>
+              <img src='favicon.ico' height='50px' alt='icon' />
+            </Box>
+            <Typography variant='h1' fontWeight={500}>
+              GSN
+            </Typography>
+            &nbsp; &nbsp;
+            <Box
+              component='span'
+              sx={{
+                opacity: 0.5
+              }}
+            >
+              <Typography variant='h1'>{isHome ? 'Relay Servers info' : 'Relay Servers'}</Typography>
+            </Box>
           </Box>
-          <Typography variant='h1' fontWeight={500}>
-            GSN
-          </Typography>
-          &nbsp; &nbsp;
-          <Box
-            component='span'
-            sx={{
-              opacity: 0.5
-            }}
-          >
-            <Typography variant='h1'>{isHome ? 'Relay Servers info' : 'Relay Servers'}</Typography>
-          </Box>
-        </Box>
+        </Button.Unstyled>
         {isHome && (
           <Box display='flex' alignItems='center' gap={15}>
             <Tooltip

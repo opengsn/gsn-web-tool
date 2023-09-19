@@ -23,16 +23,23 @@ const groups = {
   Binance: [56, 97],
   Avalanche: 'Avalanche',
   Arbitrum: 'Arb',
-  Optimism: 'Optimism'
+  Optimism: 'Optimism',
+  Gnosis: 'Gnosis Chain (formerly xDAI)'
 }
 
-function getGroup (chainInfo: any) {
-  const groupName = Object.keys(groups).find(groupName => {
+function getGroup(chainInfo: any) {
+  const groupName = Object.keys(groups).find((groupName) => {
     const g = (groups as groupsMapped)[groupName]
-    if (Array.isArray(g) && g.includes(parseInt(chainInfo.chainId))) { return true }
+    if (Array.isArray(g) && g.includes(parseInt(chainInfo.chainId))) {
+      return true
+    }
     return chainInfo.title?.includes(groupName)
   })
-  if (groupName != null) { return groupName } else { return 'Other' }
+  if (groupName != null) {
+    return groupName
+  } else {
+    return 'Other'
+  }
 }
 
 // use gsn-networks for all gsn-deployed networks.
@@ -58,7 +65,7 @@ interface ChainListNetworkSet {
 
 let chainList: any | null = null
 
-export async function getNetworks (): Promise<ChainWithGsn[]> {
+export async function getNetworks(): Promise<ChainWithGsn[]> {
   if (chainList === null) {
     try {
       // const chainResponse = await axios.get(chainListMiniUrl)
@@ -68,10 +75,10 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
         throw new Error(`Failed to load chains from ${chainListMiniUrl}`)
       }
       chainList = chainResponse.data.reduce((set: ChainListNetworkSet, chainInfo: ChainListNetwork) => {
-        return ({
+        return {
           ...set,
           [chainInfo.chainId]: chainInfo
-        })
+        }
       }, {})
     } catch (e: any) {
       console.error(e)
@@ -140,7 +147,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
       blockExplorers = { default: { name: 'localhost', url: 'localhost.com' } }
     }
 
-    return ([
+    return [
       ...set,
       {
         id: parseInt(chainId),
@@ -156,7 +163,7 @@ export async function getNetworks (): Promise<ChainWithGsn[]> {
           contracts
         }
       }
-    ])
+    ]
   }, [])
 
   const wrappedNativeCurrency: { [key: string]: string } = {

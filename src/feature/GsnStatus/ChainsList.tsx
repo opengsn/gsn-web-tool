@@ -9,6 +9,8 @@ export default function ChainsList() {
   const networks = useAppSelector((state) => state.networkList.networks)
   const [selectedGroup, setSelectedGroup] = useState<string>('')
 
+  const sortedNetworks = Object.values(networks).sort((a, b) => a.group.localeCompare(b.group))
+
   return (
     <>
       <Grid container px='80px'>
@@ -19,8 +21,8 @@ export default function ChainsList() {
       <Box mt={5}>
         <Divider />
       </Box>
-      <Box width='1100px' mx='auto'>
-        {Object.values(networks).map((x) => {
+      <Box width='1100px' mx='auto' mb={10}>
+        {sortedNetworks.map((x) => {
           return (
             <div key={x.chain.name}>
               {x.chain.gsn.relayHubAddress !== undefined && x.errorMsg === ''
