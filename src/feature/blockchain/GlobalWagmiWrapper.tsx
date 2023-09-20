@@ -30,6 +30,8 @@ export default function GlobalWagmiWarpper() {
           const networksForWagmi: ChainWithGsn[] = await getNetworks()
           if (path === ROUTES.List) dispatch(fetchNetworks({ networks: networksForWagmi }))
           setGsnNetworks(networksForWagmi)
+        } else {
+          dispatch(fetchNetworks({ networks: gsnNetworks }))
         }
       } catch (e) {
         console.error(e)
@@ -39,7 +41,7 @@ export default function GlobalWagmiWarpper() {
       console.error(e)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, gsnNetworks.length])
+  }, [dispatch, gsnNetworks.length, path])
 
   if (gsnNetworks.length === 0) return <>loading...</>
   const { chains, provider: wagmiProvider } = configureChains(gsnNetworks, [
