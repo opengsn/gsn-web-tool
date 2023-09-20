@@ -8,7 +8,7 @@ import { TokenValueInfo } from './TokenValueInfo'
 import { Box, Typography } from '../../../components/atoms'
 import { useTheme } from '@mui/material'
 import { Chip } from '../../../components/atoms/Chip'
-import { formatNumber } from '../../../utils'
+import { addSlashToUrl, formatNumber } from '../../../utils'
 
 interface RelayHubInfoProps {
   relayHubAddress: string
@@ -28,6 +28,8 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
   const provider = useProvider({ chainId })
   const [stakingTokens, setStakingTokens] = useState<IFoundToken[]>([])
   const theme = useTheme()
+
+  const blockExplorerUrlWithSlash = addSlashToUrl(blockExplorerUrl)
 
   useEffect(() => {
     if (curBlockNumberData !== undefined) {
@@ -91,7 +93,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Typography>
           &nbsp;
         </Box>
-        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrl ?? ''}/address/${relayHubAddress}`} />
+        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrlWithSlash}address/${relayHubAddress}`} />
       </Box>
       {hubStateData !== undefined
         ? (

@@ -8,6 +8,7 @@ import { ViewDetailsButton } from './ViewDetailsButton'
 import { Box, TableCell, TableRow, Typography } from '../../../../components/atoms'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../../../constants/routes'
+import { addSlashToUrl } from '../../../../utils'
 
 export interface RelayLineProps {
   url: string
@@ -26,6 +27,8 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
       </TableRow>
     )
   }
+
+  const blockExplorerUrl = addSlashToUrl(blockExplorer?.url)
 
   return (
     <TableRow
@@ -49,7 +52,7 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
                 <Typography variant='h6'>Manager</Typography>
               </Box>
             )}
-            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayManagerAddress}`} address={relayManagerAddress} />
+            <BlockExplorerUrl url={`${blockExplorerUrl}address/${relayManagerAddress}`} address={relayManagerAddress} />
           </Box>
           <Box display='flex' width='160px'>
             {relayWorkerAddress && (
@@ -57,7 +60,7 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
                 <Typography variant='h6'>Worker</Typography>
               </Box>
             )}
-            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayWorkerAddress}`} address={relayWorkerAddress} />
+            <BlockExplorerUrl url={`${blockExplorerUrl}address/${relayWorkerAddress}`} address={relayWorkerAddress} />
           </Box>
         </Box>
       </TableCell>
