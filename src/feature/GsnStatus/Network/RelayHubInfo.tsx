@@ -1,4 +1,3 @@
-/* eslint-disable multiline-ternary */
 import { Fragment, useEffect, useState } from 'react'
 import { useBlockNumber, useContractRead, useProvider } from 'wagmi'
 
@@ -9,7 +8,7 @@ import { TokenValueInfo } from './TokenValueInfo'
 import { Box, Typography } from '../../../components/atoms'
 import { useTheme } from '@mui/material'
 import { Chip } from '../../../components/atoms/Chip'
-import { formatNumber } from '../../../utils'
+import { addSlashToUrl, formatNumber } from '../../../utils'
 
 interface RelayHubInfoProps {
   relayHubAddress: string
@@ -29,6 +28,8 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
   const provider = useProvider({ chainId })
   const [stakingTokens, setStakingTokens] = useState<IFoundToken[]>([])
   const theme = useTheme()
+
+  const blockExplorerUrlWithSlash = addSlashToUrl(blockExplorerUrl)
 
   useEffect(() => {
     if (curBlockNumberData !== undefined) {
@@ -92,9 +93,10 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Typography>
           &nbsp;
         </Box>
-        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrl ?? ''}/address/${relayHubAddress}`} />
+        <BlockExplorerUrl address={relayHubAddress} url={`${blockExplorerUrlWithSlash}address/${relayHubAddress}`} />
       </Box>
-      {hubStateData !== undefined ? (
+      {hubStateData !== undefined
+        ? (
         <>
           <Box>
             <Typography variant='h6' fontWeight={600}>
@@ -104,7 +106,8 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
               {formatDays(hubStateData.minimumUnstakeDelay as any)}{' '}
             </Typography>
           </Box>
-          {stakingTokens.length > 0 ? (
+          {stakingTokens.length > 0
+            ? (
             <Box>
               <Typography variant='h6' fontWeight={600}>
                 Stake token{stakingTokens.length > 1 ? 's' : null}:
@@ -126,7 +129,8 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
                 })}
               </Typography>
             </Box>
-          ) : null}
+              )
+            : null}
           <Box>
             <Typography variant='h6' fontWeight={600}>
               Relay Fee:
@@ -139,7 +143,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Box>
           <Box>
             <Typography variant='h6' fontWeight={600}>
-              Online Networks:
+              Relayers / Relay servers
             </Typography>{' '}
           </Box>
           <Box ml={'-10px'}>
@@ -153,7 +157,8 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
             />
           </Box>
         </>
-      ) : null}
+          )
+        : null}
     </Box>
   )
 }

@@ -1,4 +1,4 @@
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useBalance, useContractRead } from 'wagmi'
 import { PingResponse } from '../../../types'
 import { formatNumber, isSameAddress, weiToGwei } from '../../../utils'
 import { TableCell, TableRow, Typography } from '../../../components/atoms'
@@ -6,8 +6,10 @@ import ExplorerLink from '../Commands/RegisterRelay/ExplorerLink'
 import { Poppins } from '../../../theme/font'
 import { useTheme } from '@mui/material'
 import { Chip } from '../../../components/atoms/Chip'
+import RelayHub from '../../../contracts/RelayHub.json'
+import { formatEther } from 'ethers/lib/utils.js'
 
-const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'stakingToken', 'ready']
+const accordionSummaryInfoArr = ['relayManagerAddress', 'relayWorkerAddress', 'relayHubManagerBalance', 'stakingToken', 'ready']
 
 interface IProps {
   relayData: PingResponse
@@ -15,34 +17,53 @@ interface IProps {
   explorerLink: string | null
 }
 
-function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
+function PingResponseData({ relayData, showAllInfo, explorerLink }: IProps) {
   const chainId = Number(relayData.chainId)
   const { address } = useAccount()
   const theme = useTheme()
+  // const [relayHubManagerBalance, setRelayHubManagerBalance] = useState<BigNumber | null>(null)
 
   const { data: relayManagerBalanceData } = useBalance({
     address: relayData.relayManagerAddress as any,
     watch: true,
     chainId
   })
+
   const { data: relayWorkerBalanceData } = useBalance({
     address: relayData.relayWorkerAddress as any,
     watch: true,
     chainId
   })
 
+  const { data: relayHubManagerBalance }: { data: any } = useContractRead({
+    address: relayData.relayHubAddress as `0x${string}`,
+    abi: RelayHub.abi,
+    watch: true,
+    functionName: 'balanceOf',
+    args: [relayData.relayManagerAddress]
+  })
+
   const camelCaseToHuman = (s: string): string => {
     return s.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
   }
 
+  const { relayWorkerAddress, relayManagerAddress, ...rest } = relayData
+
+  const relayDataSorted = {
+    relayManagerAddress,
+    relayWorkerAddress,
+    relayHubManagerBalance,
+    ...rest
+  }
+
   return (
     <>
-      {Object.keys(relayData).map((x, i) => {
+      {Object.keys(relayDataSorted).map((x, i) => {
         let data
         if (x === 'relayManagerAddress') {
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -70,7 +91,7 @@ function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
         } else if (x === 'relayWorkerAddress') {
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -94,11 +115,41 @@ function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
               </TableCell>
             </>
           )
+        } else if (x === 'relayHubManagerBalance') {
+          data = (
+            <>
+              <TableCell width='33%'>
+                <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  {camelCaseToHuman(x)}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant={'h6'} fontFamily={Poppins}>
+                  {relayData[x as keyof PingResponse]?.toString()}
+                </Typography>
+                &nbsp;
+                {relayData[x as keyof PingResponse]?.toString() && (
+                  <ExplorerLink
+                    explorerLink={explorerLink}
+                    params={`address/${relayData[x as keyof PingResponse]?.toString() as string}`}
+                  />
+                )}
+              </TableCell>
+              <TableCell>
+                <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
+                  Balance:{' '}
+                  <b>
+                    <>{relayHubManagerBalance && formatNumber(+formatEther(relayHubManagerBalance) || 0)}</>
+                  </b>
+                </Typography>
+              </TableCell>
+            </>
+          )
         } else if (x === 'ownerAddress' && address !== undefined) {
           const accountIsOwner = isSameAddress(relayData[x], address)
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -125,7 +176,7 @@ function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
         } else if (x.includes('Gas')) {
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
@@ -145,29 +196,29 @@ function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
           const isReady = relayData[x as keyof PingResponse] === true
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant={'h6'} fontFamily={Poppins}>
-                  {
-                    isReady
-                      ? (
-                        <Chip
-                          bgcolor={theme.palette.primary.chipBGSuccess}
-                          label={
-                            <Typography fontFamily={Poppins} color={theme.palette.primary.mainPos} variant="h6">
-                              Ready
-                            </Typography>
-                          }
-                        />)
-                      : (
-                        <Typography variant={'h6'} fontFamily={Poppins}>
-                          Not Ready
-                        </Typography>)
-                  }
+                  {isReady
+                    ? (
+                    <Chip
+                      bgcolor={theme.palette.primary.chipBGSuccess}
+                      label={
+                        <Typography fontFamily={Poppins} color={theme.palette.primary.mainPos} variant='h6'>
+                          Ready
+                        </Typography>
+                      }
+                    />
+                      )
+                    : (
+                    <Typography variant={'h6'} fontFamily={Poppins}>
+                      Not Ready
+                    </Typography>
+                      )}
                 </Typography>
               </TableCell>
               <TableCell>{''}</TableCell>
@@ -176,7 +227,7 @@ function PingResponseData ({ relayData, showAllInfo, explorerLink }: IProps) {
         } else {
           data = (
             <>
-              <TableCell width="33%">
+              <TableCell width='33%'>
                 <Typography variant={'h6'} fontFamily={Poppins} color={theme.palette.primary.mainBrightWhite}>
                   {camelCaseToHuman(x)}
                 </Typography>

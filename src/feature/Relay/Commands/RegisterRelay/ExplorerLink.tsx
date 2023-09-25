@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react'
 import { Box, Icon } from '../../../../components/atoms'
 import { TokenContext } from './StakeWithERC20/TokenContextWrapper'
 import { useTheme } from '@mui/material'
+import { addSlashToUrl } from '../../../../utils'
 
 interface IProps {
   params?: string | null
@@ -11,14 +12,14 @@ interface IProps {
 const ExplorerLink: FC<IProps> = ({ params, explorerLink }) => {
   const { explorerLink: explorerLinkContext } = useContext(TokenContext)
   const theme = useTheme()
-  const explorerLinkToUse = explorerLink ?? explorerLinkContext
+  const explorerLinkToUse = addSlashToUrl(explorerLink) ?? addSlashToUrl(explorerLinkContext)
 
   if (!explorerLinkToUse || !params) return null
 
   return (
     <Box
       component={'a'}
-      href={`${explorerLinkToUse}/${params}`}
+      href={`${explorerLinkToUse}${params}`}
       target='_blank'
       sx={{
         verticalAlign: 'middle'

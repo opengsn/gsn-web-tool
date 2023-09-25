@@ -4,7 +4,7 @@ import { useNetwork } from 'wagmi'
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { fetchRelayData, deleteRelayData } from './relaySlice'
 
-import { Accordion, AccordionSummary, Alert, Box, CircularProgress, Typography } from '../../components/atoms'
+import { Accordion, AccordionSummary, Alert, Box, Button, CircularProgress, Typography } from '../../components/atoms'
 
 import RelayInfo from './Info/RelayInfo'
 import RelayCommands from './Commands/Commands'
@@ -56,20 +56,28 @@ export default function Relay() {
             isManage={true}
           >
             <Box width='100%' p='10px'>
-              <Box
-                sx={(theme) => ({
-                  bgcolor: theme.palette.primary.relayHubBG,
-                  p: 5
-                })}
+              <Button.Unstyled
+                onClick={(event) => {
+                  setExpanded((prev) => !prev)
+                }}
               >
-                <Typography variant='h6' fontWeight={600}>
-                  Relay Hub:
-                </Typography>
-                &nbsp;
-                <BlockExplorerUrl address={relay.relayUrl} url={relay.relayUrl} truncate={false} />
-              </Box>
-              <Box mt='15px'>
-                <RelayInfo showAllInfo={expanded} />
+                <Box
+                  sx={(theme) => ({
+                    bgcolor: theme.palette.primary.relayHubBG,
+                    p: 5
+                  })}
+                >
+                  <Typography variant='h6' fontWeight={600}>
+                    Relay Server URL:
+                  </Typography>
+                  &nbsp;
+                  <BlockExplorerUrl address={relay.relayUrl} url={relay.relayUrl} truncate={false} />
+                </Box>
+              </Button.Unstyled>
+              <Box width='100%'>
+                <Box mt='15px'>
+                  <RelayInfo showAllInfo={expanded} />
+                </Box>
               </Box>
             </Box>
           </AccordionSummary>

@@ -45,12 +45,13 @@ export default function NetworkCard({ network, selectedGroup }: NetworkCardProps
   return (
     <Box pt='20px' className={chain.gsn.group}>
       <Box sx={glowStyle(theme, glowing)}>
-        <Accordion expanded={expanded}>
-          <AccordionSummary
-            onChange={(event) => {
-              setExpanded((prev) => !prev)
-            }}
-          >
+        <Accordion
+          expanded={expanded}
+          onChange={(event) => {
+            setExpanded((prev) => !prev)
+          }}
+        >
+          <AccordionSummary>
             <Box p={15}>
               <NetworkHeader group={chain.gsn.group} name={chain.name} />
               <RelayHubInfo

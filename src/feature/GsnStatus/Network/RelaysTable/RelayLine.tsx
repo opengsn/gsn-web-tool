@@ -5,9 +5,10 @@ import RelayStatus from './RelayStatus'
 import RelayUrl from './RelayUrl'
 import { RelayVersion } from './RelayVersion'
 import { ViewDetailsButton } from './ViewDetailsButton'
-import { Box, TableCell, TableRow } from '../../../../components/atoms'
+import { Box, TableCell, TableRow, Typography } from '../../../../components/atoms'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../../../../constants/routes'
+import { addSlashToUrl } from '../../../../utils'
 
 export interface RelayLineProps {
   url: string
@@ -27,6 +28,8 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
     )
   }
 
+  const blockExplorerUrl = addSlashToUrl(blockExplorer?.url)
+
   return (
     <TableRow
       key={relayManagerAddress}
@@ -43,11 +46,21 @@ export default function RelayLine({ url, relay, blockExplorer, errorMsg }: Relay
       </TableCell>
       <TableCell>
         <Box display='flex' flexDirection='column' gap={1}>
-          <Box display='flex' justifyContent='space-between' width='95px'>
-            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayManagerAddress}`} address={relayManagerAddress} />
+          <Box display='flex' width='160px'>
+            {relayManagerAddress && (
+              <Box mr='auto'>
+                <Typography variant='h6'>Manager</Typography>
+              </Box>
+            )}
+            <BlockExplorerUrl url={`${blockExplorerUrl}address/${relayManagerAddress}`} address={relayManagerAddress} />
           </Box>
-          <Box display='flex' justifyContent='space-between' width='95px'>
-            <BlockExplorerUrl url={`${blockExplorer?.url ?? ''}/address/${relayWorkerAddress}`} address={relayWorkerAddress} />
+          <Box display='flex' width='160px'>
+            {relayWorkerAddress && (
+              <Box mr='auto'>
+                <Typography variant='h6'>Worker</Typography>
+              </Box>
+            )}
+            <BlockExplorerUrl url={`${blockExplorerUrl}address/${relayWorkerAddress}`} address={relayWorkerAddress} />
           </Box>
         </Box>
       </TableCell>

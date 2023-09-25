@@ -16,6 +16,7 @@ import {
 } from '../../../../components/atoms'
 import { Chip } from '../../../../components/atoms/Chip'
 import { useTheme } from '@mui/material'
+import { addSlashToUrl } from '../../../../utils'
 
 interface RelaysTableProps {
   relays: GsnNetworkRelay[]
@@ -24,6 +25,8 @@ interface RelaysTableProps {
 
 export default function RelaysTable({ relays, chain }: RelaysTableProps) {
   const theme = useTheme()
+  const blackExplorerUrlWithSlash = addSlashToUrl(chain.blockExplorers?.default.url)
+
   const TableHead = () => (
     <MuiTableHead>
       <TableRow>
@@ -37,12 +40,12 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
             Status
           </Typography>
         </TableCell>
-        <TableCell width='15%'>
+        <TableCell width='10%'>
           <Typography variant='h5' fontWeight={600}>
             Version
           </Typography>
         </TableCell>
-        <TableCell width='15%'>
+        <TableCell width='20%'>
           <Typography variant='h5' fontWeight={600}>
             Address
           </Typography>
@@ -82,9 +85,14 @@ export default function RelaysTable({ relays, chain }: RelaysTableProps) {
               </TableCell>
               <TableCell>{''}</TableCell>
               <TableCell>
-                <BlockExplorerUrl address={x.manager} url={`${chain.blockExplorers?.default.url ?? ''}/address/${x.manager}`} />
-                <br />
-                <br />
+                <Box display='flex' width='160px'>
+                  <Box mr='auto'>
+                    <Typography variant='h6'>Manager</Typography>
+                  </Box>
+                  <BlockExplorerUrl address={x.manager} url={`${blackExplorerUrlWithSlash}/address/${x.manager}`} />
+                  <br />
+                  <br />
+                </Box>
               </TableCell>
               <TableCell>
                 <Balance address={x.manager} chainId={chain.id} />

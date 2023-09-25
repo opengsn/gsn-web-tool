@@ -56,3 +56,8 @@ export const formatNumber = (num: number | string, digits: number = 6) => {
 export const weiToGwei = (wei: number): number => {
   return wei / Math.pow(10, 9)
 }
+
+export const addSlashToUrl = (url: string | undefined | null) => {
+  if (!url) return ''
+  return url.endsWith('/') ? url : url + '/'
+}
