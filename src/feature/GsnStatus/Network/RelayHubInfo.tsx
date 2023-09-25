@@ -143,7 +143,7 @@ export default function RelayHubInfo({ relayHubAddress, RelayHubAbi, blockExplor
           </Box>
           <Box>
             <Typography variant='h6' fontWeight={600}>
-              Relayers / Relay servers
+              Active Relay Servers:
             </Typography>{' '}
           </Box>
           <Box ml={'-10px'}>
