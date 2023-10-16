@@ -6,7 +6,7 @@ import RelayHub from '../../contracts/RelayHub.json'
 import { ChainWithGsn } from '../../types/ChainWithGsn'
 
 // const infura = (document.location.href.match(/#.*infura=([^&]*)/) || [])[1] || 'f40be2b1a3914db682491dc62a19ad43'
-const infura = 'f40be2b1a3914db682491dc62a19ad43'
+const infura = 'b6381937a493473a877503df6b908a57'
 // '127b8c9f6d0d46f69a42963b5cd0d0ac'
 
 const chainListMiniUrl = 'https://chainid.network/chains_mini.json'

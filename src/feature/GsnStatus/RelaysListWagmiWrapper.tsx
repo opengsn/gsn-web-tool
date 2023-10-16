@@ -24,7 +24,7 @@ export default function RelaysListWagmiWrapper () {
   const { provider } = configureChains(
     gsnNetworks,
     [
-      infuraProvider({ apiKey: 'f40be2b1a3914db682491dc62a19ad43' }),
+      infuraProvider({ apiKey: 'b6381937a493473a877503df6b908a57' }),
       jsonRpcProvider({
         rpc: (chain) => {
           return {
